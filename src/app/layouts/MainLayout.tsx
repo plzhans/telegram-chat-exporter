@@ -1,8 +1,10 @@
-import { Outlet } from 'react-router-dom';
+import { Suspense } from 'react';
+import { Outlet, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import * as Select from '@radix-ui/react-select';
 import { Check, ChevronDown, Github, Languages, LogOut } from 'lucide-react';
 import { Button } from '@/shared/ui/Button';
+import { DialogListSkeleton, MessageListSkeleton, PageSkeleton } from '@/shared/ui/Skeleton';
 import { useAuth } from '@/shared/auth/useAuth';
 import { COPYRIGHT, SOURCE_URL, VERSION_LABEL } from '@/shared/config/app';
 import {
@@ -80,7 +82,12 @@ function LanguageSelect() {
           align="end"
           className="z-50 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg"
         >
-          <Select.Viewport className="p-1">
+          {/*
+            언어가 열 몇 개가 되면서 목록이 화면보다 길어질 수 있다. Radix 가 알려주는
+            "이 위치에서 쓸 수 있는 높이"까지만 쓰고 그 안에서 스크롤시킨다 — 없으면 목록이
+            화면 밖으로 나가서 아래쪽 언어를 고를 방법이 없어진다.
+          */}
+          <Select.Viewport className="max-h-[--radix-select-content-available-height] overflow-y-auto p-1">
             {SUPPORTED_LANGUAGES.map((lang) => (
               <Select.Item
                 key={lang}
@@ -101,6 +108,14 @@ function LanguageSelect() {
       </Select.Portal>
     </Select.Root>
   );
+}
+
+/** 지금 주소가 가리키는 화면의 스켈레톤. */
+function RouteSkeleton() {
+  const { pathname } = useLocation();
+  if (/\/dialogs\/[^/]+/.test(pathname)) return <MessageListSkeleton />;
+  if (pathname.endsWith('/dialogs')) return <DialogListSkeleton />;
+  return <PageSkeleton />;
 }
 
 export function MainLayout() {
@@ -146,15 +161,19 @@ export function MainLayout() {
             */}
             <div className="mx-auto flex max-w-3xl items-center gap-3 px-4 py-1">
               {/*
-                누구로 접속했는지를 이름만이 아니라 **id 와 번호까지** 적는다. 백업을 근거로
-                쓸 때 "어느 계정에서 받은 것인가"가 곧 출처이고, 이름은 언제든 바뀌지만
-                id 는 안 그렇다. 내보내기 파일의 meta.json 에 남는 값과 같은 것이다.
+                이름과 사용자명까지만 적는다.
+
+                전화번호와 회원번호는 화면에 띄울 값이 아니다 - 옆사람이 보거나 화면을
+                공유하는 순간 그대로 새어 나가는데, 정작 사용자에게는 알려 주는 바가 없다.
+                "어느 계정에서 받았는가"라는 출처 기록은 내보내기 파일의 meta.json 이 맡는다.
               */}
               <p className="min-w-0 flex-1 truncate text-xs text-slate-600">
-                {t('auth.signedInAs', { name: me.name })}
-                <span className="ml-1.5 font-mono text-[0.7rem] text-slate-400">
-                  {[me.username && `@${me.username}`, me.id, me.phone].filter(Boolean).join(' · ')}
-                </span>
+                <span className="font-semibold text-slate-800">{me.name}</span>
+                {me.username && (
+                  <span className="ms-1.5 font-mono text-[0.7rem] text-slate-400">
+                    @{me.username}
+                  </span>
+                )}
               </p>
               <Button
                 variant="ghost"
@@ -172,17 +191,31 @@ export function MainLayout() {
       </header>
 
       {/* min-h-0 이 없으면 flex 아이템이 콘텐츠 높이만큼 부풀어 스크롤이 창으로 새어 나간다. */}
-      <main className="mx-auto w-full min-h-0 max-w-3xl flex-1 overflow-y-auto px-4 py-4">
-        <Outlet />
-      </main>
+      <main className="mx-auto w-full min-h-0 max-w-3xl flex-1 overflow-y-auto px-4 py-2 sm:py-4">
+        {/*
+          페이지 묶음이 도착하는 동안 헤더는 그대로 두고 이 자리만 채운다.
 
-      {/* 내보낸 HTML 하단에도 같은 문자열이 찍힌다. 두 줄을 대조해 그때의 코드를 짚는다. */}
-      <footer className="shrink-0 border-t border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-4 py-1.5">
-          <p className="truncate text-[0.65rem] text-slate-400">{COPYRIGHT}</p>
-          <p className="shrink-0 font-mono text-[0.65rem] text-slate-400">{VERSION_LABEL}</p>
-        </div>
-      </footer>
+          어떤 화면이 올지 주소로 미리 알 수 있으므로 그 화면 모양의 스켈레톤을 쓴다.
+          이어서 뜨는 세션 복원·목록 조회 단계도 같은 것을 그리므로, 사용자 눈에는 한 번의
+          기다림으로 이어진다.
+        */}
+        <Suspense fallback={<RouteSkeleton />}>
+          <Outlet />
+        </Suspense>
+
+        {/*
+          내용 끝에 붙는다. 창 아래에 못 박아 두면 모바일 앱의 하단 탭처럼 보여서, 누르는
+          곳으로 오해하게 된다. 이건 눌러야 할 것이 아니라 필요한 사람만 찾아 읽는 값이다.
+
+          내보낸 HTML 하단에도 같은 문자열이 찍힌다. 두 줄을 대조해 그때의 코드를 짚는다.
+        */}
+        <footer className="mt-4 border-t border-slate-200 pt-2">
+          <div className="flex items-center justify-between gap-3">
+            <p className="truncate text-[0.65rem] text-slate-400">{COPYRIGHT}</p>
+            <p className="shrink-0 font-mono text-[0.65rem] text-slate-400">{VERSION_LABEL}</p>
+          </div>
+        </footer>
+      </main>
     </div>
   );
 }

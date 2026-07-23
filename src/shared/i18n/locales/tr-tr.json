@@ -1,0 +1,403 @@
+{
+  "seo": {
+    "tag": "tr-TR",
+    "ogLocale": "tr_TR",
+    "hreflang": [
+      "tr-TR",
+      "tr"
+    ],
+    "title": "Telegram sohbetlerini dışa aktar — tarayıcınızda, sunucuda hiçbir şey saklanmadan | Telegram Exporter",
+    "shareTitle": "Telegram sohbetlerini dışa aktar — tarayıcınızda, sunucuda hiçbir şey saklanmadan",
+    "description": "Telegram yazışmalarınızı bir zip dosyasına aktarın. Her şey tarayıcınızın içinde çalışır ve sunucuda hiçbir şey saklanmaz — telefon numaranız, giriş kodunuz ve mesajlarınız başka hiçbir yere gönderilmez. Kurmanız gereken bir şey yok.",
+    "shareDescription": "Telegram sohbetlerini doğrudan tarayıcınızda zip dosyasına aktarın. Sunucuda hiçbir şey saklanmaz."
+  },
+  "app": {
+    "title": "Telegram Exporter",
+    "tagline": "Tamamen tarayıcınızda çalışan Telegram sohbet yedeği"
+  },
+  "common": {
+    "next": "İleri",
+    "back": "Geri",
+    "cancel": "Vazgeç",
+    "retry": "Yeniden dene",
+    "refresh": "Yenile",
+    "source": "Kaynak kodu",
+    "language": "Dil",
+    "signOut": "Çıkış yap"
+  },
+  "trust": {
+    "purpose": "Bu sayfa, Telegram yazışmalarınızın yedeğini kolayca alabilmeniz için yapıldı.",
+    "lede": "Sohbetlerinizi bir zip dosyası olarak kaydeder. Tarayıcı, interneti görüntülemek için kullandığınız programdır — Chrome ya da Safari gibi — ve bütün işlem onun içinde biter.",
+    "how": {
+      "title": "Nasıl çalışır",
+      "noServer": {
+        "title": "Arada bize ait hiçbir sunucu yok",
+        "body": "Sitelerin çoğu yazdıklarınızı kendi sunucularına gönderir. Bu sayfanın öyle bir sunucusu hiç yok. Tarayıcınız doğrudan Telegram ile konuşur."
+      },
+      "credentials": {
+        "title": "Telefon numaranız ve giriş kodunuz yalnızca Telegram'a gider",
+        "body": "Giriş için gereken değerler, Telegram'a gönderilen istek dışında hiçbir şeyde kullanılmaz. Bunları görebileceğimiz bir yol yok."
+      },
+      "download": {
+        "title": "Mesajlarınız anında dosyaya dönüşür",
+        "body": "Mesajlar ekranda gösterilir; dışa aktar dediğinizde sıkıştırılıp kendi bilgisayarınıza kaydedilir. Hiçbir yere yüklenmez."
+      }
+    },
+    "verify": {
+      "title": "Kendiniz nasıl doğrularsınız",
+      "csp": "Bu sayfa, Telegram (<code>wss://*.web.telegram.org</code>) dışında <strong>hiçbir adrese bağlanamayacak</strong> şekilde kilitlenmiştir. Bu kuralı tarayıcınız zorunlu kılar; dolayısıyla sayfayı yazan kişi bile onu çiğneyemez.",
+      "devtools": "F12'ye (Mac'te ⌥⌘I) basıp <strong>Ağ</strong> sekmesini açarsanız, bu sayfanın gerçekten bağlandığı bütün adresleri görürsünüz.",
+      "source": "Kaynak kodunun tamamı herkese açık.",
+      "peek": "Bu sayfanın başka hiçbir yere bağlanamadığını kendiniz görün.",
+      "cspAnalytics": "Bu sayfa, Telegram (<code>wss://*.web.telegram.org</code>) ve ziyaret sayımı için Google Analytics dışında <strong>hiçbir adrese bağlanamaz.</strong> Kuralı tarayıcı zorunlu kılar, site bunu keyfince değiştiremez."
+    },
+    "stored": {
+      "title": "Bu tarayıcıda ne kalır",
+      "lede": "Hiçbir kişisel bilgi ve hiçbir mesaj içeriği saklanmaz. Yalnızca herkese aynı görünen malzeme ve sizi oturumda tutan değer kalır. Bu tablo listenin tamamıdır.",
+      "colKind": "Ne",
+      "colWhere": "Nerede tutulur",
+      "colUntil": "Ne zaman silinir",
+      "sessionKind": "Oturum durumu",
+      "sessionWhere": "Yalnızca bu sekmenin içinde",
+      "sessionUntil": "Sekmeyi kapatınca · {{minutes}} dakika kullanılmayınca · çıkış yapınca",
+      "sessionNote": "Yalnızca “oturumu açık tut” seçeneğini işaretlerseniz saklanır; böylece sayfayı yenilemek yeniden giriş yapmanızı gerektirmez. Diğer sekmeler ve pencereler bunu göremez.",
+      "stickerKind": "Çıkartma görselleri",
+      "stickerWhere": "Bu tarayıcı",
+      "stickerUntil": "Çıkış yapınca · 20 MB aşılırsa eskiden başlayarak",
+      "stickerNote": "Çıkartmalar Telegram'daki herkese aynı görünür, bu yüzden kişisel bilgi değildir. Kimin ne zaman gönderdiği saklanmaz, yalnızca görsel kalır. Her seferinde yeniden indirmek yavaş olduğu için tutulurlar.",
+      "peek": "Yalnızca iki şey: oturum durumunuz ve çıkartma görselleri. Mesaj içeriği yok."
+    },
+    "never": {
+      "title": "Asla saklanmayanlar",
+      "body": "Yazışmalar · fotoğraflar ve ekler · telefon numarası · kişiler · giriş kodu. Hiçbiri saklanmaz ve hiçbiri Telegram dışında bir yere gitmez."
+    },
+    "analytics": {
+      "title": "Ziyaret istatistikleri için Google'a bağlanılır",
+      "peek": "Yalnızca ziyaret sayısı. Yazışma ya da telefon numarası yok.",
+      "lede": "Bu site, ziyaretçi saymak için <strong>Google Analytics</strong> kullanır.",
+      "network": "Yani bu sayfa yalnızca Telegram'a değil, <strong>Google'a da bağlanır.</strong> Analitik betiğini <code>googletagmanager.com</code> adresinden alır ve ziyaret kaydını <code>google-analytics.com</code> adresine gönderir. Telegram dışındaki tek dış bağlantı budur ve geliştirici araçlarının Ağ sekmesinde olduğu gibi görünür.",
+      "sent": "Gönderilen şey: ilk sayfanın açıldığı bilgisi ve hangi dilde açıldığı.",
+      "notSent": "Asla gönderilmeyenler: yazışmalarınız, telefon numaranız, giriş kodunuz veya hangi sohbetleri açtığınız. Sohbet adresleri sohbet kimliğini içerdiği için o adresler bilerek gönderilmez.",
+      "block": "Bunu bir reklam engelleyiciyle ya da tarayıcınızın izleme korumasıyla engellemeniz bu aracı bozmaz.",
+      "selfHost": "Bunu bile istemiyorsanız <strong>kodu indirip kendi makinenizde çalıştırın.</strong> Analitik ayarı yalnızca bu site yayımlanırken verilir; kendi derlediğiniz kopyada analitik hiç bulunmaz — Google bağlantısı kodda yer almaz."
+    },
+    "ads": {
+      "title": "Reklam gösterilir",
+      "peek": "Google AdSense reklamları var. Yazışmalarınızla ilgisi yok.",
+      "body": "Bu site <strong>Google AdSense</strong> reklamları taşır. Bu yüzden Google'ın reklam ağına da (<code>googlesyndication.com</code> · <code>doubleclick.net</code>) bağlanır ve reklamlar ayrı bir çerçeve (iframe) içinde çalışır.",
+      "isolation": "Reklam kodu bu sayfadaki hiçbir şeyi okuyamaz. Yazışmalarınız, telefon numaranız ve giriş kodunuz reklam verenlerle asla paylaşılmaz. <strong>Giriş ve sohbet ekranlarına reklam konmaz.</strong>",
+      "selfHost": "Reklamsız kullanmak için <strong>kodu indirip kendi makinenizde çalıştırın.</strong> Reklam ayarı yalnızca bu site yayımlanırken verilir; kendi derlediğiniz kopyada reklam kodu hiç bulunmaz."
+    },
+    "device": {
+      "title": "Hız, kullandığınız cihaza bağlıdır",
+      "body": "Arada sunucu olmaması, indirme ve sıkıştırma işinin tamamını şu anda kullandığınız bilgisayarın ya da telefonun yaptığı anlamına da gelir. Bu yüzden aynı sohbet farklı cihazlarda farklı sürebilir.",
+      "bigChat": "Çok fazla mesaj içeren sohbetler için bilgisayar kullanın. Telefonlarda boş bellek daha azdır; dışa aktarma yavaşlayabilir veya yarıda durabilir.",
+      "keepOpen": "Dışa aktarma sürerken bu sekmeyi açık tutun. Ekran kapanırsa ya da başka bir uygulamaya geçerseniz tarayıcı işi yavaşlatır veya durdurur.",
+      "rate": "Telegram istek hızını sınırladığı için, cihazınız hızlı olsa da büyük sohbetlerde beklemek gerekir. Takılmış değildir.",
+      "peek": "Arada sunucu olmadığı için süre, kendi bilgisayarınıza ya da telefonunuza bağlıdır."
+    },
+    "warning": {
+      "title": "Bu araç giriş kodunuzu ister",
+      "principle": "Telegram, giriş kodunuzu asla kimseyle paylaşmamanızı söyler. Bu öğüt doğrudur. Bu siteyi de istisna yapmayın — ona da aynı ölçüde şüpheyle yaklaşın.",
+      "why": "Yine de bu araç, mesajlarınızı getirmek için Telegram'a sizin adınıza girer. Telefon numaranız ve giriş kodunuz olmadan hiçbir şey yapamaz. Bu değerler yalnızca Telegram'a gönderilen istekte kullanılır ve hiçbir yerde saklanmaz.",
+      "storage": "Giriş yaptıktan sonra geriye yalnızca bağlantıyı ayakta tutan tek bir değer kalır; o da yalnızca baktığınız sekmenin içinde yaşar — sekmeyi kapatınca yok olur.",
+      "selfHost": "Yine de ikna olmadıysanız kimsenin sözüne güvenmeyin. Kodu kendiniz okuyun ya da indirip kendi makinenizde çalıştırın. O zaman tam olarak bu ekranı, kendi denetlediğiniz kodla kullanırsınız."
+    }
+  },
+  "credentials": {
+    "title": "Başlayalım",
+    "modeShared": "Hemen başla (önerilen)",
+    "modeSharedHint": "Bu siteye gömülü uygulama anahtarını kullanır. Yalnızca telefon numaranız yeterli.",
+    "modeCustom": "Kendi api_id değerimi gireceğim",
+    "modeCustomHint": "my.telegram.org üzerinde kendiniz aldığınız anahtarı kullanır.",
+    "apiId": "api_id",
+    "apiHash": "api_hash",
+    "open": "Kayıt sayfasını aç",
+    "guide": {
+      "title": "api_id nasıl alınır",
+      "step1": "my.telegram.org adresine telefon numaranızı girin. Onay kodu SMS ile değil, Telegram uygulamasına gelir — başka bir cihazda Telegram'ı açık tutun.",
+      "step2": "Giriş yaptıktan sonra <b>API development tools</b> sayfasını açın ve aşağıdaki gibi doldurun. Yalnızca <b>Latin harfleri ve rakam</b> kullanın — başka bir şey yazarsanız nedenini söylemeden başarısız olur.",
+      "step3": "Gönderdiğinizde api_id ve api_hash çıkar. İkisini de yukarıdaki alanlara yapıştırın.",
+      "fields": {
+        "appTitle": "App title",
+        "shortName": "Short name",
+        "url": "URL",
+        "platform": "Platform",
+        "description": "Description"
+      },
+      "empty": "boş bırakın",
+      "shortNameNote": "5–32 karakter, yalnızca harf ve rakam. Dünya genelinde benzersiz olmalı; alınmış bir ad yalnızca ERROR olarak görünür — sonuna bir rakam eklemeyi deneyin.",
+      "trouble": {
+        "title": "Yalnızca ERROR çıkıyorsa",
+        "intro": "O sayfa neden başarısız olduğunu asla söylemez. En olasıdan başlayarak şunları kontrol edin.",
+        "reload": "<b>Önce sayfayı yenileyin.</b> ERROR çıkmasına rağmen uygulama çoğu zaman gerçekten oluşturulmuştur.",
+        "vpn": "<b>VPN veya proxy'nizi kapatın.</b> IP'nizin ülkesi telefon numaranızın ülkesinden farklıysa Telegram engeller. En sık görülen neden budur.",
+        "extensions": "<b>Tüm eklentiler kapalıyken gizli pencerede tekrar deneyin.</b> Reklam engelleyiciler formun gönderilmesini bile durdurur.",
+        "shortName": "<b>Farklı bir short name deneyin.</b> Ad çakışması da yalnızca ERROR olarak görünür.",
+        "spambot": "<b>Hesap kısıtlamalarını kontrol edin.</b> Yeni ya da spam işaretli hesaplar uygulama oluşturamaz. Öğrenmek için Telegram'da @SpamBot'a yazın.",
+        "wait": "<b>15–60 dakika bekleyip yalnızca bir kez</b> deneyin. Tekrar tekrar denemek zaten sınırlamaya takılır."
+      }
+    },
+    "remember": "api_id değerinizi bu tarayıcıda hatırlar. Hesap erişimi değil, uygulama kimliğidir; saklamak güvenlidir.",
+    "keepSignedIn": "Bu sekmede oturumu açık tut",
+    "keepSignedInHint": "Sayfayı yenilemek yeniden giriş istemez. Sekmeyi kapatmak ya da {{minutes}} dakika kullanmamak bunu siler. Ortak bilgisayarda kapalı tutun.",
+    "forget": "Kayıtlı api_id değerini unut",
+    "submit": "Telegram'a bağlan",
+    "errors": {
+      "required": "Bu alan zorunludur.",
+      "apiIdFormat": "api_id bir sayı olmalıdır.",
+      "apiHashFormat": "api_hash 32 onaltılık karakterden oluşmalıdır."
+    }
+  },
+  "sessionNotice": {
+    "confirm": "Tamam",
+    "expired": {
+      "title": "Oturumunuzun süresi doldu",
+      "body": "Bu sekmeyi {{minutes}} dakikadan uzun süre kullanmadınız; bu yüzden tarayıcıda saklanan giriş bilgileri silindi. Hesabınıza dokunulmadı — yeniden giriş yapmanız yeterli."
+    },
+    "invalid": {
+      "title": "Lütfen yeniden giriş yapın",
+      "body": "Saklanan giriş bilgileriyle devam edilemedi. Oturum başka bir cihazdan sonlandırılmış ya da Telegram tarafından süresi dolmuş olabilir."
+    }
+  },
+  "auth": {
+    "connecting": "Telegram'a bağlanılıyor…",
+    "phone": {
+      "title": "Telefon numarası",
+      "willSend": "Kod şu numaraya gönderilecek:",
+      "placeholder": "+90 532 123 45 67",
+      "submit": "Bana kod gönder",
+      "country": "Ülke",
+      "countrySearch": "Ada, koda veya numaraya göre ara",
+      "countryEmpty": "Sonuç yok",
+      "unverified": "Bu, o ülkenin numara biçimine uymuyor. Yazım hatası değilse yine de devam edebilirsiniz."
+    },
+    "code": {
+      "titleApp": "Telegram uygulamanıza gönderilen kod",
+      "titleSms": "SMS ile gönderilen kod",
+      "hint": "Başka bir cihazdaki Telegram'a gelen 5 haneli kodu girin.",
+      "submit": "Giriş yap",
+      "changeNumber": "Başka numara kullan"
+    },
+    "password": {
+      "title": "İki adımlı doğrulama parolası",
+      "hint": "Hesabınızda tanımlı iki adımlı doğrulama parolasını girin.",
+      "hintLabel": "İpucu: {{hint}}",
+      "submit": "Onayla"
+    }
+  },
+  "dialogs": {
+    "title": "Sohbetler",
+    "subtitle": "Yedeklemek istediğiniz sohbetleri seçin.",
+    "loading": "Sohbetler yükleniyor…",
+    "empty": "Sohbet bulunamadı.",
+    "count": "{{count, number}} sohbet",
+    "filtered": "{{total, number}} içinden {{shown, number}}",
+    "noMatch": "Bu ada uyan sohbet yok.",
+    "searchPlaceholder": "Sohbetlerde ada göre ara",
+    "searchClear": "Aramayı temizle",
+    "unread": "{{count}} okunmamış",
+    "type": {
+      "user": "Kişisel",
+      "group": "Grup",
+      "channel": "Kanal"
+    },
+    "preview": {
+      "you": "Siz",
+      "photo": "Fotoğraf",
+      "document": "Dosya",
+      "video": "Video",
+      "audio": "Ses",
+      "sticker": "Çıkartma",
+      "poll": "Anket",
+      "contact": "Kişi",
+      "geo": "Konum",
+      "webPage": "Bağlantı",
+      "action": "Sistem mesajı",
+      "other": "Ek"
+    }
+  },
+  "messages": {
+    "loading": "Mesajlar yükleniyor…",
+    "empty": "Burada mesaj yok.",
+    "loadOlder": "Daha eski mesajları yükle",
+    "loadNewer": "Daha yeni mesajları yükle",
+    "albumCount": "{{count, number}} fotoğraf",
+    "edited": "düzenlendi",
+    "photoViewer": "Fotoğraf görüntüleyici",
+    "previousPhoto": "Önceki fotoğraf",
+    "nextPhoto": "Sonraki fotoğraf",
+    "dayEmpty": "{{date}} tarihinde mesaj yok. Mesaj bulunan ilk gün olan {{landed}} tarihinden itibaren gösteriliyor.",
+    "jumpToDate": "Tarihe git",
+    "backToLatest": "En yeniye dön",
+    "export": "Dışa aktar",
+    "media": "Ek: {{type}}",
+    "action": "Sistem mesajı: {{type}}",
+    "sender": {
+      "bot": "bot",
+      "channel": "kanal"
+    },
+    "mediaKind": {
+      "photo": "fotoğraf",
+      "sticker": "çıkartma",
+      "video": "video",
+      "gif": "GIF",
+      "audio": "ses",
+      "file": "dosya",
+      "contact": "kişi",
+      "geo": "konum",
+      "poll": "anket",
+      "webpage": "bağlantı",
+      "venue": "mekân",
+      "dice": "zar",
+      "game": "oyun",
+      "invoice": "fatura",
+      "story": "hikâye",
+      "voice": "sesli mesaj",
+      "videoNote": "video mesaj",
+      "unsupported": "desteklenmeyen biçim",
+      "geolive": "canlı konum",
+      "giveaway": "çekiliş",
+      "giveawayresults": "çekiliş sonuçları",
+      "paidmedia": "ücretli medya"
+    },
+    "actionKind": {
+      "chatadduser": " sohbete katıldı",
+      "chatdeleteuser": " sohbetten ayrıldı",
+      "chatjoinedbylink": " davet bağlantısıyla katıldı",
+      "chatjoinedbyrequest": " adlı kişinin katılma isteği onaylandı",
+      "chatcreate": " sohbeti oluşturdu",
+      "channelcreate": " kanalı oluşturdu",
+      "chatedittitle": " sohbetin adını değiştirdi",
+      "chateditphoto": " sohbetin fotoğrafını değiştirdi",
+      "chatdeletephoto": " sohbetin fotoğrafını kaldırdı",
+      "pinmessage": " bir mesajı sabitledi",
+      "chatmigrateto": "Sohbet süper gruba dönüştü",
+      "channelmigratefrom": "Sohbet süper gruba dönüştü",
+      "historyclear": "Geçmiş temizlendi",
+      "phonecall": " arama yaptı",
+      "groupcall": "Bir sesli sohbet yapıldı",
+      "invitetogroupcall": " sesli sohbete davet etti",
+      "screenshottaken": " ekran görüntüsü aldı",
+      "contactsignup": " Telegram'a katıldı",
+      "setmessagesttl": "Otomatik silme süresi değişti",
+      "setchattheme": " sohbet temasını değiştirdi",
+      "giftpremium": " Premium hediye etti",
+      "topiccreate": " bir konu oluşturdu",
+      "topicedit": " bir konuyu düzenledi",
+      "suggestprofilephoto": " profil fotoğrafı önerdi",
+      "webviewdatasent": " bir form gönderdi",
+      "paymentsent": "Ödeme tamamlandı"
+    },
+    "actionBy": "{{name}}{{what}}"
+  },
+  "calendar": {
+    "prevMonth": "Önceki ay",
+    "nextMonth": "Sonraki ay",
+    "check": "Bu ay hangi günlerde mesaj var, bak",
+    "checking": "{{date}} kontrol ediliyor… ({{done}}/{{total}})",
+    "checkingDay": "{{date}} kontrol ediliyor…",
+    "dayEmpty": "{{date}} tarihinde mesaj yok. Başka bir gün seçin.",
+    "legendHas": "mesaj var",
+    "legendEmpty": "mesaj yok",
+    "dayCount": "{{count, number}} mesaj"
+  },
+  "export": {
+    "title": "Bu sohbeti dışa aktar",
+    "description": "Mesajları zip olarak indirir. Sıkıştırma da tarayıcınızda olur ve hiçbir sunucu işin içine girmez.",
+    "start": "zip olarak dışa aktar",
+    "cancel": "Durdur",
+    "from": "Başlangıç",
+    "to": "Bitiş",
+    "rangeHint": "Çok eski sohbetleri parça parça aktarmak daha güvenlidir.",
+    "wholeHistory": "Tüm geçmişi dışa aktar",
+    "wholeHistoryHint": "Tarihleri yok sayar ve en baştan her şeyi alır. Telegram'ın sınırları yüzünden büyük sohbetler çok uzun sürebilir.",
+    "progress": "Mesaj {{count, number}} / {{total, number}}",
+    "waiting": "Telegram'ın istek sınırı nedeniyle bekleniyor. Takılmadı — lütfen bu sekmeyi açık bırakın.",
+    "done": "Tamamlandı. {{count, number}} mesaj kaydedildi.",
+    "savedPicked": "Dosya, seçtiğiniz konumda. Tarayıcılar güvenlik gereği tam yolu bildirmediği için yalnızca dosya adı gösteriliyor.",
+    "savedDownload": "Dosya, tarayıcınızın indirilenler klasöründe.",
+    "memoryFallback": "Bu tarayıcı doğrudan dosyaya yazamadığı için zip önce tamamen oluşturulup sonunda indiriliyor. Çok büyük sohbetlerde Chrome veya Edge daha güvenli.",
+    "presets": "Hızlı seçim",
+    "presetToday": "Bugün",
+    "presetWeek": "Son 7 gün",
+    "presetMonth": "Son 30 gün",
+    "stats": {
+      "total": "Toplam mesaj",
+      "messages": "{{count, number}}",
+      "period": "Dönem"
+    },
+    "includeTitle": "Ekleri de aktar",
+    "includePhotos": "Fotoğraflar",
+    "includePhotosHint": "Bu sohbetteki fotoğrafları tam boyutuyla mesajların yanında kaydeder. Çıkartmalar dâhil değildir. Çok fotoğraf, çok daha fazla süre ve yer demektir.",
+    "includeNote": "Aktarılmayan ekler de türü ve dosya kimliğiyle listede (attachments.jsonl) yer alır. Yalnızca dosyanın kendisi eksik olur — neyin gönderildiğine dair kayıt eksiksiz kalır.",
+    "progressFiles": "Ek {{files, number}} / {{totalFiles, number}}",
+    "deviceTitle": "Bu işi, kullandığınız cihaz yapar",
+    "deviceBody": "Arada sunucu olmadığı için bütün indirme ve sıkıştırmayı bu bilgisayar ya da telefon yapar — yani süre büyük ölçüde cihaza bağlıdır. Büyük sohbetlerde veya fotoğrafları da eklerken bilgisayar kullanın ve iş bitene kadar bu sekmeyi açık tutun.",
+    "doneTitle": "Dışa aktarma tamamlandı",
+    "doneRange": "Dönem",
+    "doneWhole": "Tüm geçmiş",
+    "doneMessages": "Mesajlar",
+    "doneFiles": "Kaydedilen dosyalar",
+    "doneSize": "Dosya boyutu",
+    "doneCount": "{{count, number}}",
+    "again": "Yeni bir dışa aktarma başlat",
+    "includeExcludedTitle": "Aktarılmayanlar",
+    "includeExcluded": "Videolar · sesler · görüntü olmayan belgeler",
+    "layoutTitle": "Beni nereye koyalım",
+    "layoutChat": "Sağa (varsayılan) — uygulamadaki gibi sağda",
+    "layoutFlat": "Sola — hangi tarafın ben olduğu belli olmasın diye solda",
+    "layoutHint": "Herkesi sola koymak hangi tarafın siz olduğunu gizler. Karşılığında kendi mesajlarınızda da adınız görünür.",
+    "includeStickers": "Çıkartmalar",
+    "includeStickersHint": "Her çıkartma kaç kez gönderilmiş olursa olsun bir kez saklanır. Bir sohbette genelde birkaç düzine tür bulunur, bu yüzden birkaç MB'ı geçmez.",
+    "progressCounting": "Şimdiye dek {{count, number}} mesaj aktarıldı…"
+  },
+  "errors": {
+    "title": "Hata",
+    "API_ID_INVALID": "api_id veya api_hash geçerli değil.",
+    "API_ID_PUBLISHED_FLOOD": "Telegram bu uygulama anahtarını kısıtladı. Lütfen my.telegram.org üzerinden kendi api_id değerinizi alıp yeniden deneyin.",
+    "AUTH_RESTART": "Kimlik doğrulamanın baştan yapılması gerekiyor.",
+    "AUTH_USER_CANCEL": "Kimlik doğrulama iptal edildi.",
+    "FLOOD_WAIT": "Çok fazla istek. Lütfen {{duration}} sonra yeniden deneyin.",
+    "PASSWORD_HASH_INVALID": "İki adımlı doğrulama parolası doğru değil.",
+    "PHONE_CODE_EXPIRED": "Giriş kodunun süresi doldu. Lütfen yeni bir kod isteyin.",
+    "PHONE_CODE_INVALID": "Giriş kodu doğru değil.",
+    "PHONE_NUMBER_BANNED": "Bu numara yasaklı.",
+    "PHONE_NUMBER_INVALID": "Telefon numarası hatalı görünüyor. Ülke kodunu eklediğinizden emin olun.",
+    "PHONE_NUMBER_UNOCCUPIED": "Bu numaraya ait bir Telegram hesabı yok.",
+    "PHONE_PASSWORD_FLOOD": "Çok fazla parola denemesi. Lütfen biraz bekleyip yeniden deneyin.",
+    "SESSION_PASSWORD_NEEDED": "İki adımlı doğrulama parolası gerekiyor.",
+    "PEER_NOT_CACHED": "Bu sohbetin bilgileri zaman aşımına uğradı. Listeye dönüp yeniden seçin.",
+    "SESSION_REVOKED": "Oturum sonlandırıldı. Lütfen yeniden giriş yapın.",
+    "UPDATE_APP_TO_LOGIN": "Telegram artık bu yolla girişe izin vermiyor.",
+    "UNKNOWN": "Bir şeyler ters gitti: {{raw}}",
+    "duration": {
+      "seconds": "{{count}} saniye",
+      "minutes": "{{count}} dakika",
+      "hours": "{{count}} saat"
+    }
+  },
+  "mediaInfo": {
+    "title": "Ek ayrıntıları",
+    "id": "Dosya kimliği",
+    "messageId": "Mesaj kimliği",
+    "kind": "Tür",
+    "fileName": "Dosya adı",
+    "mimeType": "MIME türü",
+    "size": "Boyutlar",
+    "bytes": "Büyüklük",
+    "uploaded": "Yüklenme",
+    "dc": "Veri merkezi",
+    "accessHash": "access hash",
+    "copy": "Tümünü kopyala",
+    "duration": "Süre"
+  },
+  "errorPage": {
+    "title": "Bu ekran açılırken bir sorun oluştu",
+    "body": "Geçici olabilir. Yeniden deneyin, sorun sürerse başlangıca dönün.",
+    "notFound": "Sayfa bulunamadı",
+    "notFoundBody": "Adres değişmiş veya yanlış yazılmış olabilir.",
+    "home": "Başlangıca dön",
+    "details": "Hata ayrıntıları"
+  }
+}

@@ -49,7 +49,7 @@ export default function ExportPage() {
    */
   if (isPending) {
     return (
-      <div className="flex flex-col items-center gap-3 rounded-2xl border border-slate-200 bg-white p-8">
+      <div className="flex flex-col items-center gap-3 edge-card bg-white p-8">
         <Spinner />
       </div>
     );
@@ -67,7 +67,7 @@ export default function ExportPage() {
           to={`/dialogs/${id}`}
           className="rounded-lg p-2 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="h-4 w-4 rtl:rotate-180" />
         </Link>
         {dialog && (
           <Avatar

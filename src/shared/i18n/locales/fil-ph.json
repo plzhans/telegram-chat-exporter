@@ -1,0 +1,404 @@
+{
+  "seo": {
+    "tag": "fil-PH",
+    "ogLocale": "fil_PH",
+    "hreflang": [
+      "fil-PH",
+      "fil",
+      "tl"
+    ],
+    "title": "I-export ang mga chat sa Telegram — sa browser mo, walang itinatago sa server | Telegram Exporter",
+    "shareTitle": "I-export ang mga chat sa Telegram — sa browser mo, walang itinatago sa server",
+    "description": "I-export ang mga usapan mo sa Telegram bilang zip file. Lahat ay tumatakbo sa loob ng browser mo at walang itinatago sa anumang server — ang numero ng telepono, login code, at mga mensahe mo ay hindi kailanman ipinapadala sa iba. Walang kailangang i-install.",
+    "shareDescription": "I-export ang mga chat sa Telegram bilang zip file mismo sa browser mo. Walang itinatago sa server."
+  },
+  "app": {
+    "title": "Telegram Exporter",
+    "tagline": "Backup ng mga chat sa Telegram na buong-buo sa browser mo"
+  },
+  "common": {
+    "next": "Susunod",
+    "back": "Bumalik",
+    "cancel": "Kanselahin",
+    "retry": "Subukan ulit",
+    "refresh": "I-refresh",
+    "source": "Source code",
+    "language": "Wika",
+    "signOut": "Mag-sign out"
+  },
+  "trust": {
+    "purpose": "Ginawa ang pahinang ito para madali kang makagawa ng backup ng mga usapan mo sa Telegram.",
+    "lede": "Sine-save nito ang mga chat mo bilang zip file. Ang browser ang programang ginagamit mo para tumingin sa internet, gaya ng Chrome o Safari — at sa loob niyan natatapos ang lahat.",
+    "how": {
+      "title": "Paano ito gumagana",
+      "noServer": {
+        "title": "Walang server namin sa gitna",
+        "body": "Karamihan sa mga website ay ipinapadala sa sarili nilang server ang mga ini-type mo. Ang pahinang ito ay walang ganoong server. Direktang nakikipag-usap ang browser mo sa Telegram."
+      },
+      "credentials": {
+        "title": "Ang numero at login code mo ay napupunta lang sa Telegram",
+        "body": "Ang mga halagang kailangan sa pag-sign in ay walang ibang pinaggagamitan kundi ang kahilingan papuntang Telegram. Walang daan para makita namin ang mga iyon."
+      },
+      "download": {
+        "title": "Agad na nagiging file ang mga mensahe mo",
+        "body": "Ipinapakita ang mga mensahe sa screen, at kapag pinindot mo ang export, isinisiksik ang mga ito at sine-save sa sarili mong computer. Walang ina-upload kahit saan."
+      }
+    },
+    "verify": {
+      "title": "Paano mo mismo masusuri",
+      "csp": "Naka-lock ang pahinang ito kaya <strong>hindi ito makakakonekta sa kahit anong address</strong> maliban sa Telegram (<code>wss://*.web.telegram.org</code>). Ang browser mo ang nagpapatupad ng patakarang iyon, kaya kahit ang gumawa ng pahina ay hindi ito kayang labagin.",
+      "devtools": "Pindutin ang F12 (⌥⌘I sa Mac) at buksan ang tab na <strong>Network</strong> para makita ang lahat ng address na talagang kinokonekta ng pahinang ito.",
+      "source": "Bukas sa publiko ang buong source code.",
+      "peek": "Tingnan mo mismo na hindi makakakonekta sa iba ang pahinang ito.",
+      "cspAnalytics": "Hindi makakakonekta ang pahinang ito sa kahit saan maliban sa Telegram (<code>wss://*.web.telegram.org</code>) at Google Analytics para sa bilang ng bisita — <strong>wala nang iba.</strong> Ang browser ang nagpapatupad nito, kaya hindi ito mababago ng site."
+    },
+    "stored": {
+      "title": "Ano ang natitira sa browser na ito",
+      "lede": "Walang personal na impormasyon at walang nilalaman ng mensahe ang itinatago. Ang natitira lang ay bagay na pareho ang itsura para sa lahat, at ang halagang nagpapanatiling naka-sign in ka. Ang talahanayang ito ang buong listahan.",
+      "colKind": "Ano",
+      "colWhere": "Saan itinatago",
+      "colUntil": "Kailan binubura",
+      "sessionKind": "Katayuan ng pag-sign in",
+      "sessionWhere": "Sa loob lang ng tab na ito",
+      "sessionUntil": "Kapag isinara ang tab · pagkatapos ng {{minutes}} minutong walang ginagawa · kapag nag-sign out",
+      "sessionNote": "Itinatago lang kung pipiliin mong “manatiling naka-sign in”, para hindi ka hingan ng login sa tuwing magre-refresh. Hindi ito nakikita ng ibang tab o ibang window.",
+      "stickerKind": "Mga larawan ng sticker",
+      "stickerWhere": "Ang browser na ito",
+      "stickerUntil": "Kapag nag-sign out · pinakaluma muna kapag lumampas sa 20MB",
+      "stickerNote": "Pareho ang itsura ng mga sticker para sa lahat ng gumagamit ng Telegram, kaya hindi ito personal na impormasyon. Hindi itinatago kung sino ang nagpadala at kailan — ang larawan lang. Itinatago ang mga ito dahil mabagal kung kukunin muli sa bawat pagkakataon.",
+      "peek": "Dalawang bagay lang: ang katayuan ng pag-sign in mo at mga larawan ng sticker. Walang nilalaman ng mensahe."
+    },
+    "never": {
+      "title": "Ano ang hindi kailanman itinatago",
+      "body": "Mga usapan · larawan at attachment · numero ng telepono · mga contact · login code. Wala sa mga ito ang iniimbak, at wala sa mga ito ang napupunta kahit saan maliban sa Telegram."
+    },
+    "analytics": {
+      "title": "Kumokonekta sa Google para sa bilang ng bisita",
+      "peek": "Bilang ng bisita lang. Walang usapan o numero ng telepono.",
+      "lede": "Gumagamit ang site na ito ng <strong>Google Analytics</strong> para bilangin ang mga bisita.",
+      "network": "Ibig sabihin, <strong>kumokonekta rin ang pahinang ito sa Google</strong>, hindi lang sa Telegram. Kinukuha nito ang analytics script mula sa <code>googletagmanager.com</code> at nagpapadala ng talaan ng pagbisita sa <code>google-analytics.com</code>. Ito lang ang labas na koneksyon bukod sa Telegram, at makikita mo ito sa Network tab ng developer tools.",
+      "sent": "Ang ipinapadala: na nabuksan ang unang pahina, at kung anong wika.",
+      "notSent": "Ang hindi kailanman ipinapadala: mga usapan mo, numero ng telepono, login code, o kung anong chat ang binuksan mo. Naglalaman ng chat id ang mga address ng chat, kaya sinadyang hindi ipadala ang mga iyon.",
+      "block": "Hindi masisira ang tool na ito kahit harangan mo ito ng ad blocker o ng tracking protection ng browser.",
+      "selfHost": "Kung ayaw mo kahit iyon, <strong>i-download ang code at patakbuhin sa sarili mong makina.</strong> Ang setting ng analytics ay inilalagay lang kapag ini-publish ang site na ito, kaya ang kopyang ikaw mismo ang gumawa ay walang analytics — nawawala sa code ang koneksyon sa Google."
+    },
+    "ads": {
+      "title": "May ipinapakitang ad",
+      "peek": "May mga ad ng Google AdSense. Walang kinalaman sa mga usapan mo.",
+      "body": "May mga ad ng <strong>Google AdSense</strong> ang site na ito. Kaya kumokonekta rin ito sa ad network ng Google (<code>googlesyndication.com</code> · <code>doubleclick.net</code>), at tumatakbo ang mga ad sa loob ng hiwalay na frame (iframe).",
+      "isolation": "Hindi kayang basahin ng code ng ad ang kahit ano sa pahinang ito. Ang mga usapan, numero ng telepono, at login code mo ay hindi kailanman ibinabahagi sa mga advertiser. <strong>Walang ad sa mga screen ng pag-sign in at ng usapan.</strong>",
+      "selfHost": "Para magamit nang walang ad, <strong>i-download ang code at patakbuhin sa sarili mong makina.</strong> Ang setting ng ad ay inilalagay lang kapag ini-publish ang site na ito, kaya ang kopyang ikaw mismo ang gumawa ay walang code ng ad."
+    },
+    "device": {
+      "title": "Nakadepende ang bilis sa device na ginagamit mo",
+      "body": "Ang kawalan ng server sa gitna ay nangangahulugan ding ang PC o telepono na ginagamit mo ngayon ang gumagawa ng lahat ng pagkuha at pagsisiksik. Kaya ang parehong chat ay maaaring magkaiba ang tagal sa magkaibang device.",
+      "bigChat": "Para sa mga chat na napakaraming mensahe, gumamit ng PC. Mas kaunti ang libreng memory ng telepono, kaya maaaring bumagal ang export o huminto sa gitna.",
+      "keepOpen": "Panatilihing bukas ang tab na ito habang nag-e-export. Kapag namatay ang screen o lumipat ka sa ibang app, babagalan o ihihinto ng browser ang trabaho.",
+      "rate": "Nililimitahan ng Telegram ang bilis ng mga kahilingan, kaya may paghihintay pa rin sa malaking chat kahit mabilis ang device. Hindi ito nag-hang.",
+      "peek": "Dahil walang server sa gitna, nakadepende ang tagal sa sarili mong PC o telepono."
+    },
+    "warning": {
+      "title": "Humihingi ang tool na ito ng login code mo",
+      "principle": "Sinasabi ng Telegram na huwag mong ibahagi ang login code mo kaninuman. Tama ang payong iyon. Huwag mong gawing eksepsiyon ang site na ito — pagdudahan mo rin ito nang ganoon din.",
+      "why": "Gayunpaman, nagsa-sign in ang tool na ito sa Telegram bilang ikaw para kunin ang mga mensahe mo. Kung wala ang numero at login code mo, wala itong magagawa. Ginagamit lang ang mga halagang iyon sa kahilingan papuntang Telegram at hindi kailanman iniimbak.",
+      "storage": "Pagkatapos mong mag-sign in, ang tanging natitira ay isang halagang nagpapanatili ng koneksyon, at nabubuhay lang iyon sa loob ng tab na tinitingnan mo — isara mo ang tab at mawawala na.",
+      "selfHost": "Kung hindi ka pa rin kumbinsido, huwag kang maniwala sa salita ninuman. Basahin mo ang code, o i-download at patakbuhin sa sarili mong makina. Makukuha mo ang eksaktong screen na ito, na tumatakbo sa code na ikaw mismo ang sumuri."
+    }
+  },
+  "credentials": {
+    "title": "Magsimula",
+    "modeShared": "Magsimula na (inirerekomenda)",
+    "modeSharedHint": "Ginagamit ang app key na kasama ng site na ito. Numero ng telepono lang ang kailangan mo.",
+    "modeCustom": "Gamitin ang sarili kong api_id",
+    "modeCustomHint": "Ginagamit ang key na ikaw mismo ang nagparehistro sa my.telegram.org.",
+    "apiId": "api_id",
+    "apiHash": "api_hash",
+    "open": "Buksan ang pahina ng pagpaparehistro",
+    "guide": {
+      "title": "Paano kumuha ng api_id",
+      "step1": "Ilagay ang numero mo sa my.telegram.org. Sa Telegram app dumarating ang confirmation code, hindi sa SMS — panatilihing bukas ang Telegram sa ibang device.",
+      "step2": "Kapag naka-sign in ka na, buksan ang <b>API development tools</b> at punan tulad ng nasa ibaba. Gumamit lang ng <b>letrang Latin at numero</b> — anumang iba pa ay babagsak nang hindi sinasabi kung bakit.",
+      "step3": "Pagka-submit, makakakuha ka ng api_id at api_hash. I-paste ang dalawa sa mga kahon sa itaas.",
+      "fields": {
+        "appTitle": "App title",
+        "shortName": "Short name",
+        "url": "URL",
+        "platform": "Platform",
+        "description": "Description"
+      },
+      "empty": "iwanang blangko",
+      "shortNameNote": "5–32 karakter, letra at numero lang. Kailangang natatangi ito sa buong mundo, at ang pangalang kinuha na ay lumalabas lang bilang ERROR — subukang dagdagan ng numero.",
+      "trouble": {
+        "title": "Kung ERROR lang ang lumalabas",
+        "intro": "Hindi kailanman sinasabi ng pahinang iyon kung bakit ito bumagsak. Suriin ito, mula sa pinakamalamang.",
+        "reload": "<b>I-reload muna ang pahina.</b> Madalas ay nagawa naman talaga ang app kahit lumabas ang ERROR.",
+        "vpn": "<b>Patayin ang VPN o proxy mo.</b> Kung magkaiba ang bansa ng IP mo at ang bansa ng numero mo, hinaharangan ito ng Telegram. Ito ang pinakakaraniwang dahilan.",
+        "extensions": "<b>Subukan ulit sa private window na patay ang lahat ng extension.</b> Hinaharangan ng ad blocker ang mismong pagsusumite ng form.",
+        "shortName": "<b>Subukan ang ibang short name.</b> Ang pangalang nagbanggaan ay lumalabas ding ERROR lang.",
+        "spambot": "<b>Tingnan ang mga restriksiyon sa account.</b> Hindi makakagawa ng app ang bago o may markang spam na account. Kausapin ang @SpamBot sa Telegram para malaman.",
+        "wait": "<b>Maghintay ng 15–60 minuto at subukang minsan lang.</b> Ang paulit-ulit na pagsubok mismo ay napapasailalim sa limitasyon."
+      }
+    },
+    "remember": "Tinatandaan ang api_id mo sa browser na ito. Isa itong pagkakakilanlan ng app, hindi pag-access sa account, kaya ligtas itong itago.",
+    "keepSignedIn": "Manatiling naka-sign in sa tab na ito",
+    "keepSignedInHint": "Hindi ka hihingan ng login kapag nag-reload. Nabubura ito kapag isinara ang tab o hindi ginamit nang {{minutes}} minuto. Patayin ito sa computer na ginagamit ng marami.",
+    "forget": "Kalimutan ang naka-save na api_id",
+    "submit": "Kumonekta sa Telegram",
+    "errors": {
+      "required": "Kailangan ang field na ito.",
+      "apiIdFormat": "Dapat numero ang api_id.",
+      "apiHashFormat": "Dapat 32 hex na karakter ang api_hash."
+    }
+  },
+  "sessionNotice": {
+    "confirm": "OK",
+    "expired": {
+      "title": "Nag-expire ang session mo",
+      "body": "Mahigit {{minutes}} minutong hindi mo ginamit ang tab na ito, kaya binura ang mga detalye ng pag-sign in na nakatago sa browser. Buo pa rin ang account mo — mag-sign in ka lang ulit."
+    },
+    "invalid": {
+      "title": "Pakisign in muli",
+      "body": "Hindi naipagpatuloy ang naka-save na detalye ng pag-sign in. Baka tinapos ang session mula sa ibang device, o pinaso ito ng Telegram."
+    }
+  },
+  "auth": {
+    "connecting": "Kumokonekta sa Telegram…",
+    "phone": {
+      "title": "Numero ng telepono",
+      "willSend": "Ipapadala ang code sa:",
+      "placeholder": "+63 917 123 4567",
+      "submit": "Padalhan ako ng code",
+      "country": "Bansa",
+      "countrySearch": "Maghanap sa pangalan, code, o numero",
+      "countryEmpty": "Walang tugma",
+      "unverified": "Hindi ito tumutugma sa format ng numero para sa bansang iyon. Kung hindi ito typo, puwede kang magpatuloy."
+    },
+    "code": {
+      "titleApp": "Code na ipinadala sa Telegram app mo",
+      "titleSms": "Code na ipinadala sa SMS",
+      "hint": "Ilagay ang 5-digit na code na dumating sa Telegram sa ibang device.",
+      "submit": "Mag-sign in",
+      "changeNumber": "Gumamit ng ibang numero"
+    },
+    "password": {
+      "title": "Password ng two-step verification",
+      "hint": "Ilagay ang password ng two-step verification na nakatakda sa account mo.",
+      "hintLabel": "Pahiwatig: {{hint}}",
+      "submit": "Kumpirmahin"
+    }
+  },
+  "dialogs": {
+    "title": "Mga chat",
+    "subtitle": "Piliin ang mga chat na gusto mong i-backup.",
+    "loading": "Nilo-load ang mga chat…",
+    "empty": "Walang chat.",
+    "count": "{{count, number}} chat",
+    "filtered": "{{shown, number}} sa {{total, number}}",
+    "noMatch": "Walang chat na tumutugma sa pangalang iyon.",
+    "searchPlaceholder": "Maghanap ng chat ayon sa pangalan",
+    "searchClear": "Burahin ang hinahanap",
+    "unread": "{{count}} hindi pa nababasa",
+    "type": {
+      "user": "Personal",
+      "group": "Grupo",
+      "channel": "Channel"
+    },
+    "preview": {
+      "you": "Ikaw",
+      "photo": "Larawan",
+      "document": "File",
+      "video": "Video",
+      "audio": "Audio",
+      "sticker": "Sticker",
+      "poll": "Poll",
+      "contact": "Contact",
+      "geo": "Lokasyon",
+      "webPage": "Link",
+      "action": "Mensahe ng sistema",
+      "other": "Attachment"
+    }
+  },
+  "messages": {
+    "loading": "Nilo-load ang mga mensahe…",
+    "empty": "Walang mensahe rito.",
+    "loadOlder": "Mag-load ng mas lumang mensahe",
+    "loadNewer": "Mag-load ng mas bagong mensahe",
+    "albumCount": "{{count, number}} larawan",
+    "edited": "in-edit",
+    "photoViewer": "Tagatingin ng larawan",
+    "previousPhoto": "Nakaraang larawan",
+    "nextPhoto": "Susunod na larawan",
+    "dayEmpty": "Walang mensahe noong {{date}}. Ipinapakita mula {{landed}}, ang susunod na araw na may mensahe.",
+    "jumpToDate": "Pumunta sa petsa",
+    "backToLatest": "Balik sa pinakabago",
+    "export": "I-export",
+    "media": "Attachment: {{type}}",
+    "action": "Mensahe ng sistema: {{type}}",
+    "sender": {
+      "bot": "bot",
+      "channel": "channel"
+    },
+    "mediaKind": {
+      "photo": "larawan",
+      "sticker": "sticker",
+      "video": "video",
+      "gif": "GIF",
+      "audio": "audio",
+      "file": "file",
+      "contact": "contact",
+      "geo": "lokasyon",
+      "poll": "poll",
+      "webpage": "link",
+      "venue": "lugar",
+      "dice": "dice",
+      "game": "laro",
+      "invoice": "invoice",
+      "story": "story",
+      "voice": "voice message",
+      "videoNote": "video note",
+      "unsupported": "hindi suportadong format",
+      "geolive": "live na lokasyon",
+      "giveaway": "giveaway",
+      "giveawayresults": "resulta ng giveaway",
+      "paidmedia": "bayad na media"
+    },
+    "actionKind": {
+      "chatadduser": " ay sumali sa chat",
+      "chatdeleteuser": " ay umalis sa chat",
+      "chatjoinedbylink": " ay sumali sa pamamagitan ng invite link",
+      "chatjoinedbyrequest": " ay inaprubahang sumali",
+      "chatcreate": " ay gumawa ng chat",
+      "channelcreate": " ay gumawa ng channel",
+      "chatedittitle": " ay nagpalit ng pangalan ng chat",
+      "chateditphoto": " ay nagpalit ng larawan ng chat",
+      "chatdeletephoto": " ay nag-alis ng larawan ng chat",
+      "pinmessage": " ay nag-pin ng mensahe",
+      "chatmigrateto": "Naging supergroup ang chat",
+      "channelmigratefrom": "Naging supergroup ang chat",
+      "historyclear": "Nabura ang kasaysayan",
+      "phonecall": " ay tumawag",
+      "groupcall": "May naganap na voice chat",
+      "invitetogroupcall": " ay nag-imbita sa voice chat",
+      "screenshottaken": " ay kumuha ng screenshot",
+      "contactsignup": " ay sumali sa Telegram",
+      "setmessagesttl": "Nagbago ang timer ng auto-delete",
+      "setchattheme": " ay nagpalit ng tema ng chat",
+      "giftpremium": " ay nagregalo ng Premium",
+      "topiccreate": " ay gumawa ng topic",
+      "topicedit": " ay nag-edit ng topic",
+      "suggestprofilephoto": " ay nagmungkahi ng profile photo",
+      "webviewdatasent": " ay nagpadala ng form",
+      "paymentsent": "Natapos ang bayad"
+    },
+    "actionBy": "{{name}}{{what}}"
+  },
+  "calendar": {
+    "prevMonth": "Nakaraang buwan",
+    "nextMonth": "Susunod na buwan",
+    "check": "Tingnan kung aling mga araw ang may mensahe",
+    "checking": "Sinusuri ang {{date}}… ({{done}}/{{total}})",
+    "checkingDay": "Sinusuri ang {{date}}…",
+    "dayEmpty": "Walang mensahe noong {{date}}. Pumili ng ibang araw.",
+    "legendHas": "may mensahe",
+    "legendEmpty": "walang mensahe",
+    "dayCount": "{{count, number}} mensahe"
+  },
+  "export": {
+    "title": "I-export ang chat na ito",
+    "description": "Dina-download ang mga mensahe bilang zip. Sa browser mo rin nangyayari ang pagsisiksik at walang server na nasasangkot.",
+    "start": "I-export bilang zip",
+    "cancel": "Itigil",
+    "from": "Mula",
+    "to": "Hanggang",
+    "rangeHint": "Para sa napakalumang chat, mas ligtas ang hati-hating pag-export.",
+    "wholeHistory": "I-export ang buong kasaysayan",
+    "wholeHistoryHint": "Hindi pinapansin ang mga petsa at kinukuha ang lahat mula sa simula. Maaaring napakatagal ng malaking chat dahil sa limitasyon ng Telegram.",
+    "progress": "Mensahe {{count, number}} / {{total, number}}",
+    "waiting": "Naghihintay dahil sa limitasyon ng Telegram sa dami ng kahilingan. Hindi ito nag-hang — pakiiwang bukas ang tab na ito.",
+    "done": "Tapos na. Na-save ang {{count, number}} mensahe.",
+    "savedPicked": "Nasa lokasyong pinili mo ito. Dahil sa seguridad, hindi ibinubunyag ng browser ang buong path, kaya pangalan lang ng file ang ipinapakita.",
+    "savedDownload": "Nasa downloads folder ito ng browser mo.",
+    "memoryFallback": "Hindi kayang sumulat nang diretso sa file ang browser na ito, kaya binubuo muna ang zip at dina-download sa dulo. Para sa napakalaking chat, mas ligtas ang Chrome o Edge.",
+    "presets": "Mabilisang pili",
+    "presetToday": "Ngayon",
+    "presetWeek": "Huling 7 araw",
+    "presetMonth": "Huling 30 araw",
+    "stats": {
+      "total": "Kabuuang mensahe",
+      "messages": "{{count, number}}",
+      "period": "Panahon"
+    },
+    "includeTitle": "Isama ang mga attachment",
+    "includePhotos": "Mga larawan",
+    "includePhotosHint": "Sine-save ang buong-laking larawan mula sa chat na ito kasama ng mga mensahe. Hindi kasama ang mga sticker. Ang daming larawan ay mas mahabang oras at mas malaking espasyo.",
+    "includeNote": "Ang mga attachment na hindi naisama ay nasa listahan pa rin (attachments.jsonl) kasama ang uri at file id nila. Ang file lang ang wala — buo pa rin ang talaan ng kung ano ang naipadala.",
+    "progressFiles": "Attachment {{files, number}} / {{totalFiles, number}}",
+    "deviceTitle": "Ang device na ginagamit mo ang gumagawa nito",
+    "deviceBody": "Walang server sa gitna, kaya ang PC o telepono mismo ang kumukuha at nagsisiksik ng lahat — ibig sabihin, malaki ang epekto ng device sa tagal. Para sa malalaking chat, o kapag may kasamang larawan, gumamit ng PC at panatilihing bukas ang tab hanggang matapos.",
+    "doneTitle": "Tapos na ang export",
+    "doneRange": "Panahon",
+    "doneWhole": "Buong kasaysayan",
+    "doneMessages": "Mga mensahe",
+    "doneFiles": "Na-save na file",
+    "doneSize": "Laki ng file",
+    "doneCount": "{{count, number}}",
+    "again": "Magsimula ng bagong export",
+    "includeExcludedTitle": "Hindi kasama",
+    "includeExcluded": "Video · audio · dokumentong hindi larawan",
+    "layoutTitle": "Saan ilalagay ako",
+    "layoutChat": "Kanan (default) — sa kanan, gaya sa app",
+    "layoutFlat": "Kaliwa — sa kaliwa, para hindi halata kung aling panig ako",
+    "layoutHint": "Kapag nasa isang panig ang lahat, hindi halata kung alin ka. Kapalit nito, lalabas din ang pangalan mo sa sarili mong mga mensahe.",
+    "includeStickers": "Mga sticker",
+    "includeStickersHint": "Isang beses lang naise-save ang bawat sticker gaano man kadalas ipinadala. Karaniwan ay ilang dosenang uri lang sa isang chat, kaya ilang MB lang ito.",
+    "progressCounting": "{{count, number}} mensahe na ang na-export…"
+  },
+  "errors": {
+    "title": "Error",
+    "API_ID_INVALID": "Hindi wasto ang api_id o api_hash.",
+    "API_ID_PUBLISHED_FLOOD": "Nilimitahan ng Telegram ang app key na ito. Pakirehistro ang sarili mong api_id sa my.telegram.org at subukan ulit.",
+    "AUTH_RESTART": "Kailangang simulan muli ang pagpapatunay.",
+    "AUTH_USER_CANCEL": "Kinansela ang pagpapatunay.",
+    "FLOOD_WAIT": "Masyadong maraming kahilingan. Pakisubukan muli pagkalipas ng {{duration}}.",
+    "PASSWORD_HASH_INVALID": "Mali ang password ng two-step verification.",
+    "PHONE_CODE_EXPIRED": "Nag-expire ang login code. Pakihingi ng bago.",
+    "PHONE_CODE_INVALID": "Mali ang login code.",
+    "PHONE_NUMBER_BANNED": "Naka-ban ang numerong ito.",
+    "PHONE_NUMBER_INVALID": "Mukhang mali ang numerong iyon. Tingnan kung isinama mo ang country code.",
+    "PHONE_NUMBER_UNOCCUPIED": "Walang Telegram account para sa numerong ito.",
+    "PHONE_PASSWORD_FLOOD": "Masyadong maraming pagsubok sa password. Maghintay muna at subukan ulit.",
+    "SESSION_PASSWORD_NEEDED": "Kailangan ang password ng two-step verification.",
+    "PEER_NOT_CACHED": "Nag-expire ang detalye ng chat na ito. Bumalik sa listahan at piliin itong muli.",
+    "SESSION_REVOKED": "Tinapos ang session. Pakisign in muli.",
+    "UPDATE_APP_TO_LOGIN": "Hindi na pinapayagan ng Telegram ang ganitong paraan ng pag-sign in.",
+    "UNKNOWN": "May mali: {{raw}}",
+    "duration": {
+      "seconds": "{{count}} segundo",
+      "minutes": "{{count}} minuto",
+      "hours": "{{count}} oras"
+    }
+  },
+  "mediaInfo": {
+    "title": "Detalye ng attachment",
+    "id": "File id",
+    "messageId": "Message id",
+    "kind": "Uri",
+    "fileName": "Pangalan ng file",
+    "mimeType": "MIME type",
+    "size": "Sukat",
+    "bytes": "Laki",
+    "uploaded": "Na-upload",
+    "dc": "Data center",
+    "accessHash": "access hash",
+    "copy": "Kopyahin lahat",
+    "duration": "Tagal"
+  },
+  "errorPage": {
+    "title": "May problema sa pagbukas ng screen na ito",
+    "body": "Maaaring pansamantala lang. Subukan ulit, at kung magpatuloy ay bumalik sa simula.",
+    "notFound": "Hindi mahanap ang pahina",
+    "notFoundBody": "Maaaring nagbago ang address o mali ang pagkaka-type.",
+    "home": "Bumalik sa simula",
+    "details": "Detalye ng error"
+  }
+}

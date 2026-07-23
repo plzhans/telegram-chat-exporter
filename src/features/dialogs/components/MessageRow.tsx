@@ -30,7 +30,7 @@ export function formatTime(unixSeconds: number, locale: string): string {
 export function EditedMark({ message, muted }: { message: MessageSummary; muted: string }) {
   const { t } = useTranslation();
   if (!message.editDate) return null;
-  return <span className={cn('mr-1', muted)}>{t('messages.edited')}</span>;
+  return <span className={cn('me-1', muted)}>{t('messages.edited')}</span>;
 }
 
 interface MessageRowProps {
@@ -113,7 +113,7 @@ export function MessageRow({ message, showSender = true }: MessageRowProps) {
         {message.mediaKey && (
           <div className="relative">
             <MessagePhoto message={message} dark={message.out} />
-            <MediaInfoButton message={message} className="absolute right-1.5 top-1.5" />
+            <MediaInfoButton message={message} className="absolute end-1.5 top-1.5" />
 
             {/*
               영상은 썸네일만 보여준다(재생은 원본을 받아야 한다). 그림만 덩그러니 두면
@@ -131,7 +131,7 @@ export function MessageRow({ message, showSender = true }: MessageRowProps) {
 
             {/* 글이 없으면 시각을 얹을 자리가 여기뿐이다. */}
             {!message.text && (
-              <span className="absolute bottom-1.5 right-1.5 rounded-full bg-slate-900/55 px-1.5 py-0.5 text-[0.7rem] leading-none text-white">
+              <span className="absolute bottom-1.5 end-1.5 rounded-full bg-slate-900/55 px-1.5 py-0.5 text-[0.7rem] leading-none text-white">
                 <EditedMark message={message} muted="" />
                 {formatTime(message.date, locale)}
               </span>
@@ -141,16 +141,16 @@ export function MessageRow({ message, showSender = true }: MessageRowProps) {
 
         {/* 사진이 아닌 첨부(파일·위치·투표 등)는 종류만 알린다. 이것도 말풍선 밖이다. */}
         {message.mediaType && !message.mediaKey && (
-          <span className="flex items-center gap-1 rounded-xl bg-slate-100 px-2.5 py-1.5 text-sm text-slate-600">
+          <span className="flex items-center gap-1 rounded-xl bg-slate-100 px-2.5 py-1.5 text-xs text-slate-600">
             <Paperclip className="h-3 w-3 shrink-0" />
             {t('messages.media', {
               type: t(`messages.mediaKind.${message.mediaType}`, {
                 defaultValue: message.mediaClass ?? message.mediaType,
               }),
             })}
-            <MediaInfoButton message={message} className="ml-0.5" />
+            <MediaInfoButton message={message} className="ms-0.5" />
             {!message.text && (
-              <span className="ml-1 text-[0.7rem] text-slate-400">
+              <span className="ms-1 text-[0.7rem] text-slate-400">
                 <EditedMark message={message} muted="" />
                 {formatTime(message.date, locale)}
               </span>
@@ -162,14 +162,16 @@ export function MessageRow({ message, showSender = true }: MessageRowProps) {
           /*
             시각을 본문 안에 흘려 넣는다.
 
-            `float-right` 로 두면 마지막 줄에 자리가 남을 때는 **그 줄 오른쪽 끝**에 붙고,
-            모자라면 아래 줄로 내려가 오른쪽에 선다. 메신저들이 쓰는 그 배치다.
+            `float-end` 로 두면 마지막 줄에 자리가 남을 때는 **그 줄 끝**에 붙고, 모자라면
+            아래 줄로 내려가 끝에 선다. 메신저들이 쓰는 그 배치다. `float-right` 가 아니라
+            `float-end` 인 이유는 아랍어판 때문이다 — 그쪽은 글이 오른쪽에서 시작하므로
+            줄의 끝이 왼쪽이다.
             `flow-root` 는 떠 있는 요소를 문단 높이에 포함시키려고 준다 — 없으면 시각이
             아래 줄로 내려갔을 때 말풍선이 그만큼 안 커져서 글자가 삐져나온다.
           */
           <p
             className={cn(
-              'flow-root max-w-[80%] whitespace-pre-wrap break-words rounded-2xl px-3 py-2 text-base',
+              'flow-root max-w-[82%] whitespace-pre-wrap break-words rounded-2xl px-3 py-2 text-[0.84375rem] sm:max-w-[74%]',
               message.out ? 'bg-primary text-white' : 'bg-slate-100 text-slate-800',
             )}
           >
@@ -179,7 +181,7 @@ export function MessageRow({ message, showSender = true }: MessageRowProps) {
             {message.text}
             <span
               className={cn(
-                'float-right ml-2 mt-1 select-none text-[0.7rem] leading-none',
+                'float-end ms-2 mt-1 select-none text-[0.7rem] leading-none',
                 message.out ? 'text-primary-100' : 'text-slate-400',
               )}
             >
@@ -204,15 +206,25 @@ function SenderLabel({ message, inBubble = false }: { message: MessageSummary; i
   return (
     <span
       className={cn(
-        'flex items-center gap-1 text-xs font-semibold',
-        // 말풍선 안에서는 본문 위에 한 줄로 서고, 밖에서는 예전처럼 살짝 들여쓴다.
+        /*
+          `w-max` 가 있어야 이름이 온전히 나온다. **두 자리 모두 필요하다.**
+
+          이름이 선 자리의 폭은 옆에 있는 것이 정한다 — 말풍선 안이면 본문 길이가, 밖이면
+          스티커나 사진의 크기가 그 폭이다. 그보다 긴 이름은 그 좁은 폭에 갇혀 접히고,
+          `break-words` 까지 걸려 있으면 낱말 한가운데서 끊긴다: `김양진 (호` / `주)`.
+
+          max-content 를 주면 그 줄이 자기 폭을 먼저 주장하므로 말풍선이나 열이 이름만큼은
+          넓어진다. `max-w-full` 은 아주 긴 이름이 밖으로 삐져나가지 않게 막는 안전장치이고,
+          그때는 예전처럼 접힌다.
+        */
+        'flex w-max max-w-full items-center gap-1 text-xs font-semibold',
         inBubble ? 'mb-0.5 text-primary-700' : 'px-1 text-slate-500',
       )}
     >
       {message.senderName}
       {/* 봇은 이름만으로 구분되지 않는다. 사람 이름을 쓰는 봇도 흔하다. */}
       {message.senderKind !== 'user' && (
-        <span className="rounded bg-slate-200 px-1 py-px text-[0.65rem] font-bold uppercase text-slate-600">
+        <span className="shrink-0 rounded bg-slate-200 px-1 py-px text-[0.65rem] font-bold uppercase text-slate-600">
           {t(`messages.sender.${message.senderKind}`)}
         </span>
       )}

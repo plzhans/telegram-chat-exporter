@@ -42,7 +42,15 @@ export default function SignIn() {
     <div className="space-y-4">
       <SessionNotice />
 
-      <TrustPanel />
+      {/*
+        **첫 화면에서만 띄운다.**
+
+        "어떻게 동작하나요 · 직접 확인하는 방법 · 남는 것" 은 시작할지 말지를 정하려는
+        사람에게 필요한 글이다. 이미 시작하기를 누른 사람은 그 판단을 끝냈고, 지금은
+        번호를 적으려고 손이 멈춘 상태다. 그 자리에 같은 글이 계속 서 있으면 정작 읽어야
+        할 로그인 코드 경고가 스크롤 아래로 밀린다.
+      */}
+      {step === 'idle' && <TrustPanel />}
 
       <ErrorNotice error={error} />
 
@@ -51,7 +59,7 @@ export default function SignIn() {
       )}
 
       {step === 'connecting' && (
-        <div className="flex flex-col items-center gap-3 rounded-2xl border border-slate-200 bg-white p-8">
+        <div className="flex flex-col items-center gap-3 edge-card bg-white p-8">
           <Spinner />
           <p className="text-sm text-slate-500">{t('auth.connecting')}</p>
         </div>
@@ -66,7 +74,7 @@ export default function SignIn() {
       {step === 'phone' && (
         <div className="space-y-3">
           <LoginCodeNotice />
-          <div className="rounded-2xl border border-slate-200 bg-white p-4">
+          <div className="edge-card bg-white p-4">
             <PhoneForm busy={busy} onSubmit={submitPhone} footer={cancelButton} />
           </div>
         </div>
@@ -75,7 +83,7 @@ export default function SignIn() {
       {step === 'code' && (
         <div className="space-y-3">
           <LoginCodeNotice />
-          <div className="rounded-2xl border border-slate-200 bg-white p-4">
+          <div className="edge-card bg-white p-4">
           <AuthStepForm
             key="code"
             label={t(codeViaApp ? 'auth.code.titleApp' : 'auth.code.titleSms')}
@@ -109,7 +117,7 @@ export default function SignIn() {
       )}
 
       {step === 'password' && (
-        <div className="rounded-2xl border border-slate-200 bg-white p-4">
+        <div className="edge-card bg-white p-4">
           <AuthStepForm
             key="password"
             label={t('auth.password.title')}

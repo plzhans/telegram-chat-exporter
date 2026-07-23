@@ -1,0 +1,403 @@
+{
+  "seo": {
+    "tag": "pt-BR",
+    "ogLocale": "pt_BR",
+    "hreflang": [
+      "pt-BR",
+      "pt"
+    ],
+    "title": "Exportar conversas do Telegram — no seu navegador, sem guardar nada em servidor | Telegram Exporter",
+    "shareTitle": "Exportar conversas do Telegram — no seu navegador, sem guardar nada em servidor",
+    "description": "Exporte suas conversas do Telegram para um arquivo zip. Tudo acontece dentro do seu navegador e nada fica guardado em servidor — seu número de telefone, o código de acesso e as mensagens nunca são enviados a lugar nenhum. Não precisa instalar nada.",
+    "shareDescription": "Exporte conversas do Telegram para um zip direto no navegador. Nada fica guardado em servidor."
+  },
+  "app": {
+    "title": "Telegram Exporter",
+    "tagline": "Backup das conversas do Telegram inteiramente no seu navegador"
+  },
+  "common": {
+    "next": "Avançar",
+    "back": "Voltar",
+    "cancel": "Cancelar",
+    "retry": "Tentar de novo",
+    "refresh": "Atualizar",
+    "source": "Código-fonte",
+    "language": "Idioma",
+    "signOut": "Sair"
+  },
+  "trust": {
+    "purpose": "Esta página existe para você fazer backup das suas conversas do Telegram de um jeito simples.",
+    "lede": "Ela salva suas conversas em um arquivo zip. Navegador é o programa que você usa para ver a internet, como o Chrome ou o Safari — e tudo acontece dentro dele.",
+    "how": {
+      "title": "Como funciona",
+      "noServer": {
+        "title": "Não há nenhum servidor nosso no meio",
+        "body": "A maioria dos sites manda o que você digita para os servidores deles. Esta página não tem servidor nenhum. Seu navegador fala diretamente com o Telegram."
+      },
+      "credentials": {
+        "title": "Seu número e seu código de acesso vão só para o Telegram",
+        "body": "Os valores necessários para entrar não são usados para nada além da requisição ao Telegram. Não existe caminho pelo qual poderíamos vê-los."
+      },
+      "download": {
+        "title": "Suas mensagens viram arquivo na hora",
+        "body": "As mensagens aparecem na tela e, ao exportar, são compactadas e salvas no seu próprio computador. Nada é enviado para lugar nenhum."
+      }
+    },
+    "verify": {
+      "title": "Como conferir por conta própria",
+      "csp": "Esta página está trancada de modo que <strong>não consegue se conectar a nenhum endereço</strong> além do Telegram (<code>wss://*.web.telegram.org</code>). Quem impõe essa regra é o seu navegador, então nem quem escreveu a página consegue burlá-la.",
+      "devtools": "Aperte F12 (⌥⌘I no Mac) e abra a aba <strong>Rede</strong> para ver todos os endereços a que esta página realmente se conecta.",
+      "source": "Todo o código-fonte é público.",
+      "peek": "Confira você mesmo que esta página não consegue se conectar a mais nada.",
+      "cspAnalytics": "Esta página não consegue se conectar a nada além do Telegram (<code>wss://*.web.telegram.org</code>) e do Google Analytics, usado para contar visitas — <strong>nada além disso.</strong> Quem impõe essa regra é o navegador, então o site não pode mudá-la."
+    },
+    "stored": {
+      "title": "O que fica neste navegador",
+      "lede": "Nenhum dado pessoal e nenhum conteúdo de mensagem é guardado. Só material que é igual para todo mundo, mais o valor que mantém você conectado. Esta tabela é a lista completa.",
+      "colKind": "O quê",
+      "colWhere": "Onde fica",
+      "colUntil": "Quando é apagado",
+      "sessionKind": "Estado de login",
+      "sessionWhere": "Só dentro desta aba",
+      "sessionUntil": "Ao fechar a aba · após {{minutes}} minutos sem uso · ao sair",
+      "sessionNote": "Só é guardado se você marcar “continuar conectado”, para que recarregar a página não exija login de novo. Outras abas e janelas não conseguem vê-lo.",
+      "stickerKind": "Imagens de figurinhas",
+      "stickerWhere": "Este navegador",
+      "stickerUntil": "Ao sair · as mais antigas primeiro, passando de 20 MB",
+      "stickerNote": "As figurinhas são iguais para todo mundo no Telegram, então não são dado pessoal. Quem enviou e quando não fica guardado — só a imagem. Ficam em cache porque buscá-las de novo toda vez é lento.",
+      "peek": "Só duas coisas: seu estado de login e imagens de figurinhas. Nenhum conteúdo de mensagem."
+    },
+    "never": {
+      "title": "O que nunca é guardado",
+      "body": "Conversas, fotos e anexos, número de telefone, contatos, código de acesso. Nada disso é armazenado e nada disso vai a lugar nenhum além do Telegram."
+    },
+    "analytics": {
+      "title": "As estatísticas de visita se conectam ao Google",
+      "peek": "Só contagem de visitas. Nenhuma conversa nem número de telefone.",
+      "lede": "Este site usa o <strong>Google Analytics</strong> para contar visitantes.",
+      "network": "Isso significa que a página <strong>também se conecta ao Google</strong>, e não só ao Telegram. Ela carrega o script de análise de <code>googletagmanager.com</code> e envia o registro da visita para <code>google-analytics.com</code>. Essa é a única conexão externa além do Telegram, e dá para vê-la na aba Rede das ferramentas de desenvolvedor.",
+      "sent": "O que é enviado: que a página inicial foi aberta e em qual idioma.",
+      "notSent": "O que nunca é enviado: suas conversas, número de telefone, código de acesso ou quais conversas você abriu. Os endereços das conversas contêm o id da conversa, então esses endereços são deliberadamente omitidos.",
+      "block": "Bloquear isso com um bloqueador de anúncios ou com a proteção contra rastreamento do navegador não quebra esta ferramenta.",
+      "selfHost": "Se você não quiser nem isso, <strong>baixe o código e rode na sua própria máquina.</strong> A configuração de análise só é fornecida na publicação deste site, então uma cópia que você mesmo compila não tem análise nenhuma — a conexão com o Google simplesmente não existe no código."
+    },
+    "ads": {
+      "title": "São exibidos anúncios",
+      "peek": "Há anúncios do Google AdSense. Não têm relação com suas conversas.",
+      "body": "Este site exibe anúncios do <strong>Google AdSense</strong>. Por isso ele também se conecta à rede de anúncios do Google (<code>googlesyndication.com</code> · <code>doubleclick.net</code>), e os anúncios rodam dentro de um quadro separado (iframe).",
+      "isolation": "O código dos anúncios não consegue ler nada desta página. Suas conversas, seu número e seu código de acesso nunca são compartilhados com anunciantes. <strong>Não há anúncios nas telas de login e de conversa.</strong>",
+      "selfHost": "Para usar sem anúncios, <strong>baixe o código e rode na sua própria máquina.</strong> A configuração de anúncios só é fornecida na publicação deste site, então uma cópia que você mesmo compila não tem código de anúncio nenhum."
+    },
+    "device": {
+      "title": "A velocidade depende do aparelho que você está usando",
+      "body": "Não haver servidor no meio também quer dizer que o PC ou o celular em que você está agora faz toda a busca e a compactação. Por isso a mesma conversa pode levar tempos diferentes em aparelhos diferentes.",
+      "bigChat": "Para conversas com muitíssimas mensagens, use um PC. Celulares têm menos memória sobrando, então a exportação pode ficar lenta ou parar no meio.",
+      "keepOpen": "Mantenha esta aba aberta durante a exportação. Se a tela apagar ou você mudar para outro aplicativo, o navegador desacelera ou pausa o trabalho.",
+      "rate": "O Telegram limita a velocidade das requisições, então uma conversa grande significa espera mesmo em um aparelho rápido. Não travou.",
+      "peek": "Sem servidor no meio, o tempo depende do seu próprio PC ou celular."
+    },
+    "warning": {
+      "title": "Esta ferramenta pede seu código de acesso",
+      "principle": "O Telegram diz para você nunca compartilhar seu código de acesso com ninguém. O conselho está certo. Não abra exceção para este site — desconfie dele do mesmo jeito.",
+      "why": "Dito isso, esta ferramenta entra no Telegram como você para buscar suas mensagens. Sem seu número e seu código de acesso, ela não consegue fazer nada. Esses valores são usados só na requisição ao Telegram e nunca são armazenados.",
+      "storage": "Depois que você entra, a única coisa guardada é um valor que mantém a conexão aberta, e ele vive apenas dentro da aba que você está vendo — fechou a aba, acabou.",
+      "selfHost": "Se ainda assim não convencer, não acredite na palavra de ninguém. Leia o código, ou baixe e rode na sua própria máquina. Você terá exatamente esta tela, rodando um código que você mesmo conferiu."
+    }
+  },
+  "credentials": {
+    "title": "Começar",
+    "modeShared": "Começar agora (recomendado)",
+    "modeSharedHint": "Usa a chave de aplicativo embutida neste site. Você só precisa do seu número de telefone.",
+    "modeCustom": "Usar meu próprio api_id",
+    "modeCustomHint": "Usa uma chave que você mesmo registrou em my.telegram.org.",
+    "apiId": "api_id",
+    "apiHash": "api_hash",
+    "open": "Abrir a página de registro",
+    "guide": {
+      "title": "Como obter um api_id",
+      "step1": "Informe seu número em my.telegram.org. O código de confirmação chega no aplicativo do Telegram, não por SMS — deixe o Telegram aberto em outro aparelho.",
+      "step2": "Depois de entrar, abra <b>API development tools</b> e preencha como no exemplo. Use <b>apenas letras latinas e números</b> — qualquer outra coisa falha sem dizer por quê.",
+      "step3": "Ao enviar, você recebe um api_id e um api_hash. Cole os dois nos campos acima.",
+      "fields": {
+        "appTitle": "App title",
+        "shortName": "Short name",
+        "url": "URL",
+        "platform": "Platform",
+        "description": "Description"
+      },
+      "empty": "deixe em branco",
+      "shortNameNote": "5 a 32 caracteres, só letras e números. Precisa ser único no mundo todo, e um nome já usado aparece só como ERROR — tente acrescentar um número.",
+      "trouble": {
+        "title": "Se só aparece ERROR",
+        "intro": "Aquela página nunca diz por que falhou. Confira estes pontos, do mais provável ao menos provável.",
+        "reload": "<b>Recarregue a página primeiro.</b> Muitas vezes o aplicativo foi criado mesmo com o ERROR aparecendo.",
+        "vpn": "<b>Desligue seu VPN ou proxy.</b> Se o país do seu IP for diferente do país do seu número, o Telegram bloqueia. É a causa mais comum.",
+        "extensions": "<b>Tente de novo numa janela anônima com todas as extensões desativadas.</b> Bloqueadores de anúncios impedem o próprio envio do formulário.",
+        "shortName": "<b>Tente outro short name.</b> Nome já usado também aparece só como ERROR.",
+        "spambot": "<b>Verifique restrições na conta.</b> Contas novas ou marcadas como spam não conseguem criar aplicativos. Mande mensagem para o @SpamBot no Telegram para descobrir.",
+        "wait": "<b>Espere de 15 a 60 minutos e tente uma vez só.</b> Tentativas repetidas já caem no limite por si."
+      }
+    },
+    "remember": "Lembra seu api_id neste navegador. É um identificador de aplicativo, não acesso à conta, então guardá-lo é seguro.",
+    "keepSignedIn": "Continuar conectado nesta aba",
+    "keepSignedInHint": "Recarregar não vai pedir login de novo. Fechar a aba ou deixá-la {{minutes}} minutos sem uso apaga isso. Desligue em computador compartilhado.",
+    "forget": "Esquecer api_id salvo",
+    "submit": "Conectar ao Telegram",
+    "errors": {
+      "required": "Este campo é obrigatório.",
+      "apiIdFormat": "O api_id precisa ser um número.",
+      "apiHashFormat": "O api_hash precisa ter 32 caracteres hexadecimais."
+    }
+  },
+  "sessionNotice": {
+    "confirm": "OK",
+    "expired": {
+      "title": "Sua sessão expirou",
+      "body": "Esta aba ficou mais de {{minutes}} minutos sem uso, então os dados de login guardados neste navegador foram apagados. Sua conta continua intacta — é só entrar de novo."
+    },
+    "invalid": {
+      "title": "Entre novamente, por favor",
+      "body": "Não foi possível retomar os dados de login guardados. A sessão pode ter sido encerrada em outro aparelho, ou o Telegram pode tê-la expirado."
+    }
+  },
+  "auth": {
+    "connecting": "Conectando ao Telegram…",
+    "phone": {
+      "title": "Número de telefone",
+      "willSend": "O código será enviado para:",
+      "placeholder": "+55 11 91234 5678",
+      "submit": "Enviar o código",
+      "country": "País",
+      "countrySearch": "Buscar por nome, código ou número",
+      "countryEmpty": "Nada encontrado",
+      "unverified": "Isso não bate com o formato de número desse país. Se não for erro de digitação, você pode continuar assim mesmo."
+    },
+    "code": {
+      "titleApp": "Código enviado ao seu aplicativo do Telegram",
+      "titleSms": "Código enviado por SMS",
+      "hint": "Digite o código de 5 dígitos que chegou no Telegram em outro aparelho.",
+      "submit": "Entrar",
+      "changeNumber": "Usar outro número"
+    },
+    "password": {
+      "title": "Senha da verificação em duas etapas",
+      "hint": "Digite a senha de verificação em duas etapas definida na sua conta.",
+      "hintLabel": "Dica: {{hint}}",
+      "submit": "Confirmar"
+    }
+  },
+  "dialogs": {
+    "title": "Conversas",
+    "subtitle": "Escolha as conversas que você quer salvar.",
+    "loading": "Carregando conversas…",
+    "empty": "Nenhuma conversa encontrada.",
+    "count": "{{count, number}} conversas",
+    "filtered": "{{shown, number}} de {{total, number}}",
+    "noMatch": "Nenhum nome de conversa corresponde a isso.",
+    "searchPlaceholder": "Buscar conversas por nome",
+    "searchClear": "Limpar busca",
+    "unread": "{{count}} não lidas",
+    "type": {
+      "user": "Direta",
+      "group": "Grupo",
+      "channel": "Canal"
+    },
+    "preview": {
+      "you": "Você",
+      "photo": "Foto",
+      "document": "Arquivo",
+      "video": "Vídeo",
+      "audio": "Áudio",
+      "sticker": "Figurinha",
+      "poll": "Enquete",
+      "contact": "Contato",
+      "geo": "Localização",
+      "webPage": "Link",
+      "action": "Mensagem do sistema",
+      "other": "Anexo"
+    }
+  },
+  "messages": {
+    "loading": "Carregando mensagens…",
+    "empty": "Nenhuma mensagem aqui.",
+    "loadOlder": "Carregar mensagens mais antigas",
+    "loadNewer": "Carregar mensagens mais recentes",
+    "albumCount": "{{count, number}} fotos",
+    "edited": "editada",
+    "photoViewer": "Visualizador de fotos",
+    "previousPhoto": "Foto anterior",
+    "nextPhoto": "Próxima foto",
+    "dayEmpty": "Nenhuma mensagem em {{date}}. Mostrando a partir de {{landed}}, o dia seguinte com mensagens.",
+    "jumpToDate": "Ir para a data",
+    "backToLatest": "Voltar às mais recentes",
+    "export": "Exportar",
+    "media": "Anexo: {{type}}",
+    "action": "Mensagem do sistema: {{type}}",
+    "sender": {
+      "bot": "bot",
+      "channel": "canal"
+    },
+    "mediaKind": {
+      "photo": "foto",
+      "sticker": "figurinha",
+      "video": "vídeo",
+      "gif": "GIF",
+      "audio": "áudio",
+      "file": "arquivo",
+      "contact": "contato",
+      "geo": "localização",
+      "poll": "enquete",
+      "webpage": "link",
+      "venue": "local",
+      "dice": "dado",
+      "game": "jogo",
+      "invoice": "fatura",
+      "story": "story",
+      "voice": "mensagem de voz",
+      "videoNote": "vídeo-mensagem",
+      "unsupported": "formato não suportado",
+      "geolive": "localização em tempo real",
+      "giveaway": "sorteio",
+      "giveawayresults": "resultado do sorteio",
+      "paidmedia": "mídia paga"
+    },
+    "actionKind": {
+      "chatadduser": " entrou na conversa",
+      "chatdeleteuser": " saiu da conversa",
+      "chatjoinedbylink": " entrou por link de convite",
+      "chatjoinedbyrequest": " teve o pedido de entrada aprovado",
+      "chatcreate": " criou a conversa",
+      "channelcreate": " criou o canal",
+      "chatedittitle": " mudou o nome da conversa",
+      "chateditphoto": " mudou a foto da conversa",
+      "chatdeletephoto": " removeu a foto da conversa",
+      "pinmessage": " fixou uma mensagem",
+      "chatmigrateto": "A conversa virou um supergrupo",
+      "channelmigratefrom": "A conversa virou um supergrupo",
+      "historyclear": "O histórico foi apagado",
+      "phonecall": " fez uma chamada",
+      "groupcall": "Houve um bate-papo por voz",
+      "invitetogroupcall": " convidou alguém para um bate-papo por voz",
+      "screenshottaken": " tirou uma captura de tela",
+      "contactsignup": " entrou no Telegram",
+      "setmessagesttl": "O tempo de autodestruição mudou",
+      "setchattheme": " mudou o tema da conversa",
+      "giftpremium": " presenteou com o Premium",
+      "topiccreate": " criou um tópico",
+      "topicedit": " editou um tópico",
+      "suggestprofilephoto": " sugeriu uma foto de perfil",
+      "webviewdatasent": " enviou um formulário",
+      "paymentsent": "Pagamento concluído"
+    },
+    "actionBy": "{{name}}{{what}}"
+  },
+  "calendar": {
+    "prevMonth": "Mês anterior",
+    "nextMonth": "Próximo mês",
+    "check": "Ver em quais dias há mensagens",
+    "checking": "Verificando {{date}}… ({{done}}/{{total}})",
+    "checkingDay": "Verificando {{date}}…",
+    "dayEmpty": "Nenhuma mensagem em {{date}}. Escolha outro dia.",
+    "legendHas": "tem mensagens",
+    "legendEmpty": "sem mensagens",
+    "dayCount": "{{count, number}} mensagens"
+  },
+  "export": {
+    "title": "Exportar esta conversa",
+    "description": "Baixa as mensagens como um zip. A compactação acontece no seu navegador e nenhum servidor entra no caminho.",
+    "start": "Exportar como zip",
+    "cancel": "Parar",
+    "from": "De",
+    "to": "Até",
+    "rangeHint": "Para conversas muito antigas, exportar em fatias é mais seguro.",
+    "wholeHistory": "Exportar todo o histórico",
+    "wholeHistoryHint": "Ignora as datas e pega tudo desde o começo. Conversas grandes podem demorar muitíssimo por causa dos limites do Telegram.",
+    "progress": "Mensagens {{count, number}} / {{total, number}}",
+    "waiting": "Aguardando um limite de requisições do Telegram. Não travou — por favor, deixe esta aba aberta.",
+    "done": "Pronto. {{count, number}} mensagens salvas.",
+    "savedPicked": "Está no local que você escolheu. Por segurança, os navegadores não revelam o caminho completo, então só o nome do arquivo é mostrado.",
+    "savedDownload": "Está na pasta de downloads do seu navegador.",
+    "memoryFallback": "Este navegador não consegue escrever direto em arquivo, então o zip é montado inteiro e baixado no fim. Para conversas muito grandes, Chrome ou Edge é mais seguro.",
+    "presets": "Escolha rápida",
+    "presetToday": "Hoje",
+    "presetWeek": "Últimos 7 dias",
+    "presetMonth": "Últimos 30 dias",
+    "stats": {
+      "total": "Total de mensagens",
+      "messages": "{{count, number}}",
+      "period": "Período"
+    },
+    "includeTitle": "Incluir anexos",
+    "includePhotos": "Fotos",
+    "includePhotosHint": "Salva as fotos em tamanho original desta conversa junto com as mensagens. Figurinhas não entram. Muitas fotos significam muito mais tempo e espaço.",
+    "includeNote": "Os anexos que não entram continuam aparecendo na lista (attachments.jsonl) com seu tipo e id de arquivo. Só o arquivo em si falta — o registro do que foi enviado fica completo.",
+    "progressFiles": "Anexos {{files, number}} / {{totalFiles, number}}",
+    "deviceTitle": "Este trabalho é feito pelo aparelho em que você está",
+    "deviceBody": "Não há servidor no meio, então este PC ou celular faz toda a busca e a compactação — ou seja, o tempo depende muito do aparelho. Para conversas grandes, ou ao incluir fotos, use um PC e mantenha esta aba aberta até terminar.",
+    "doneTitle": "Exportação concluída",
+    "doneRange": "Período",
+    "doneWhole": "Histórico completo",
+    "doneMessages": "Mensagens",
+    "doneFiles": "Arquivos salvos",
+    "doneSize": "Tamanho do arquivo",
+    "doneCount": "{{count, number}}",
+    "again": "Começar outra exportação",
+    "includeExcludedTitle": "Não incluído",
+    "includeExcluded": "Vídeos · áudios · documentos que não são imagens",
+    "layoutTitle": "Onde me colocar",
+    "layoutChat": "À direita (padrão) — à direita, como no aplicativo",
+    "layoutFlat": "À esquerda — à esquerda, para não ficar óbvio qual lado sou eu",
+    "layoutHint": "Deixar todo mundo à esquerda esconde qual lado é o seu. Em compensação, seu nome passa a aparecer também nas suas mensagens.",
+    "includeStickers": "Figurinhas",
+    "includeStickersHint": "Cada figurinha é guardada uma vez só, não importa quantas vezes tenha sido enviada. Uma conversa costuma ter algumas dezenas de tipos, então isso fica em poucos MB.",
+    "progressCounting": "{{count, number}} mensagens exportadas até agora…"
+  },
+  "errors": {
+    "title": "Erro",
+    "API_ID_INVALID": "O api_id ou o api_hash não é válido.",
+    "API_ID_PUBLISHED_FLOOD": "O Telegram restringiu esta chave de aplicativo. Registre seu próprio api_id em my.telegram.org e tente de novo.",
+    "AUTH_RESTART": "A autenticação precisa recomeçar.",
+    "AUTH_USER_CANCEL": "A autenticação foi cancelada.",
+    "FLOOD_WAIT": "Requisições demais. Tente de novo em {{duration}}.",
+    "PASSWORD_HASH_INVALID": "Essa senha de verificação em duas etapas não está correta.",
+    "PHONE_CODE_EXPIRED": "O código de acesso expirou. Peça um novo.",
+    "PHONE_CODE_INVALID": "Esse código de acesso não está correto.",
+    "PHONE_NUMBER_BANNED": "Este número está banido.",
+    "PHONE_NUMBER_INVALID": "Esse número parece errado. Verifique se você incluiu o código do país.",
+    "PHONE_NUMBER_UNOCCUPIED": "Não existe conta do Telegram para este número.",
+    "PHONE_PASSWORD_FLOOD": "Tentativas de senha demais. Espere um pouco e tente de novo.",
+    "SESSION_PASSWORD_NEEDED": "É necessária a senha de verificação em duas etapas.",
+    "PEER_NOT_CACHED": "Os dados desta conversa expiraram. Volte à lista e escolha de novo.",
+    "SESSION_REVOKED": "A sessão foi encerrada. Entre novamente.",
+    "UPDATE_APP_TO_LOGIN": "O Telegram não permite mais entrar desta forma.",
+    "UNKNOWN": "Algo deu errado: {{raw}}",
+    "duration": {
+      "seconds": "{{count}} segundos",
+      "minutes": "{{count}} minutos",
+      "hours": "{{count}} horas"
+    }
+  },
+  "mediaInfo": {
+    "title": "Detalhes do anexo",
+    "id": "Id do arquivo",
+    "messageId": "Id da mensagem",
+    "kind": "Tipo",
+    "fileName": "Nome do arquivo",
+    "mimeType": "Tipo MIME",
+    "size": "Dimensões",
+    "bytes": "Tamanho",
+    "uploaded": "Enviado em",
+    "dc": "Data center",
+    "accessHash": "access hash",
+    "copy": "Copiar tudo",
+    "duration": "Duração"
+  },
+  "errorPage": {
+    "title": "Ocorreu um problema ao abrir esta tela",
+    "body": "Pode ser temporário. Tente novamente e, se continuar, volte ao início.",
+    "notFound": "Página não encontrada",
+    "notFoundBody": "O endereço pode ter mudado ou sido digitado errado.",
+    "home": "Voltar ao início",
+    "details": "Detalhes do erro"
+  }
+}

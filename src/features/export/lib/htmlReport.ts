@@ -246,7 +246,8 @@ body{margin:0;background:#fff;color:#0F172A;
 .av.hole{background:none}
 .who{font-size:13px;color:#475569;margin-bottom:2px}
 /* sender name: first line inside the bubble */
-.nmline{display:block;font-size:13px;margin-bottom:1px}
+/* max-content keeps a name longer than the message from wrapping inside a narrow bubble. */
+.nmline{display:block;width:max-content;max-width:100%;font-size:13px;margin-bottom:1px}
 .nm{font-weight:700}
 .bot{background:#E2E8F0;color:#475569;border-radius:4px;padding:0 4px;
   font-size:11px;font-weight:700;margin-left:4px;vertical-align:1px}
@@ -303,6 +304,19 @@ body{margin:0;background:#fff;color:#0F172A;
   box-shadow:0 2px 8px rgba(15,23,42,.18);display:flex;align-items:center;
   justify-content:center;color:#334155;text-decoration:none;font-size:18px;line-height:1}
 .jump:hover{background:#F1F5F9;color:#0F172A;border-color:#94A3B8}
+/*
+  Narrow screens: let the conversation reach the edges. Side padding and a rounded frame
+  cost width that the messages need, and a border drawn at the very edge of the screen
+  reads as a cut-off, not as a frame.
+*/
+@media (max-width:640px){
+  .wrap{padding:8px 0}
+  .brand{padding:0 8px}
+  .head{border-radius:0;border-inline:0;padding:12px 10px}
+  .chat{border-radius:0;border-inline:0;padding:2px 6px 8px}
+  .col{max-width:calc(100% - 34px)}
+  .foot{padding:0 8px}
+}
 @media print{.wrap{max-width:none}.row{break-inside:avoid}.jump{display:none}
   .zoom:target{position:static;transform:none}.zoom:target ~ .cl{display:none}
   .head details{display:block}.head dl{display:grid}.head summary{display:none}}

@@ -43,7 +43,7 @@ export function DialogRow({ dialog }: { dialog: DialogSummary }) {
     <li>
       <Link
         to={`/dialogs/${dialog.id}`}
-        className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-slate-50"
+        className="flex items-center gap-2.5 px-3 py-2.5 transition-colors hover:bg-slate-50 sm:gap-3 sm:px-4 sm:py-3"
       >
         <Avatar
           id={dialog.id}
@@ -94,7 +94,7 @@ export function DialogRow({ dialog }: { dialog: DialogSummary }) {
           </span>
         )}
 
-        <ChevronRight className="h-4 w-4 shrink-0 text-slate-300" />
+        <ChevronRight className="h-4 w-4 shrink-0 text-slate-300 rtl:rotate-180" />
       </Link>
     </li>
   );

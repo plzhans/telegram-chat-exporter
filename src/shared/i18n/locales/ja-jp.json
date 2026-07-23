@@ -1,0 +1,403 @@
+{
+  "seo": {
+    "tag": "ja-JP",
+    "ogLocale": "ja_JP",
+    "hreflang": [
+      "ja-JP",
+      "ja"
+    ],
+    "title": "Telegram のトークをエクスポート — サーバーに保存せずブラウザだけで | Telegram Exporter",
+    "shareTitle": "Telegram のトークをエクスポート — サーバーに保存せずブラウザだけで",
+    "description": "Telegram のトーク履歴を zip ファイルに書き出します。処理はすべてブラウザの中で完結し、サーバーには何も保存されません。電話番号・ログインコード・メッセージがどこかへ送られることはありません。インストールも不要です。",
+    "shareDescription": "Telegram のトークを、サーバーに保存せずブラウザだけで zip に書き出します。"
+  },
+  "app": {
+    "title": "Telegram Exporter",
+    "tagline": "ブラウザの中だけで動く Telegram トークのバックアップ"
+  },
+  "common": {
+    "next": "次へ",
+    "back": "戻る",
+    "cancel": "キャンセル",
+    "retry": "もう一度試す",
+    "refresh": "更新",
+    "source": "ソースコード",
+    "language": "言語",
+    "signOut": "ログアウト"
+  },
+  "trust": {
+    "purpose": "このページは、Telegram のトーク内容を手軽にバックアップするために作られました。",
+    "lede": "トークを圧縮ファイル（zip）としてダウンロードします。Chrome や Safari のようにウェブを見るためのソフトをブラウザと呼びますが、処理はすべてそのブラウザの中で終わります。",
+    "how": {
+      "title": "どう動くのか",
+      "noServer": {
+        "title": "経由するサーバーがありません",
+        "body": "ふつうのウェブサイトは、入力された値をその会社のサーバーへ送ります。このページにはそうしたサーバーが存在しません。ブラウザが Telegram と直接やり取りします。"
+      },
+      "credentials": {
+        "title": "電話番号とログインコードは Telegram にしか届きません",
+        "body": "ログインに必要な値は、Telegram へのリクエスト以外には使われません。こちらがそれを見る経路はありません。"
+      },
+      "download": {
+        "title": "トーク内容はすぐにファイルになります",
+        "body": "取得したトークは画面に表示し、エクスポートを押すと圧縮してお使いのパソコンに保存します。どこにもアップロードしません。"
+      }
+    },
+    "verify": {
+      "title": "自分で確かめる方法",
+      "csp": "このページは Telegram（<code>wss://*.web.telegram.org</code>）以外の<strong>どのアドレスにも接続できないよう</strong>ロックされています。ブラウザが強制するルールなので、このページを作った本人にも破れません。",
+      "devtools": "F12（Mac は ⌥⌘I）を押して<strong>ネットワーク</strong>タブを見れば、このページが実際にどこへ接続しているかがすべて見えます。",
+      "source": "作られたコードはすべて公開されています。",
+      "peek": "このページが他のどこにも接続できないことを、ご自身で確かめてみてください。",
+      "cspAnalytics": "このページは Telegram（<code>wss://*.web.telegram.org</code>）とアクセス解析用の Google アナリティクス、<strong>その二つ以外のどのアドレスにも接続できません。</strong>ブラウザが強制するルールなので、このサイト側で勝手に変えることはできません。"
+    },
+    "stored": {
+      "title": "このブラウザに残るもの",
+      "lede": "個人情報やトーク内容は残しません。誰にとっても同じに見える公開データと、ログインを続けるための値だけが残ります。残るものは以下がすべてです。",
+      "colKind": "種類",
+      "colWhere": "保管場所",
+      "colUntil": "削除される時",
+      "sessionKind": "ログイン状態",
+      "sessionWhere": "いま開いているタブの中だけ",
+      "sessionUntil": "タブを閉じた時 ・ {{minutes}}分使わなかった時 ・ ログアウトした時",
+      "sessionNote": "「ログイン状態を保つ」を選んだ時だけ残ります。再読み込みのたびにログインし直さずに済むようにするためです。他のタブや他のウィンドウからは見えません。",
+      "stickerKind": "スタンプの画像",
+      "stickerWhere": "このブラウザ",
+      "stickerUntil": "ログアウトした時 ・ 20MB を超えたら古いものから",
+      "stickerNote": "Telegram を使う誰にとっても同じに見える画像なので、個人情報ではありません。誰がいつ送ったかは残らず、画像だけが残ります。毎回取得し直すと遅いので手元に置いています。",
+      "peek": "ログイン状態とスタンプ画像の二つだけです。トーク内容は残りません。"
+    },
+    "never": {
+      "title": "決して残さないもの",
+      "body": "トーク内容 ・ 写真と添付ファイル ・ 電話番号 ・ 連絡先 ・ ログインコード。どれも保存せず、Telegram へ送る以外にはどこへも送りません。"
+    },
+    "analytics": {
+      "title": "アクセス解析のため Google に接続します",
+      "peek": "訪問数だけを見ています。トーク内容や電話番号は含まれません。",
+      "lede": "このサイトは、何人が訪れたかを知るために <strong>Google アナリティクス</strong>を使っています。",
+      "network": "そのため、このページは Telegram だけでなく <strong>Google にも接続します。</strong><code>googletagmanager.com</code> から解析スクリプトを取得し、<code>google-analytics.com</code> へ訪問記録を送ります。これが Telegram 以外で唯一の外部接続で、開発者ツールのネットワークタブでそのまま確認できます。",
+      "sent": "送られるのは、最初の画面を開いたという事実と言語だけです。",
+      "notSent": "トーク内容 ・ 電話番号 ・ ログインコード ・ どのトークを開いたかは<strong>送りません。</strong>トークのアドレスにはトーク番号が含まれるため、そのアドレスは初めから送らないようにしてあります。",
+      "block": "広告ブロッカーやブラウザのトラッキング防止機能で遮断しても、このツールはそのまま動きます。",
+      "selfHost": "それすら望まない場合は、<strong>コードをダウンロードしてご自分のパソコンで動かしてください。</strong>解析の設定はこのサイトを公開する時にだけ入れる値なので、自分でビルドすればアナリティクスは一切含まれません。Google への接続がコードから消えます。"
+    },
+    "ads": {
+      "title": "広告が表示されます",
+      "peek": "Google アドセンスの広告があります。トーク内容とは無関係です。",
+      "body": "このサイトは <strong>Google アドセンス</strong>の広告を掲載しています。そのため Google の広告網（<code>googlesyndication.com</code> ・ <code>doubleclick.net</code>）にも接続し、広告は別枠（iframe）の中で動きます。",
+      "isolation": "広告のコードはこのページの値を読み取れません。トーク内容 ・ 電話番号 ・ ログインコードが広告と共有されることはありません。<strong>ログイン画面とトーク画面には広告を入れていません。</strong>",
+      "selfHost": "広告なしで使いたい場合は、<strong>コードをダウンロードしてご自分のパソコンで動かしてください。</strong>広告の設定はこのサイトを公開する時にだけ入れる値なので、自分でビルドすれば広告のコードは一切含まれません。"
+    },
+    "device": {
+      "title": "速さはお使いの機器しだいです",
+      "body": "経由するサーバーがないということは、トークの取得も圧縮も、いま使っているパソコンやスマートフォンがすべて行うということでもあります。そのため同じトークでも、機器の性能によってかかる時間が変わります。",
+      "bigChat": "メッセージが非常に多いトークはパソコンでの取得をおすすめします。スマートフォンはメモリに余裕がなく、時間がかかったり途中で止まったりすることがあります。",
+      "keepOpen": "エクスポート中はこのタブを閉じないでください。画面が消えたり他のアプリに切り替えたりすると、ブラウザが処理を遅くしたり止めたりします。",
+      "rate": "Telegram がリクエストの速さを制限しているため、機器が速くてもトークが多ければ待ち時間が生じます。止まったわけではありません。",
+      "peek": "サーバーを経由しない分、かかる時間はお使いのパソコン・スマートフォンの性能しだいです。"
+    },
+    "warning": {
+      "title": "このツールはログインコードを求めます",
+      "principle": "Telegram は、ログインコードを誰にも教えないよう案内しています。その原則は正しいものです。このサイトも例外にせず、同じように疑ってください。",
+      "why": "ただしこのツールは、あなたのアカウントで Telegram に直接つないでトークを取得します。電話番号とログインコードがなければ何もできません。それらの値は Telegram へのリクエストにだけ使われ、どこにも保存されません。",
+      "storage": "ログイン後に残るのは接続を保つための値ひとつだけで、それもいま見ているタブの中に一時的にあるだけで、タブを閉じれば消えます。",
+      "selfHost": "それでも信じきれないなら、人の言葉を信じないでください。コードをご自分で読むか、いっそダウンロードしてご自分のパソコンで動かせば済みます。そうすれば、いまのこの画面とまったく同じものを、ご自身で確かめたコードで使うことになります。"
+    }
+  },
+  "credentials": {
+    "title": "はじめる",
+    "modeShared": "すぐ始める（推奨）",
+    "modeSharedHint": "このサイトに組み込まれたアプリキーを使います。電話番号を入力するだけで済みます。",
+    "modeCustom": "自分の api_id を入力する",
+    "modeCustomHint": "my.telegram.org で自分で発行したキーを使います。",
+    "apiId": "api_id",
+    "apiHash": "api_hash",
+    "open": "発行ページを開く",
+    "guide": {
+      "title": "api_id の取得方法",
+      "step1": "my.telegram.org に電話番号を入れると、確認コードが Telegram アプリに届きます。SMS ではなくアプリに届くので、別の端末で Telegram を開いておいてください。",
+      "step2": "ログイン後 <b>API development tools</b> を開き、下のように入力します。<b>半角英数字だけ</b>を使うことが大切です — それ以外の文字が入ると理由を告げずに失敗します。",
+      "step3": "送信すると api_id と api_hash が表示されます。二つの値を上の欄に貼り付けてください。",
+      "fields": {
+        "appTitle": "App title",
+        "shortName": "Short name",
+        "url": "URL",
+        "platform": "Platform",
+        "description": "Description"
+      },
+      "empty": "空のまま",
+      "shortNameNote": "5〜32文字、英数字のみ。全体で一意である必要があり、すでに使われている名前だと ERROR としか出ません — 末尾に数字を足してみてください。",
+      "trouble": {
+        "title": "ERROR しか出ず作成できない場合",
+        "intro": "あのページは失敗の理由を教えてくれません。起こりやすい順に確認してください。",
+        "reload": "<b>まず再読み込みしてください。</b>ERROR が出ていても、アプリは実際に作成済みという場合がかなりあります。",
+        "vpn": "<b>VPN・プロキシを切ってください。</b>接続元 IP の国と電話番号の国が違うと、セキュリティの仕組みが遮断します。最も多い原因です。",
+        "extensions": "<b>シークレットウィンドウで拡張機能をすべて切って</b>もう一度試してください。広告ブロッカーがフォームの送信そのものを止めます。",
+        "shortName": "<b>Short name を変えてみてください。</b>名前の重複も ERROR としか表示されません。",
+        "spambot": "<b>アカウントの制限を確認してください。</b>登録して間もない、またはスパム判定を受けたアカウントではアプリを作成できません。Telegram で @SpamBot に話しかけると教えてくれます。",
+        "wait": "<b>15〜60分待って一度だけ</b>試し直してください。繰り返し試すこと自体が制限にかかります。"
+      }
+    },
+    "remember": "このブラウザに api_id を記憶します。アカウントへのアクセス権ではなくアプリの識別子なので、保存しても安全です。",
+    "keepSignedIn": "このタブでログイン状態を保つ",
+    "keepSignedInHint": "再読み込みしてもログインし直さずに済みます。タブを閉じるか {{minutes}}分使わないと消えます。共用のパソコンでは切っておいてください。",
+    "forget": "保存した api_id を消す",
+    "submit": "Telegram に接続",
+    "errors": {
+      "required": "必須項目です。",
+      "apiIdFormat": "api_id は数字です。",
+      "apiHashFormat": "api_hash は32桁の16進数です。"
+    }
+  },
+  "sessionNotice": {
+    "confirm": "OK",
+    "expired": {
+      "title": "セッションの有効期限が切れました",
+      "body": "{{minutes}}分以上使われなかったため、このブラウザに保存されていたログイン情報を消しました。アカウントはそのままですので、もう一度ログインしてください。"
+    },
+    "invalid": {
+      "title": "もう一度ログインしてください",
+      "body": "保存されていたログイン情報を引き継げませんでした。他の端末からこのセッションを終了したか、Telegram がセッションを失効させた可能性があります。"
+    }
+  },
+  "auth": {
+    "connecting": "Telegram に接続中…",
+    "phone": {
+      "title": "電話番号",
+      "willSend": "この番号に認証コードを送ります:",
+      "placeholder": "+81 90 1234 5678",
+      "submit": "認証コードを受け取る",
+      "country": "国",
+      "countrySearch": "国名・コード・番号で検索",
+      "countryEmpty": "該当なし",
+      "unverified": "この国の番号形式と一致しません。入力ミスでなければ、このまま進めても構いません。"
+    },
+    "code": {
+      "titleApp": "Telegram アプリに届いたコード",
+      "titleSms": "SMS で届いたコード",
+      "hint": "別の端末の Telegram アプリに届いた5桁のコードを入力してください。",
+      "submit": "ログイン",
+      "changeNumber": "別の番号でログイン"
+    },
+    "password": {
+      "title": "2段階認証のパスワード",
+      "hint": "アカウントに設定した2段階認証のパスワードを入力してください。",
+      "hintLabel": "ヒント: {{hint}}",
+      "submit": "確認"
+    }
+  },
+  "dialogs": {
+    "title": "トーク",
+    "subtitle": "バックアップするトークを選んでください。",
+    "loading": "トークを読み込み中…",
+    "empty": "トークがありません。",
+    "count": "{{count, number}}件",
+    "filtered": "{{total, number}}件中 {{shown, number}}件",
+    "noMatch": "名前が一致するトークがありません。",
+    "searchPlaceholder": "トーク名で検索",
+    "searchClear": "検索語を消す",
+    "unread": "未読 {{count}}",
+    "type": {
+      "user": "個人",
+      "group": "グループ",
+      "channel": "チャンネル"
+    },
+    "preview": {
+      "you": "自分",
+      "photo": "写真",
+      "document": "ファイル",
+      "video": "動画",
+      "audio": "音声",
+      "sticker": "スタンプ",
+      "poll": "投票",
+      "contact": "連絡先",
+      "geo": "位置情報",
+      "webPage": "リンク",
+      "action": "システムメッセージ",
+      "other": "添付"
+    }
+  },
+  "messages": {
+    "loading": "メッセージを読み込み中…",
+    "empty": "メッセージがありません。",
+    "loadOlder": "以前のメッセージを読み込む",
+    "loadNewer": "以降のメッセージを読み込む",
+    "albumCount": "写真 {{count, number}}枚",
+    "edited": "編集済み",
+    "photoViewer": "写真を大きく見る",
+    "previousPhoto": "前の写真",
+    "nextPhoto": "次の写真",
+    "dayEmpty": "{{date}} にはトークがありません。その後の最初のトークである {{landed}} から表示します。",
+    "jumpToDate": "日付へ移動",
+    "backToLatest": "最新へ",
+    "export": "エクスポート",
+    "media": "添付: {{type}}",
+    "action": "システムメッセージ: {{type}}",
+    "sender": {
+      "bot": "ボット",
+      "channel": "チャンネル"
+    },
+    "mediaKind": {
+      "photo": "写真",
+      "sticker": "スタンプ",
+      "video": "動画",
+      "gif": "GIF",
+      "audio": "音声",
+      "file": "ファイル",
+      "contact": "連絡先",
+      "geo": "位置情報",
+      "poll": "投票",
+      "webpage": "リンク",
+      "venue": "スポット",
+      "dice": "サイコロ",
+      "game": "ゲーム",
+      "invoice": "請求書",
+      "story": "ストーリー",
+      "voice": "ボイスメッセージ",
+      "videoNote": "ビデオメッセージ",
+      "unsupported": "非対応の形式",
+      "geolive": "リアルタイムの位置情報",
+      "giveaway": "プレゼント企画",
+      "giveawayresults": "プレゼント企画の結果",
+      "paidmedia": "有料メディア"
+    },
+    "actionKind": {
+      "chatadduser": " さんがトークに参加しました",
+      "chatdeleteuser": " さんがトークから退出しました",
+      "chatjoinedbylink": " さんが招待リンクから参加しました",
+      "chatjoinedbyrequest": " さんの参加リクエストが承認されました",
+      "chatcreate": " さんがトークを作成しました",
+      "channelcreate": " さんがチャンネルを作成しました",
+      "chatedittitle": " さんがトーク名を変更しました",
+      "chateditphoto": " さんがトークの写真を変更しました",
+      "chatdeletephoto": " さんがトークの写真を削除しました",
+      "pinmessage": " さんがメッセージをピン留めしました",
+      "chatmigrateto": "トークがスーパーグループになりました",
+      "channelmigratefrom": "トークがスーパーグループになりました",
+      "historyclear": "トーク履歴が消去されました",
+      "phonecall": " さんが通話しました",
+      "groupcall": "音声チャットがありました",
+      "invitetogroupcall": " さんが音声チャットに招待しました",
+      "screenshottaken": " さんがスクリーンショットを撮りました",
+      "contactsignup": " さんが Telegram に登録しました",
+      "setmessagesttl": "メッセージの自動削除の設定が変わりました",
+      "setchattheme": " さんがトークのテーマを変更しました",
+      "giftpremium": " さんが Premium を贈りました",
+      "topiccreate": " さんがトピックを作成しました",
+      "topicedit": " さんがトピックを編集しました",
+      "suggestprofilephoto": " さんがプロフィール写真を提案しました",
+      "webviewdatasent": " さんがフォームを送信しました",
+      "paymentsent": "支払いが完了しました"
+    },
+    "actionBy": "{{name}}{{what}}"
+  },
+  "calendar": {
+    "prevMonth": "前の月",
+    "nextMonth": "次の月",
+    "check": "この月のトークがある日を確認",
+    "checking": "{{date}} を確認中… ({{done}}/{{total}})",
+    "checkingDay": "{{date}} を確認中…",
+    "dayEmpty": "{{date}} にはトークがありません。別の日付を選んでください。",
+    "legendHas": "トークあり",
+    "legendEmpty": "トークなし",
+    "dayCount": "{{count, number}}件"
+  },
+  "export": {
+    "title": "このトークをエクスポート",
+    "description": "メッセージを zip でダウンロードします。圧縮までブラウザの中で終わり、どのサーバーも経由しません。",
+    "start": "zip でエクスポート",
+    "cancel": "中止",
+    "from": "開始日",
+    "to": "終了日",
+    "rangeHint": "古いトークは期間を分けて取得するほうが安全です。",
+    "wholeHistory": "全期間をエクスポート",
+    "wholeHistoryHint": "日付を無視して最初から最後まで取得します。メッセージが多いと Telegram の制限のため非常に長くかかることがあります。",
+    "progress": "メッセージ {{count, number}} / {{total, number}}",
+    "waiting": "Telegram のリクエスト制限で待機中です。止まったわけではないので、ウィンドウを閉じないでください。",
+    "done": "完了。{{count, number}}件を保存しました。",
+    "savedPicked": "保存時に選んだ場所にあります。ブラウザはセキュリティ上フルパスを教えないため、ファイル名だけを表示しています。",
+    "savedDownload": "ブラウザのダウンロードフォルダにあります。",
+    "memoryFallback": "このブラウザはファイルへ直接書き込む機能に対応していないため、すべて作ってから一度にダウンロードします。非常に大きなトークは Chrome や Edge で取得するほうが安全です。",
+    "presets": "クイック選択",
+    "presetToday": "今日",
+    "presetWeek": "直近7日",
+    "presetMonth": "直近30日",
+    "stats": {
+      "total": "全メッセージ",
+      "messages": "{{count, number}}",
+      "period": "期間"
+    },
+    "includeTitle": "添付ファイルも一緒にエクスポート",
+    "includePhotos": "写真",
+    "includePhotosHint": "トークでやり取りされた写真を原寸で一緒に収めます。スタンプは含みません。写真が多いと時間も容量も大きく増えます。",
+    "includeNote": "収められなかった添付も、種類とファイル id は一覧（attachments.jsonl）にそのまま残ります。ファイルがないだけで、何がやり取りされたかは漏れなく記録されます。",
+    "progressFiles": "添付 {{files, number}} / {{totalFiles, number}}",
+    "deviceTitle": "この処理はいまお使いの機器が行います",
+    "deviceBody": "経由するサーバーがないため、トークの取得も圧縮もいま使っているパソコンまたはスマートフォンがすべて処理します。そのため機器の性能によってかかる時間が大きく変わります。メッセージが多い場合や写真も含める場合はパソコンで取得し、終わるまでこのタブを閉じないでください。",
+    "doneTitle": "エクスポート完了",
+    "doneRange": "期間",
+    "doneWhole": "全期間",
+    "doneMessages": "メッセージ",
+    "doneFiles": "収めたファイル",
+    "doneSize": "ファイルサイズ",
+    "doneCount": "{{count, number}}件",
+    "again": "新しくエクスポート",
+    "includeExcludedTitle": "含まれないもの",
+    "includeExcluded": "動画 ・ 音声 ・ 画像でない文書",
+    "layoutTitle": "自分の配置",
+    "layoutChat": "右（既定）— メッセンジャーのように右に表示",
+    "layoutFlat": "左 — 自分を目立たせないために左に表示",
+    "layoutHint": "左に置くと、どちらが自分かが分かりにくくなります。代わりに自分のメッセージにも名前が表示されます。",
+    "includeStickers": "スタンプ",
+    "includeStickersHint": "同じスタンプは何度送っていても1つだけ収められます。ふつうは1つのトークに数十種類なので、数 MB で収まります。",
+    "progressCounting": "メッセージ {{count, number}}件をエクスポート中…"
+  },
+  "errors": {
+    "title": "エラー",
+    "API_ID_INVALID": "api_id または api_hash が正しくありません。",
+    "API_ID_PUBLISHED_FLOOD": "このアプリキーは Telegram によって制限されました。my.telegram.org で自分で発行した api_id でもう一度お試しください。",
+    "AUTH_RESTART": "認証を最初からやり直す必要があります。",
+    "AUTH_USER_CANCEL": "認証がキャンセルされました。",
+    "FLOOD_WAIT": "リクエストが多すぎます。{{duration}}後にもう一度お試しください。",
+    "PASSWORD_HASH_INVALID": "2段階認証のパスワードが正しくありません。",
+    "PHONE_CODE_EXPIRED": "認証コードの有効期限が切れました。コードを取り直してください。",
+    "PHONE_CODE_INVALID": "認証コードが正しくありません。",
+    "PHONE_NUMBER_BANNED": "ブロックされている番号です。",
+    "PHONE_NUMBER_INVALID": "電話番号の形式が正しくありません。国番号を含めたか確認してください。",
+    "PHONE_NUMBER_UNOCCUPIED": "この番号で作られた Telegram アカウントがありません。",
+    "PHONE_PASSWORD_FLOOD": "パスワードの試行が多すぎます。しばらくしてからお試しください。",
+    "SESSION_PASSWORD_NEEDED": "2段階認証のパスワードが必要です。",
+    "PEER_NOT_CACHED": "トークの情報が期限切れです。一覧に戻ってもう一度選んでください。",
+    "SESSION_REVOKED": "セッションが終了しました。もう一度ログインしてください。",
+    "UPDATE_APP_TO_LOGIN": "Telegram はこの方式のログインを受け付けなくなりました。",
+    "UNKNOWN": "不明なエラーが発生しました: {{raw}}",
+    "duration": {
+      "seconds": "{{count}}秒",
+      "minutes": "{{count}}分",
+      "hours": "{{count}}時間"
+    }
+  },
+  "mediaInfo": {
+    "title": "添付ファイルの情報",
+    "id": "ファイル id",
+    "messageId": "メッセージ id",
+    "kind": "種類",
+    "fileName": "ファイル名",
+    "mimeType": "形式",
+    "size": "解像度",
+    "bytes": "サイズ",
+    "uploaded": "アップロード日時",
+    "dc": "データセンター",
+    "accessHash": "access hash",
+    "copy": "すべてコピー",
+    "duration": "長さ"
+  },
+  "errorPage": {
+    "title": "画面の表示中に問題が発生しました",
+    "body": "一時的な問題の可能性があります。再試行しても続く場合は最初の画面に戻ってください。",
+    "notFound": "ページが見つかりません",
+    "notFoundBody": "アドレスが変更されたか、誤って入力された可能性があります。",
+    "home": "最初の画面へ",
+    "details": "エラーの内容"
+  }
+}

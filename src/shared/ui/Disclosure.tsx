@@ -38,7 +38,7 @@ export function Disclosure({
   return (
     <details
       open={defaultOpen}
-      className={cn('group', !bare && 'rounded-2xl border border-slate-200 bg-white', className)}
+      className={cn('group', !bare && 'edge-card bg-white', className)}
     >
       <summary
         className={cn(

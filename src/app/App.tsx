@@ -1,14 +1,16 @@
-import { lazy, Suspense, useEffect } from 'react';
+import { lazy, useEffect } from 'react';
 import {
   createBrowserRouter,
   createHashRouter,
   Navigate,
   Outlet,
   RouterProvider,
+  useLocation,
   type RouteObject,
 } from 'react-router-dom';
 import { MainLayout } from './layouts/MainLayout';
-import { Spinner } from '@/shared/ui/Spinner';
+import { ErrorPage } from './ErrorPage';
+import { DialogListSkeleton, MessageListSkeleton } from '@/shared/ui/Skeleton';
 import { useAuth } from '@/shared/auth/useAuth';
 import { touchStoredSession } from '@/shared/telegram/session';
 import { langSegment, languageFromPath } from '@/shared/i18n';
@@ -18,12 +20,10 @@ const Dialogs = lazy(() => import('@/features/dialogs/pages/Dialogs'));
 const DialogDetail = lazy(() => import('@/features/dialogs/pages/DialogDetail'));
 const ExportPage = lazy(() => import('@/features/export/pages/ExportPage'));
 
-function PageLoader() {
-  return (
-    <div className="flex min-h-[60vh] items-center justify-center">
-      <Spinner />
-    </div>
-  );
+/** 세션 복원을 기다리는 동안. Suspense 폴백과 같은 것을 그려야 화면이 안 갈아치워진다. */
+function BootSkeleton() {
+  const { pathname } = useLocation();
+  return /\/dialogs\/[^/]+/.test(pathname) ? <MessageListSkeleton /> : <DialogListSkeleton />;
 }
 
 /**
@@ -36,7 +36,7 @@ function PageLoader() {
 function RequireAuth() {
   const step = useAuth((s) => s.step);
   const booted = useAuth((s) => s.booted);
-  if (!booted) return <PageLoader />;
+  if (!booted) return <BootSkeleton />;
   if (step !== 'authorized') return <Navigate to="/" replace />;
   return <Outlet />;
 }
@@ -62,14 +62,33 @@ const pages: RouteObject[] = [
   */
 const basename = import.meta.env.BASE_URL + langSegment(languageFromPath());
 
+/*
+  Suspense 는 MainLayout **안**에 있다(레이아웃의 Outlet 을 감싼다).
+
+  여기서 감싸면 lazy 페이지가 도착하기를 기다리는 동안 MainLayout 까지 통째로 대체돼서,
+  새로고침할 때마다 헤더가 나왔다 사라졌다 다시 나온다. 껍데기는 그대로 두고 본문만
+  갈아 끼워야 한다.
+*/
 const tree = [
   {
-    element: (
-      <Suspense fallback={<PageLoader />}>
-        <MainLayout />
-      </Suspense>
-    ),
-    children: pages,
+    element: <MainLayout />,
+    /*
+      레이아웃 자체가 무너진 경우. 헤더도 못 그리는 상황이라 화면 전체를 대신한다.
+    */
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        /*
+          경로 없는 껍데기 하나를 끼워 두는 이유는 **헤더를 남기기 위해서**다.
+
+          errorElement 는 그것이 달린 라우트의 element 를 대신한다. 위 레이아웃 라우트에만
+          두면 페이지 하나가 넘어져도 헤더까지 같이 사라져, 사용자는 앱이 통째로 죽은 것으로
+          본다. 자식 쪽에 두면 Outlet 자리만 바뀐다.
+        */
+        errorElement: <ErrorPage />,
+        children: pages,
+      },
+    ],
   },
 ];
 

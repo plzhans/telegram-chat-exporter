@@ -8,6 +8,7 @@ import {
   DEFAULT_LANGUAGE,
   PREFIXED_LANGUAGES,
   SUPPORTED_LANGUAGES,
+  dirOf,
   langSegment,
   type SeoMeta,
   type SupportedLanguage,
@@ -296,8 +297,12 @@ function localizedPages(): Plugin {
     const meta = seoOf(lang);
     const url = canonicalOf(lang);
 
+    /**
+     * `dir` 은 원본 `index.html` 에 없을 수도 있어서(기본 언어가 ltr 이라 굳이 안 적는다)
+     * 속성 하나를 갈아 끼우는 대신 여는 태그를 통째로 다시 쓴다.
+     */
     let out = html
-      .replace(/<html lang="[^"]*">/, `<html lang="${meta.tag}">`)
+      .replace(/<html[^>]*>/, `<html lang="${meta.tag}" dir="${dirOf(lang)}">`)
       .replace(/<title>[^<]*<\/title>/, `<title>${meta.title}</title>`)
       .replace(/(rel="canonical" href=")[^"]*(")/, `$1${url}$2`);
 

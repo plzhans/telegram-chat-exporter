@@ -3,6 +3,7 @@ import { initReactI18next } from 'react-i18next';
 import {
   DEFAULT_LANGUAGE,
   SUPPORTED_LANGUAGES,
+  dirOf,
   langSegment,
   type SeoMeta,
   type SupportedLanguage,
@@ -12,6 +13,7 @@ export {
   SUPPORTED_LANGUAGES,
   DEFAULT_LANGUAGE,
   PREFIXED_LANGUAGES,
+  dirOf,
   langSegment,
   type SeoMeta,
   type SupportedLanguage,
@@ -82,13 +84,25 @@ function storedLanguage(): SupportedLanguage | null {
   }
 }
 
+/**
+ * 같은 언어를 가리키는 옛 코드.
+ *
+ * 브라우저가 어느 쪽으로 알려 줄지는 기기와 판올림 시기에 달렸다. `tl` 은 타갈로그의
+ * 옛 코드이고 안드로이드가 아직도 이 이름으로 보내는 경우가 있다. `in` 과 `iw` 는
+ * 자바가 굳혀 놓은 인도네시아어·히브리어의 옛 코드다.
+ */
+const LEGACY_BASE: Record<string, string> = { tl: 'fil', in: 'id', iw: 'he', ji: 'yi' };
+
+const baseOf = (tag: string) => {
+  const base = tag.split('-')[0];
+  return LEGACY_BASE[base] ?? base;
+};
+
 /** 브라우저 설정에서 고른다. 지역까지 맞는 게 없으면 언어만 같은 것도 받는다. */
 function browserLanguage(): SupportedLanguage | null {
   for (const tag of navigator.languages?.length ? navigator.languages : [navigator.language]) {
     const lower = (tag ?? '').toLowerCase();
-    const hit = SUPPORTED_LANGUAGES.find(
-      (l) => l === lower || l.split('-')[0] === lower.split('-')[0],
-    );
+    const hit = SUPPORTED_LANGUAGES.find((l) => l === lower || baseOf(l) === baseOf(lower));
     if (hit) return hit;
   }
   return null;
@@ -103,6 +117,21 @@ function browserLanguage(): SupportedLanguage | null {
 export function activeLanguage(): SupportedLanguage {
   if (!__STANDALONE__) return languageFromPath();
   return storedLanguage() ?? browserLanguage() ?? DEFAULT_LANGUAGE;
+}
+
+/**
+ * 문서의 언어와 읽기 방향을 실제로 보고 있는 언어에 맞춘다.
+ *
+ * 정적 셸은 언어마다 따로 나가지만, SPA 폴백으로 다른 언어의 셸이 올 수 있다
+ * (`/en-us/dialogs` 새로고침). 그때 `<html lang>` 이 틀린 채로 남으면 화면 낭독기와
+ * 브라우저 번역이 잘못된 언어로 읽는다.
+ *
+ * `dir` 은 한 걸음 더 나간다 — 아랍어판 셸에 `dir="rtl"` 이 없으면 글자만 아랍어이고
+ * 정렬·여백·문장 부호 위치는 전부 왼쪽에서 오른쪽인 화면이 나온다.
+ */
+function applyDocumentLanguage(lang: SupportedLanguage): void {
+  document.documentElement.lang = seoOf(lang).tag;
+  document.documentElement.dir = dirOf(lang);
 }
 
 /**
@@ -122,7 +151,7 @@ export function switchLanguage(next: SupportedLanguage): void {
   } catch {
     // 저장이 막혔으면 다음에 열 때 되돌아가겠지만, 지금 화면만이라도 바꿔 준다.
     void i18n.changeLanguage(next);
-    document.documentElement.lang = seoOf(next).tag;
+    applyDocumentLanguage(next);
     return;
   }
   window.location.reload();
@@ -146,13 +175,6 @@ void i18n.use(initReactI18next).init({
   interpolation: { escapeValue: false },
 });
 
-/**
- * 문서의 언어를 실제로 보고 있는 언어에 맞춘다.
- *
- * 정적 셸은 언어마다 따로 나가지만, SPA 폴백으로 다른 언어의 셸이 올 수 있다
- * (`/en-us/dialogs` 새로고침). 그때 `<html lang>` 이 틀린 채로 남으면 화면 낭독기와
- * 브라우저 번역이 잘못된 언어로 읽는다.
- */
-document.documentElement.lang = seoOf(active).tag;
+applyDocumentLanguage(active);
 
 export default i18n;

@@ -43,7 +43,7 @@ function FormExample() {
             <dd className="min-w-0 flex-1 font-mono text-slate-800">{row.value}</dd>
           </div>
           {/* 라벨 열(w-24 = 6rem) + gap-2(0.5rem) 만큼 들여써서 값과 왼쪽을 맞춘다. */}
-          {row.note && <p className="mt-1 pl-[6.5rem] text-slate-500">{row.note}</p>}
+          {row.note && <p className="mt-1 ps-[6.5rem] text-slate-500">{row.note}</p>}
         </div>
       ))}
     </dl>
@@ -73,7 +73,7 @@ function Troubleshooting() {
 
       <div className="space-y-2 border-t border-slate-100 px-3 py-2.5">
         <p className="text-slate-500">{t('credentials.guide.trouble.intro')}</p>
-        <ol className="list-decimal space-y-1.5 pl-4 text-slate-600 marker:text-slate-400">
+        <ol className="list-decimal space-y-1.5 ps-4 text-slate-600 marker:text-slate-400">
           {keys.map((key) => (
             <li key={key}>
               <Trans i18nKey={`credentials.guide.trouble.${key}`} components={RICH} />

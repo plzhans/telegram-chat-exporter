@@ -6,7 +6,7 @@ import { Alert } from '@/shared/ui/Alert';
 import { Button } from '@/shared/ui/Button';
 import { ErrorNotice } from '@/shared/ui/ErrorNotice';
 import { Modal } from '@/shared/ui/Modal';
-import { Spinner } from '@/shared/ui/Spinner';
+import { MessageListSkeleton, Skeleton } from '@/shared/ui/Skeleton';
 import { cn } from '@/shared/lib/utils';
 import { dateKeyOf, formatDisplayDate, isSameLocalDay, startOfDayUnix } from '@/shared/lib/date';
 import {
@@ -36,18 +36,10 @@ import { DateDivider, MessageRow } from '../components/MessageRow';
  * 메시지 훅들을 같이 두면, peer 가 없는 렌더에서 훅이 먼저 돌아 PEER_NOT_CACHED 에러가 굳는다.
  */
 export default function DialogDetail() {
-  const { t } = useTranslation();
   const { id = '' } = useParams();
   const { data: dialogs, isPending } = useDialogsQuery();
 
-  if (isPending) {
-    return (
-      <div className="flex flex-col items-center gap-3 rounded-2xl border border-slate-200 bg-white p-8">
-        <Spinner />
-        <p className="text-sm text-slate-500">{t('messages.loading')}</p>
-      </div>
-    );
-  }
+  if (isPending) return <MessageListSkeleton />;
 
   if (!getCachedPeer(id)) return <Navigate to="/dialogs" replace />;
 
@@ -221,8 +213,16 @@ function DialogView({ id, dialog }: { id: string; dialog?: DialogSummary }) {
       setSelectedDate(undefined);
       return;
     }
+    /*
+      한 번에 내려간다.
+
+      `behavior: 'smooth'` 는 거리에 비례해 오래 걸린다. 며칠치를 이어 받아 둔 대화방은
+      스크롤이 수만 픽셀이라, 부드럽게 내려가는 동안 화면이 몇 초씩 흘러가고 그 사이
+      "위쪽에 닿으면 더 불러온다" 규칙까지 스쳐 지나간다. 이 버튼을 누른 사람은 과정을
+      보려는 게 아니라 끝에 있고 싶은 것이다.
+    */
     const element = scrollRef.current;
-    element?.scrollTo({ top: element.scrollHeight, behavior: 'smooth' });
+    if (element) element.scrollTop = element.scrollHeight;
   }, [selectedDate]);
 
   /**
@@ -247,7 +247,7 @@ function DialogView({ id, dialog }: { id: string; dialog?: DialogSummary }) {
           to="/dialogs"
           className="rounded-lg p-2 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="h-4 w-4 rtl:rotate-180" />
         </Link>
         {dialog && (
           <Avatar
@@ -255,11 +255,19 @@ function DialogView({ id, dialog }: { id: string; dialog?: DialogSummary }) {
             title={dialog.title}
             kind={dialog.kind}
             photo={dialog.photo}
+            /*
+              여기도 선명한 판을 쓴다. 메시지에 딸려 오는 strippedThumb 은 수십 px 이라
+              뭉개져 보인다.
+
+              요청이 느는 걸 걱정할 자리가 아니다 - 대화방 하나뿐이고, 목록을 거쳐 들어온
+              경우에는 그때 받아 둔 것이 캐시에 있어 추가 요청이 아예 없다.
+            */
+            sharp
             className="h-8 w-8 text-sm"
           />
         )}
         <div className="min-w-0 flex-1">
-          <h1 className="truncate text-base font-bold leading-tight text-slate-900">
+          <h1 className="truncate text-sm font-bold leading-tight text-slate-900">
             {dialog?.title ?? id}
           </h1>
           {/*
@@ -269,33 +277,38 @@ function DialogView({ id, dialog }: { id: string; dialog?: DialogSummary }) {
           {period && <p className="truncate text-[0.7rem] text-slate-500">{period}</p>}
         </div>
 
+        {/*
+          좁은 화면에서는 아이콘만 남긴다. 이 줄에는 대화방 이름과 기간이 먼저 서야 하는데,
+          글자가 붙은 버튼 두 개가 그 자리를 먹고 이름을 줄바꿈시킨다.
+
+          글자를 지우는 대신 `title`·`aria-label` 로 남긴다 — 눈으로 못 읽어도 길게 누르면
+          뜨고, 화면 낭독기는 그대로 읽는다.
+        */}
         <Link to={exportHref} className="shrink-0">
-          <Button variant="secondary" size="sm">
+          <Button
+            variant="secondary"
+            size="sm"
+            className="px-2 sm:px-3"
+            title={t('messages.export')}
+            aria-label={t('messages.export')}
+          >
             <Download className="h-3.5 w-3.5" />
-            {t('messages.export')}
+            <span className="hidden sm:inline">{t('messages.export')}</span>
           </Button>
         </Link>
 
         <Button
           variant={calendarOpen ? 'primary' : 'secondary'}
           size="sm"
-          className="shrink-0"
+          className="shrink-0 px-2 sm:px-3"
+          title={t('messages.jumpToDate')}
+          aria-label={t('messages.jumpToDate')}
           onClick={() => setCalendarOpen((open) => !open)}
         >
           <CalendarDays className="h-3.5 w-3.5" />
-          {selectedDate ?? t('messages.jumpToDate')}
+          <span className="hidden sm:inline">{selectedDate ?? t('messages.jumpToDate')}</span>
         </Button>
 
-        {selectedDate && (
-          <Button
-            variant="ghost"
-            size="sm"
-            className="shrink-0"
-            onClick={() => setSelectedDate(undefined)}
-          >
-            {t('messages.backToLatest')}
-          </Button>
-        )}
       </div>
 
       {/*
@@ -347,13 +360,17 @@ function DialogView({ id, dialog }: { id: string; dialog?: DialogSummary }) {
       )}
 
       {isPending ? (
-        <div className="flex flex-col items-center gap-3 rounded-2xl border border-slate-200 bg-white p-8">
-          <Spinner />
-          <p className="text-sm text-slate-500">{t('messages.loading')}</p>
+        <div className="edge-card min-h-0 flex-1 space-y-3 bg-white p-1.5 sm:p-3">
+          {Array.from({ length: 7 }, (_, i) => (
+            <div key={i} className={cn('flex items-end gap-2', i % 3 === 2 && 'flex-row-reverse')}>
+              {i % 3 !== 2 && <Skeleton className="h-7 w-7 shrink-0 rounded-full" />}
+              <Skeleton className={cn('h-10 rounded-2xl', ['w-40', 'w-56', 'w-32', 'w-48'][i % 4])} />
+            </div>
+          ))}
         </div>
       ) : messages.length === 0 ? (
         !error && (
-          <p className="rounded-2xl border border-slate-200 bg-white p-8 text-center text-sm text-slate-500">
+          <p className="edge-card bg-white p-8 text-center text-sm text-slate-500">
             {t('messages.empty')}
           </p>
         )
@@ -362,7 +379,15 @@ function DialogView({ id, dialog }: { id: string; dialog?: DialogSummary }) {
         <div className="relative flex min-h-0 flex-1 flex-col">
         <div
           ref={scrollRef}
-          className="scroll-area min-h-0 flex-1 space-y-3 overflow-y-auto rounded-2xl border border-slate-200 bg-white p-3"
+          /*
+            좁은 화면에서는 대화가 화면 끝까지 차지한다.
+
+            `-mx-4` 로 부모(main)의 좌우 여백을 되돌린다. 여백을 부모에서 아예 빼는 대신
+            여기서 되돌리는 이유는, 그 여백이 로그인·목록 화면에는 그대로 필요하기 때문이다.
+            테두리와 둥근 모서리도 같이 없앤다 - 화면 끝에 닿는 선은 테두리로 보이지 않고
+            잘린 것처럼 보인다. sm 이상에서는 전부 원래대로 돌아온다.
+          */
+          className="scroll-area edge-card min-h-0 flex-1 space-y-3 overflow-y-auto bg-white p-1.5 sm:p-3"
         >
           {/*
             날짜로 점프하면 대화 중간에 서게 된다. 그래서 위(이전)와 아래(이후) 양쪽에
@@ -415,7 +440,7 @@ function DialogView({ id, dialog }: { id: string; dialog?: DialogSummary }) {
             type="button"
             onClick={goToLatest}
             aria-label={t('messages.backToLatest')}
-            className="absolute bottom-3 right-3 flex h-9 w-9 items-center justify-center rounded-full bg-slate-900/70 text-white shadow-lg transition-colors hover:bg-slate-900"
+            className="absolute bottom-3 end-3 flex h-9 w-9 items-center justify-center rounded-full bg-slate-900/70 text-white shadow-lg transition-colors hover:bg-slate-900"
           >
             <ChevronDown className="h-5 w-5" />
           </button>

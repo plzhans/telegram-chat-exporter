@@ -1,0 +1,403 @@
+{
+  "seo": {
+    "tag": "id-ID",
+    "ogLocale": "id_ID",
+    "hreflang": [
+      "id-ID",
+      "id"
+    ],
+    "title": "Ekspor obrolan Telegram — di peramban Anda, tanpa disimpan di server | Telegram Exporter",
+    "shareTitle": "Ekspor obrolan Telegram — di peramban Anda, tanpa disimpan di server",
+    "description": "Ekspor percakapan Telegram Anda ke berkas zip. Semuanya berjalan di dalam peramban dan tidak ada yang disimpan di server — nomor telepon, kode masuk, dan pesan Anda tidak pernah dikirim ke mana pun. Tidak perlu memasang apa pun.",
+    "shareDescription": "Ekspor obrolan Telegram ke berkas zip langsung di peramban. Tidak ada yang disimpan di server."
+  },
+  "app": {
+    "title": "Telegram Exporter",
+    "tagline": "Cadangkan obrolan Telegram sepenuhnya di peramban Anda"
+  },
+  "common": {
+    "next": "Lanjut",
+    "back": "Kembali",
+    "cancel": "Batal",
+    "retry": "Coba lagi",
+    "refresh": "Muat ulang",
+    "source": "Kode sumber",
+    "language": "Bahasa",
+    "signOut": "Keluar"
+  },
+  "trust": {
+    "purpose": "Halaman ini dibuat agar Anda bisa mencadangkan percakapan Telegram dengan mudah.",
+    "lede": "Obrolan disimpan sebagai berkas zip. Peramban adalah program yang Anda pakai untuk membuka internet, seperti Chrome atau Safari — dan semua prosesnya selesai di dalam peramban itu.",
+    "how": {
+      "title": "Cara kerjanya",
+      "noServer": {
+        "title": "Tidak ada server kami di tengah",
+        "body": "Kebanyakan situs mengirim apa yang Anda ketik ke server mereka sendiri. Halaman ini sama sekali tidak punya server seperti itu. Peramban Anda berbicara langsung dengan Telegram."
+      },
+      "credentials": {
+        "title": "Nomor telepon dan kode masuk hanya menuju Telegram",
+        "body": "Nilai yang dibutuhkan untuk masuk tidak dipakai untuk apa pun selain permintaan ke Telegram. Tidak ada jalan bagi kami untuk melihatnya."
+      },
+      "download": {
+        "title": "Pesan Anda langsung menjadi berkas",
+        "body": "Pesan ditampilkan di layar, dan begitu Anda menekan ekspor, pesan itu dikemas dan disimpan ke komputer Anda sendiri. Tidak ada yang diunggah ke mana pun."
+      }
+    },
+    "verify": {
+      "title": "Cara memeriksanya sendiri",
+      "csp": "Halaman ini dikunci sehingga <strong>tidak bisa terhubung ke alamat mana pun</strong> selain Telegram (<code>wss://*.web.telegram.org</code>). Aturan itu dipaksakan oleh peramban Anda, jadi pembuat halaman ini pun tidak bisa melanggarnya.",
+      "devtools": "Tekan F12 (⌥⌘I di Mac) lalu buka tab <strong>Network</strong> untuk melihat semua alamat yang benar-benar dihubungi halaman ini.",
+      "source": "Seluruh kode sumbernya terbuka.",
+      "peek": "Buktikan sendiri bahwa halaman ini tidak bisa terhubung ke tempat lain.",
+      "cspAnalytics": "Halaman ini tidak bisa terhubung ke mana pun selain Telegram (<code>wss://*.web.telegram.org</code>) dan Google Analytics untuk menghitung kunjungan — <strong>tidak ada yang lain.</strong> Peramban yang memaksakan aturan ini, jadi situs ini tidak bisa mengubahnya."
+    },
+    "stored": {
+      "title": "Apa yang tersisa di peramban ini",
+      "lede": "Tidak ada data pribadi dan isi pesan yang disimpan. Hanya materi yang terlihat sama bagi semua orang, ditambah nilai yang menjaga Anda tetap masuk. Tabel ini adalah daftar lengkapnya.",
+      "colKind": "Apa",
+      "colWhere": "Disimpan di mana",
+      "colUntil": "Kapan dihapus",
+      "sessionKind": "Status masuk",
+      "sessionWhere": "Hanya di dalam tab ini",
+      "sessionUntil": "Saat tab ditutup · setelah {{minutes}} menit tak dipakai · saat Anda keluar",
+      "sessionNote": "Hanya disimpan bila Anda mencentang “tetap masuk”, supaya memuat ulang tidak membuat Anda harus masuk lagi. Tab dan jendela lain tidak bisa melihatnya.",
+      "stickerKind": "Gambar stiker",
+      "stickerWhere": "Peramban ini",
+      "stickerUntil": "Saat Anda keluar · yang terlama lebih dulu bila melewati 20MB",
+      "stickerNote": "Stiker terlihat sama bagi semua pengguna Telegram, jadi itu bukan data pribadi. Siapa yang mengirim dan kapan tidak disimpan — hanya gambarnya. Disimpan karena mengunduhnya berulang kali terasa lambat.",
+      "peek": "Hanya dua hal: status masuk dan gambar stiker. Tidak ada isi pesan."
+    },
+    "never": {
+      "title": "Apa yang tidak pernah disimpan",
+      "body": "Percakapan, foto dan lampiran, nomor telepon, kontak, kode masuk. Tidak satu pun disimpan, dan tidak satu pun pergi ke mana-mana selain ke Telegram."
+    },
+    "analytics": {
+      "title": "Statistik kunjungan terhubung ke Google",
+      "peek": "Hanya jumlah kunjungan. Tanpa percakapan atau nomor telepon.",
+      "lede": "Situs ini memakai <strong>Google Analytics</strong> untuk menghitung pengunjung.",
+      "network": "Artinya halaman ini <strong>juga terhubung ke Google</strong>, bukan hanya Telegram. Skrip analitik diambil dari <code>googletagmanager.com</code> dan catatan kunjungan dikirim ke <code>google-analytics.com</code>. Itulah satu-satunya koneksi keluar selain Telegram, dan Anda bisa melihatnya di tab Network pada alat pengembang.",
+      "sent": "Yang dikirim: bahwa halaman awal dibuka, dan bahasanya apa.",
+      "notSent": "Yang tidak pernah dikirim: percakapan, nomor telepon, kode masuk, atau obrolan mana yang Anda buka. Alamat obrolan memuat id obrolan, jadi alamat itu sengaja tidak dikirim.",
+      "block": "Memblokirnya dengan pemblokir iklan atau perlindungan pelacakan peramban tidak merusak alat ini.",
+      "selfHost": "Kalau Anda tidak menginginkan itu pun, <strong>unduh kodenya dan jalankan di komputer Anda sendiri.</strong> Setelan analitik hanya diisikan saat situs ini dipublikasikan, jadi salinan yang Anda bangun sendiri sama sekali tidak memuat analitik — koneksi ke Google hilang dari kode."
+    },
+    "ads": {
+      "title": "Iklan ditampilkan",
+      "peek": "Ada iklan Google AdSense. Tidak berkaitan dengan percakapan Anda.",
+      "body": "Situs ini memasang iklan <strong>Google AdSense</strong>. Karena itu ia juga terhubung ke jaringan iklan Google (<code>googlesyndication.com</code> · <code>doubleclick.net</code>), dan iklan berjalan di dalam bingkai terpisah (iframe).",
+      "isolation": "Kode iklan tidak bisa membaca apa pun di halaman ini. Percakapan, nomor telepon, dan kode masuk Anda tidak pernah dibagikan ke pengiklan. <strong>Tidak ada iklan di layar masuk maupun layar percakapan.</strong>",
+      "selfHost": "Untuk memakainya tanpa iklan, <strong>unduh kodenya dan jalankan di komputer Anda sendiri.</strong> Setelan iklan hanya diisikan saat situs ini dipublikasikan, jadi salinan yang Anda bangun sendiri sama sekali tidak memuat kode iklan."
+    },
+    "device": {
+      "title": "Kecepatan bergantung pada perangkat Anda",
+      "body": "Tidak adanya server di tengah juga berarti komputer atau ponsel yang sedang Anda pakai sekarang yang melakukan seluruh pengambilan dan pengemasan. Karena itu obrolan yang sama bisa memakan waktu berbeda di perangkat berbeda.",
+      "bigChat": "Untuk obrolan dengan sangat banyak pesan, pakailah komputer. Ponsel punya memori yang lebih terbatas, sehingga ekspor bisa lambat atau berhenti di tengah jalan.",
+      "keepOpen": "Biarkan tab ini terbuka selama ekspor. Bila layar mati atau Anda pindah ke aplikasi lain, peramban akan memperlambat atau menghentikan prosesnya.",
+      "rate": "Telegram membatasi kecepatan permintaan, jadi obrolan besar tetap membutuhkan waktu tunggu meski perangkat Anda cepat. Ini bukan macet.",
+      "peek": "Karena tidak ada server di tengah, lamanya bergantung pada komputer atau ponsel Anda sendiri."
+    },
+    "warning": {
+      "title": "Alat ini meminta kode masuk Anda",
+      "principle": "Telegram meminta Anda tidak pernah membagikan kode masuk kepada siapa pun. Nasihat itu benar. Jangan jadikan situs ini pengecualian — curigailah dengan kadar yang sama.",
+      "why": "Meski begitu, alat ini masuk ke Telegram sebagai Anda untuk mengambil pesan Anda. Tanpa nomor telepon dan kode masuk, ia tidak bisa berbuat apa-apa. Nilai-nilai itu hanya dipakai untuk permintaan ke Telegram dan tidak pernah disimpan di mana pun.",
+      "storage": "Setelah Anda masuk, satu-satunya yang tersimpan adalah satu nilai yang menjaga koneksi tetap hidup, dan itu pun hanya hidup di dalam tab yang sedang Anda lihat — tutup tabnya dan nilai itu lenyap.",
+      "selfHost": "Kalau Anda masih belum yakin, jangan percaya kata-kata siapa pun. Bacalah kodenya, atau unduh dan jalankan di komputer Anda sendiri. Anda akan mendapat layar yang persis sama, berjalan di atas kode yang Anda periksa sendiri."
+    }
+  },
+  "credentials": {
+    "title": "Mulai",
+    "modeShared": "Mulai sekarang (disarankan)",
+    "modeSharedHint": "Memakai kunci aplikasi yang disertakan pada situs ini. Anda hanya perlu nomor telepon.",
+    "modeCustom": "Pakai api_id saya sendiri",
+    "modeCustomHint": "Memakai kunci yang Anda daftarkan sendiri di my.telegram.org.",
+    "apiId": "api_id",
+    "apiHash": "api_hash",
+    "open": "Buka halaman pendaftaran",
+    "guide": {
+      "title": "Cara mendapatkan api_id",
+      "step1": "Masukkan nomor telepon Anda di my.telegram.org. Kode konfirmasi datang ke aplikasi Telegram, bukan lewat SMS — biarkan Telegram terbuka di perangkat lain.",
+      "step2": "Setelah masuk, buka <b>API development tools</b> lalu isi seperti contoh berikut. Gunakan <b>huruf Latin dan angka saja</b> — selain itu akan gagal tanpa memberi tahu alasannya.",
+      "step3": "Setelah dikirim, Anda mendapat api_id dan api_hash. Tempelkan keduanya ke kolom di atas.",
+      "fields": {
+        "appTitle": "App title",
+        "shortName": "Short name",
+        "url": "URL",
+        "platform": "Platform",
+        "description": "Description"
+      },
+      "empty": "biarkan kosong",
+      "shortNameNote": "5–32 karakter, hanya huruf dan angka. Harus unik secara global, dan nama yang sudah dipakai hanya muncul sebagai ERROR — coba tambahkan angka.",
+      "trouble": {
+        "title": "Jika yang muncul hanya ERROR",
+        "intro": "Halaman itu tidak pernah memberi tahu penyebab kegagalannya. Periksa hal-hal berikut, mulai dari yang paling mungkin.",
+        "reload": "<b>Muat ulang halamannya dulu.</b> Aplikasi sering kali sudah terbuat meski ERROR muncul.",
+        "vpn": "<b>Matikan VPN atau proxy Anda.</b> Bila negara IP Anda berbeda dari negara nomor telepon, Telegram memblokirnya. Ini penyebab paling umum.",
+        "extensions": "<b>Coba lagi di jendela penyamaran dengan semua ekstensi dimatikan.</b> Pemblokir iklan menghentikan pengiriman formulirnya.",
+        "shortName": "<b>Coba short name yang lain.</b> Nama yang bentrok juga hanya muncul sebagai ERROR.",
+        "spambot": "<b>Periksa pembatasan akun.</b> Akun baru atau yang ditandai spam tidak bisa membuat aplikasi. Kirim pesan ke @SpamBot di Telegram untuk mengetahuinya.",
+        "wait": "<b>Tunggu 15–60 menit lalu coba sekali saja.</b> Percobaan berulang sendiri terkena pembatasan."
+      }
+    },
+    "remember": "Mengingat api_id Anda di peramban ini. Itu adalah pengenal aplikasi, bukan akses ke akun, jadi aman untuk disimpan.",
+    "keepSignedIn": "Tetap masuk di tab ini",
+    "keepSignedInHint": "Memuat ulang tidak akan meminta Anda masuk lagi. Menutup tab atau membiarkannya menganggur {{minutes}} menit akan menghapusnya. Matikan bila memakai komputer bersama.",
+    "forget": "Lupakan api_id tersimpan",
+    "submit": "Sambungkan ke Telegram",
+    "errors": {
+      "required": "Kolom ini wajib diisi.",
+      "apiIdFormat": "api_id harus berupa angka.",
+      "apiHashFormat": "api_hash harus 32 karakter heksadesimal."
+    }
+  },
+  "sessionNotice": {
+    "confirm": "OK",
+    "expired": {
+      "title": "Sesi Anda kedaluwarsa",
+      "body": "Tab ini tidak dipakai lebih dari {{minutes}} menit, jadi data masuk yang tersimpan di peramban ini dihapus. Akun Anda tidak tersentuh — cukup masuk lagi."
+    },
+    "invalid": {
+      "title": "Silakan masuk lagi",
+      "body": "Data masuk yang tersimpan tidak bisa dilanjutkan. Sesi mungkin telah diakhiri dari perangkat lain, atau Telegram membuatnya kedaluwarsa."
+    }
+  },
+  "auth": {
+    "connecting": "Menyambung ke Telegram…",
+    "phone": {
+      "title": "Nomor telepon",
+      "willSend": "Kode akan dikirim ke:",
+      "placeholder": "+62 812 3456 7890",
+      "submit": "Kirimkan kode",
+      "country": "Negara",
+      "countrySearch": "Cari berdasarkan nama, kode, atau nomor",
+      "countryEmpty": "Tidak ada yang cocok",
+      "unverified": "Ini tidak cocok dengan format nomor untuk negara tersebut. Kalau bukan salah ketik, Anda tetap bisa melanjutkan."
+    },
+    "code": {
+      "titleApp": "Kode yang dikirim ke aplikasi Telegram Anda",
+      "titleSms": "Kode yang dikirim lewat SMS",
+      "hint": "Masukkan kode 5 digit yang masuk ke Telegram di perangkat lain.",
+      "submit": "Masuk",
+      "changeNumber": "Pakai nomor lain"
+    },
+    "password": {
+      "title": "Kata sandi verifikasi dua langkah",
+      "hint": "Masukkan kata sandi verifikasi dua langkah yang disetel pada akun Anda.",
+      "hintLabel": "Petunjuk: {{hint}}",
+      "submit": "Konfirmasi"
+    }
+  },
+  "dialogs": {
+    "title": "Obrolan",
+    "subtitle": "Pilih obrolan yang ingin Anda cadangkan.",
+    "loading": "Memuat obrolan…",
+    "empty": "Tidak ada obrolan.",
+    "count": "{{count, number}} obrolan",
+    "filtered": "{{shown, number}} dari {{total, number}}",
+    "noMatch": "Tidak ada nama obrolan yang cocok.",
+    "searchPlaceholder": "Cari obrolan berdasarkan nama",
+    "searchClear": "Hapus pencarian",
+    "unread": "{{count}} belum dibaca",
+    "type": {
+      "user": "Pribadi",
+      "group": "Grup",
+      "channel": "Saluran"
+    },
+    "preview": {
+      "you": "Anda",
+      "photo": "Foto",
+      "document": "Berkas",
+      "video": "Video",
+      "audio": "Suara",
+      "sticker": "Stiker",
+      "poll": "Jajak pendapat",
+      "contact": "Kontak",
+      "geo": "Lokasi",
+      "webPage": "Tautan",
+      "action": "Pesan sistem",
+      "other": "Lampiran"
+    }
+  },
+  "messages": {
+    "loading": "Memuat pesan…",
+    "empty": "Tidak ada pesan di sini.",
+    "loadOlder": "Muat pesan lebih lama",
+    "loadNewer": "Muat pesan lebih baru",
+    "albumCount": "{{count, number}} foto",
+    "edited": "diedit",
+    "photoViewer": "Penampil foto",
+    "previousPhoto": "Foto sebelumnya",
+    "nextPhoto": "Foto berikutnya",
+    "dayEmpty": "Tidak ada pesan pada {{date}}. Ditampilkan mulai {{landed}}, hari berikutnya yang punya pesan.",
+    "jumpToDate": "Lompat ke tanggal",
+    "backToLatest": "Kembali ke terbaru",
+    "export": "Ekspor",
+    "media": "Lampiran: {{type}}",
+    "action": "Pesan sistem: {{type}}",
+    "sender": {
+      "bot": "bot",
+      "channel": "saluran"
+    },
+    "mediaKind": {
+      "photo": "foto",
+      "sticker": "stiker",
+      "video": "video",
+      "gif": "GIF",
+      "audio": "audio",
+      "file": "berkas",
+      "contact": "kontak",
+      "geo": "lokasi",
+      "poll": "jajak pendapat",
+      "webpage": "tautan",
+      "venue": "tempat",
+      "dice": "dadu",
+      "game": "permainan",
+      "invoice": "tagihan",
+      "story": "cerita",
+      "voice": "pesan suara",
+      "videoNote": "pesan video",
+      "unsupported": "format tak didukung",
+      "geolive": "lokasi langsung",
+      "giveaway": "undian",
+      "giveawayresults": "hasil undian",
+      "paidmedia": "media berbayar"
+    },
+    "actionKind": {
+      "chatadduser": " bergabung ke obrolan",
+      "chatdeleteuser": " keluar dari obrolan",
+      "chatjoinedbylink": " bergabung lewat tautan undangan",
+      "chatjoinedbyrequest": " disetujui untuk bergabung",
+      "chatcreate": " membuat obrolan",
+      "channelcreate": " membuat saluran",
+      "chatedittitle": " mengubah nama obrolan",
+      "chateditphoto": " mengubah foto obrolan",
+      "chatdeletephoto": " menghapus foto obrolan",
+      "pinmessage": " menyematkan sebuah pesan",
+      "chatmigrateto": "Obrolan menjadi supergrup",
+      "channelmigratefrom": "Obrolan menjadi supergrup",
+      "historyclear": "Riwayat dihapus",
+      "phonecall": " melakukan panggilan",
+      "groupcall": "Ada obrolan suara",
+      "invitetogroupcall": " mengundang ke obrolan suara",
+      "screenshottaken": " mengambil tangkapan layar",
+      "contactsignup": " bergabung dengan Telegram",
+      "setmessagesttl": "Pengatur waktu hapus otomatis berubah",
+      "setchattheme": " mengubah tema obrolan",
+      "giftpremium": " menghadiahkan Premium",
+      "topiccreate": " membuat sebuah topik",
+      "topicedit": " mengubah sebuah topik",
+      "suggestprofilephoto": " menyarankan foto profil",
+      "webviewdatasent": " mengirim sebuah formulir",
+      "paymentsent": "Pembayaran selesai"
+    },
+    "actionBy": "{{name}}{{what}}"
+  },
+  "calendar": {
+    "prevMonth": "Bulan sebelumnya",
+    "nextMonth": "Bulan berikutnya",
+    "check": "Periksa hari mana saja yang ada pesannya",
+    "checking": "Memeriksa {{date}}… ({{done}}/{{total}})",
+    "checkingDay": "Memeriksa {{date}}…",
+    "dayEmpty": "Tidak ada pesan pada {{date}}. Pilih hari lain.",
+    "legendHas": "ada pesan",
+    "legendEmpty": "tidak ada pesan",
+    "dayCount": "{{count, number}} pesan"
+  },
+  "export": {
+    "title": "Ekspor obrolan ini",
+    "description": "Mengunduh pesan sebagai zip. Pengemasan terjadi di peramban Anda dan tidak melibatkan server mana pun.",
+    "start": "Ekspor sebagai zip",
+    "cancel": "Hentikan",
+    "from": "Dari",
+    "to": "Sampai",
+    "rangeHint": "Untuk obrolan yang sangat lama, mengekspor sepotong demi sepotong lebih aman.",
+    "wholeHistory": "Ekspor seluruh riwayat",
+    "wholeHistoryHint": "Mengabaikan tanggal dan mengambil semuanya dari awal. Obrolan besar bisa memakan waktu sangat lama karena batas kecepatan Telegram.",
+    "progress": "Pesan {{count, number}} / {{total, number}}",
+    "waiting": "Menunggu batas kecepatan Telegram. Ini bukan macet — mohon biarkan tab ini terbuka.",
+    "done": "Selesai. {{count, number}} pesan tersimpan.",
+    "savedPicked": "Berkas ada di lokasi yang Anda pilih. Demi keamanan, peramban tidak mengungkap jalur lengkapnya, jadi hanya nama berkas yang ditampilkan.",
+    "savedDownload": "Berkas ada di folder unduhan peramban Anda.",
+    "memoryFallback": "Peramban ini tidak bisa menulis langsung ke berkas, jadi zip dibangun lebih dulu dan diunduh di akhir. Untuk obrolan yang sangat besar, Chrome atau Edge lebih aman.",
+    "presets": "Pilihan cepat",
+    "presetToday": "Hari ini",
+    "presetWeek": "7 hari terakhir",
+    "presetMonth": "30 hari terakhir",
+    "stats": {
+      "total": "Total pesan",
+      "messages": "{{count, number}}",
+      "period": "Periode"
+    },
+    "includeTitle": "Sertakan lampiran",
+    "includePhotos": "Foto",
+    "includePhotosHint": "Menyimpan foto ukuran penuh dari obrolan ini bersama pesannya. Stiker tidak disertakan. Banyak foto berarti jauh lebih banyak waktu dan ruang.",
+    "includeNote": "Lampiran yang tidak disertakan tetap muncul di daftar (attachments.jsonl) lengkap dengan jenis dan id berkasnya. Hanya berkasnya yang tidak ada — catatan tentang apa yang dikirim tetap utuh.",
+    "progressFiles": "Lampiran {{files, number}} / {{totalFiles, number}}",
+    "deviceTitle": "Pekerjaan ini dilakukan oleh perangkat yang Anda pakai",
+    "deviceBody": "Tidak ada server di tengah, jadi komputer atau ponsel ini sendiri yang mengambil dan mengemas semuanya — artinya lamanya sangat bergantung pada perangkat. Untuk obrolan besar, atau bila menyertakan foto, pakailah komputer dan biarkan tab ini terbuka sampai selesai.",
+    "doneTitle": "Ekspor selesai",
+    "doneRange": "Periode",
+    "doneWhole": "Seluruh riwayat",
+    "doneMessages": "Pesan",
+    "doneFiles": "Berkas tersimpan",
+    "doneSize": "Ukuran berkas",
+    "doneCount": "{{count, number}}",
+    "again": "Mulai ekspor lain",
+    "includeExcludedTitle": "Tidak disertakan",
+    "includeExcluded": "Video · audio · dokumen non-gambar",
+    "layoutTitle": "Di mana menaruh saya",
+    "layoutChat": "Kanan (bawaan) — di kanan, seperti di aplikasi",
+    "layoutFlat": "Kiri — di kiri, agar tidak jelas sisi mana yang saya",
+    "layoutHint": "Menaruh semua orang di kiri menyembunyikan sisi mana yang Anda. Sebagai gantinya, nama Anda ikut ditampilkan pada pesan Anda sendiri.",
+    "includeStickers": "Stiker",
+    "includeStickersHint": "Setiap stiker disimpan sekali saja, sesering apa pun ia dikirim. Satu obrolan biasanya punya beberapa lusin jenis, jadi ini tetap dalam beberapa MB.",
+    "progressCounting": "Sudah mengekspor {{count, number}} pesan…"
+  },
+  "errors": {
+    "title": "Kesalahan",
+    "API_ID_INVALID": "api_id atau api_hash tidak sah.",
+    "API_ID_PUBLISHED_FLOOD": "Telegram membatasi kunci aplikasi ini. Silakan daftarkan api_id Anda sendiri di my.telegram.org lalu coba lagi.",
+    "AUTH_RESTART": "Autentikasi harus dimulai dari awal.",
+    "AUTH_USER_CANCEL": "Autentikasi dibatalkan.",
+    "FLOOD_WAIT": "Terlalu banyak permintaan. Silakan coba lagi dalam {{duration}}.",
+    "PASSWORD_HASH_INVALID": "Kata sandi verifikasi dua langkah itu tidak benar.",
+    "PHONE_CODE_EXPIRED": "Kode masuk telah kedaluwarsa. Silakan minta yang baru.",
+    "PHONE_CODE_INVALID": "Kode masuk itu tidak benar.",
+    "PHONE_NUMBER_BANNED": "Nomor telepon ini diblokir.",
+    "PHONE_NUMBER_INVALID": "Nomor telepon itu tampak keliru. Pastikan Anda menyertakan kode negara.",
+    "PHONE_NUMBER_UNOCCUPIED": "Tidak ada akun Telegram untuk nomor ini.",
+    "PHONE_PASSWORD_FLOOD": "Terlalu banyak percobaan kata sandi. Tunggu sebentar lalu coba lagi.",
+    "SESSION_PASSWORD_NEEDED": "Kata sandi verifikasi dua langkah dibutuhkan.",
+    "PEER_NOT_CACHED": "Detail obrolan ini kedaluwarsa. Kembali ke daftar lalu pilih lagi.",
+    "SESSION_REVOKED": "Sesi telah diakhiri. Silakan masuk lagi.",
+    "UPDATE_APP_TO_LOGIN": "Telegram tidak lagi mengizinkan cara masuk seperti ini.",
+    "UNKNOWN": "Terjadi kesalahan: {{raw}}",
+    "duration": {
+      "seconds": "{{count}} detik",
+      "minutes": "{{count}} menit",
+      "hours": "{{count}} jam"
+    }
+  },
+  "mediaInfo": {
+    "title": "Detail lampiran",
+    "id": "Id berkas",
+    "messageId": "Id pesan",
+    "kind": "Jenis",
+    "fileName": "Nama berkas",
+    "mimeType": "Tipe MIME",
+    "size": "Dimensi",
+    "bytes": "Ukuran",
+    "uploaded": "Diunggah",
+    "dc": "Pusat data",
+    "accessHash": "access hash",
+    "copy": "Salin semua",
+    "duration": "Durasi"
+  },
+  "errorPage": {
+    "title": "Terjadi masalah saat membuka layar ini",
+    "body": "Mungkin bersifat sementara. Coba lagi, dan jika terus terjadi kembalilah ke awal.",
+    "notFound": "Halaman tidak ditemukan",
+    "notFoundBody": "Alamat mungkin berubah atau salah ketik.",
+    "home": "Kembali ke awal",
+    "details": "Detail kesalahan"
+  }
+}

@@ -88,7 +88,7 @@ export function CredentialsForm({
   );
 
   return (
-    <div className="space-y-4 rounded-2xl border border-slate-200 bg-white p-4">
+    <div className="space-y-4 edge-card bg-white p-4">
       <h2 className="text-lg font-bold text-slate-900">{t('credentials.title')}</h2>
 
       {hasSharedCredentials && (
@@ -99,7 +99,7 @@ export function CredentialsForm({
               type="button"
               onClick={() => setMode(value)}
               className={cn(
-                'rounded-xl border p-3 text-left transition-colors',
+                'rounded-xl border p-3 text-start transition-colors',
                 mode === value
                   ? 'border-primary bg-primary-50'
                   : 'border-slate-200 hover:bg-slate-50',

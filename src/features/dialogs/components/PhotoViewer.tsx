@@ -161,7 +161,7 @@ function ViewerArrow({
       aria-label={label}
       className="shrink-0 rounded-full p-2 text-white/80 transition-colors hover:bg-white/10 disabled:opacity-25"
     >
-      <Icon className="h-6 w-6" />
+      <Icon className="h-6 w-6 rtl:rotate-180" />
     </button>
   );
 }

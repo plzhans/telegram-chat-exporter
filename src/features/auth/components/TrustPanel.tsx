@@ -62,7 +62,7 @@ export function TrustPanel() {
 
   return (
     <div className="space-y-3">
-      <section className="rounded-2xl border border-slate-200 bg-white p-4">
+      <section className="edge-card bg-white p-4">
         <header className="flex gap-3">
           <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
           <div>
@@ -104,7 +104,7 @@ export function TrustPanel() {
         대신 접힌 상태에서도 **무슨 이야기인지 한 줄로 알 수 있게** 요약을 붙인다. 제목만
         있으면 열어 봐야 아는지 몰라 그냥 지나친다.
       */}
-      <div className="divide-y divide-slate-200 overflow-hidden rounded-2xl border border-slate-200 bg-white">
+      <div className="divide-y divide-slate-200 overflow-hidden edge-card bg-white">
       <Disclosure bare title={t('trust.verify.title')} summary={t('trust.verify.peek')}>
         <ul className="space-y-1 text-xs leading-relaxed text-slate-600">
           <li className="flex gap-2">
@@ -153,13 +153,13 @@ export function TrustPanel() {
           몸통에 스크롤이 생기면 페이지 전체가 좌우로 흔들린다.
         */}
         <div className="mt-2 overflow-x-auto">
-          <table className="w-full min-w-[26rem] border-collapse text-left text-xs">
+          <table className="w-full min-w-[26rem] border-collapse text-start text-xs">
             <thead>
               <tr className="border-b border-slate-200 text-slate-500">
-                <th scope="col" className="py-1.5 pr-3 font-medium">
+                <th scope="col" className="py-1.5 pe-3 font-medium">
                   {t('trust.stored.colKind')}
                 </th>
-                <th scope="col" className="py-1.5 pr-3 font-medium">
+                <th scope="col" className="py-1.5 pe-3 font-medium">
                   {t('trust.stored.colWhere')}
                 </th>
                 <th scope="col" className="py-1.5 font-medium">
@@ -170,7 +170,7 @@ export function TrustPanel() {
             <tbody>
               {rows.map((row) => (
                 <tr key={row.kind} className="border-b border-slate-100 align-top last:border-0">
-                  <td className="py-2 pr-3 font-semibold text-slate-900">
+                  <td className="py-2 pe-3 font-semibold text-slate-900">
                     {row.kind}
                     {/*
                       "왜 이건 남기는가"를 그 줄 바로 아래에 붙인다. 표 밖으로 빼면 어느
@@ -180,7 +180,7 @@ export function TrustPanel() {
                       {row.note}
                     </span>
                   </td>
-                  <td className="py-2 pr-3 text-slate-700">{row.where}</td>
+                  <td className="py-2 pe-3 text-slate-700">{row.where}</td>
                   <td className="py-2 leading-relaxed text-slate-700">{row.until}</td>
                 </tr>
               ))}

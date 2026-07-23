@@ -249,7 +249,7 @@ export function MessageCalendar({
           aria-label={t('calendar.prevMonth')}
           className="rounded-lg p-1.5 text-slate-500 transition-colors hover:bg-slate-100"
         >
-          <ChevronLeft className="h-4 w-4" />
+          <ChevronLeft className="h-4 w-4 rtl:rotate-180" />
         </button>
         <span className="flex-1 text-center text-sm font-semibold text-slate-900">{monthLabel}</span>
         <button
@@ -258,7 +258,7 @@ export function MessageCalendar({
           aria-label={t('calendar.nextMonth')}
           className="rounded-lg p-1.5 text-slate-500 transition-colors hover:bg-slate-100"
         >
-          <ChevronRight className="h-4 w-4" />
+          <ChevronRight className="h-4 w-4 rtl:rotate-180" />
         </button>
       </div>
 

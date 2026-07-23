@@ -20,9 +20,10 @@
     "back": "Back",
     "cancel": "Cancel",
     "retry": "Try again",
+    "refresh": "Refresh",
     "source": "Source code",
     "language": "Language",
-    "signOut": "Sign out and terminate session"
+    "signOut": "Sign out"
   },
   "trust": {
     "purpose": "This page exists to let you back up your Telegram conversations, simply.",
@@ -100,8 +101,7 @@
       "principle": "Telegram tells you never to share your login code with anyone. That advice is right. Don't make an exception for this site — be just as suspicious of it.",
       "why": "That said, this tool signs in to Telegram as you in order to fetch your messages. Without your phone number and login code there is nothing it can do. Those values are used only for the request to Telegram and are never stored anywhere.",
       "storage": "After you sign in, the only thing kept is a single value that holds the connection open, and it lives only inside the tab you're looking at — close the tab and it's gone.",
-      "selfHost": "If you're still unconvinced, don't take anyone's word for it. Read the code, or download it and run it on your own machine. You'll get exactly this screen, running code you checked yourself.",
-      "after": "When your backup is done, end this session from the devices list in the Telegram app."
+      "selfHost": "If you're still unconvinced, don't take anyone's word for it. Read the code, or download it and run it on your own machine. You'll get exactly this screen, running code you checked yourself."
     }
   },
   "credentials": {
@@ -184,8 +184,7 @@
       "hint": "Enter the two-step verification password set on your account.",
       "hintLabel": "Hint: {{hint}}",
       "submit": "Confirm"
-    },
-    "signedInAs": "Signed in as {{name}}"
+    }
   },
   "dialogs": {
     "title": "Chats",
@@ -203,7 +202,6 @@
       "group": "Group",
       "channel": "Channel"
     },
-    "mediaNote": "Attachments such as photos and files are not downloaded yet. Only message text and the attachment type are saved.",
     "preview": {
       "you": "You",
       "photo": "Photo",
@@ -393,5 +391,13 @@
     "accessHash": "Access hash",
     "copy": "Copy all",
     "duration": "Duration"
+  },
+  "errorPage": {
+    "title": "Something went wrong while opening this screen",
+    "body": "This may be temporary. Try again, and if it keeps happening, go back to the start.",
+    "notFound": "Page not found",
+    "notFoundBody": "The address may have changed or been mistyped.",
+    "home": "Back to start",
+    "details": "Error details"
   }
 }

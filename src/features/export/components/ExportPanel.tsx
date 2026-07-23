@@ -213,7 +213,7 @@ export function ExportPanel({ dialog, defaultFrom, defaultTo }: ExportPanelProps
   const running = phase === 'running';
 
   return (
-    <section className="space-y-3 rounded-2xl border border-slate-200 bg-white p-4">
+    <section className="space-y-3 edge-card bg-white p-4">
       <div className="flex items-start gap-3">
         <div className="min-w-0 flex-1">
           <h2 className="text-sm font-bold text-slate-900">{t('export.title')}</h2>
@@ -450,7 +450,7 @@ export function ExportPanel({ dialog, defaultFrom, defaultTo }: ExportPanelProps
                       : t('export.progressCounting', { count: at })}
                   </span>
                   {known && <span className="tabular-nums">{Math.floor(ratio * 100)}%</span>}
-                  <span className="ml-auto font-normal text-slate-500">
+                  <span className="ms-auto font-normal text-slate-500">
                     {formatBytes(progress.bytes)}
                     {!files && progress.lastDate && ` · ~${dateKeyOf(progress.lastDate)}`}
                   </span>

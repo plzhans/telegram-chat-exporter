@@ -38,7 +38,6 @@ export function LoginCodeNotice() {
           {t('common.source')}
         </a>
       </p>
-      <p className="mt-1.5 font-semibold">{t('trust.warning.after')}</p>
     </Alert>
   );
 }

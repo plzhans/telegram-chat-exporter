@@ -217,12 +217,34 @@ addEventListener('securitypolicyviolation', (e) =>
 
 ## 다국어
 
-화면과 검색용 메타 정보 양쪽을 번역한다. 현재 **한국어·영어**를 지원한다.
+화면과 검색용 메타 정보 양쪽을 번역한다. 현재 **14개 언어**를 지원한다.
 
 번역 파일: [`src/shared/i18n/locales/`](src/shared/i18n/locales/)
 
-- [`ko-kr.json`](src/shared/i18n/locales/ko-kr.json) — 한국어 (기본)
-- [`en-us.json`](src/shared/i18n/locales/en-us.json) — 영어
+| 코드 | 언어 |
+| --- | --- |
+| [`ko-kr`](src/shared/i18n/locales/ko-kr.json) | 한국어 (기본) |
+| [`en-us`](src/shared/i18n/locales/en-us.json) | 영어 |
+| [`ja-jp`](src/shared/i18n/locales/ja-jp.json) | 일본어 |
+| [`hi-in`](src/shared/i18n/locales/hi-in.json) | 힌디어 |
+| [`ru-ru`](src/shared/i18n/locales/ru-ru.json) | 러시아어 |
+| [`id-id`](src/shared/i18n/locales/id-id.json) | 인도네시아어 |
+| [`pt-br`](src/shared/i18n/locales/pt-br.json) | 포르투갈어 (브라질) |
+| [`ar-eg`](src/shared/i18n/locales/ar-eg.json) | 아랍어 |
+| [`vi-vn`](src/shared/i18n/locales/vi-vn.json) | 베트남어 |
+| [`es-mx`](src/shared/i18n/locales/es-mx.json) | 스페인어 (멕시코) |
+| [`uk-ua`](src/shared/i18n/locales/uk-ua.json) | 우크라이나어 |
+| [`tr-tr`](src/shared/i18n/locales/tr-tr.json) | 터키어 |
+| [`fil-ph`](src/shared/i18n/locales/fil-ph.json) | 필리핀어 |
+| [`kk-kz`](src/shared/i18n/locales/kk-kz.json) | 카자흐어 |
+
+목록의 순서가 곧 **언어 선택 상자의 순서**다. 앞의 셋은 이 도구가 먼저 챙기는 사용자들이고,
+그 뒤는 텔레그램 사용자 수가 많은 순서다.
+
+**한 언어를 여러 나라가 써도 판을 나누지 않는다.** 인도·필리핀·나이지리아의 영어는 `en-us`
+한 벌이 받고, 우크라이나·카자흐스탄의 러시아어는 `ru-ru` 가 받는다. 같은 글을 두 주소에 두면
+번역이 갈라지고 검색 색인도 서로를 갉아먹는다. 지역별 매칭은 각 로케일의 `hreflang` 이
+포괄 태그(`en` · `ru`)로 처리한다.
 
 언어 목록과 접두사 규칙은 [`src/shared/i18n/languages.ts`](src/shared/i18n/languages.ts),
 초기화는 [`src/shared/i18n/index.ts`](src/shared/i18n/index.ts) 에 있다.
@@ -232,6 +254,7 @@ addEventListener('securitypolicyviolation', (e) =>
 ```
 /            한국어  (기본 언어라 접두사가 없다)
 /en-us/      영어
+/ar-eg/      아랍어
 /en-us/dialogs
 ```
 
@@ -258,7 +281,8 @@ addEventListener('securitypolicyviolation', (e) =>
 
 `hreflang` 은 언어당 여러 개를 낸다. `en-US` 만 내보내면 영국·호주 사용자에게 매칭되지
 않으므로, 영어판이 하나뿐인 동안은 포괄적인 `en` 도 함께 낸다. `en-gb` 가 생기는 날
-`en-us` 의 `hreflang` 배열에서 `en` 만 빼면 된다.
+`en-us` 의 `hreflang` 배열에서 `en` 만 빼면 된다. 같은 방식으로 `fil-ph` 는 옛 코드 `tl` 도
+함께 낸다 — 안드로이드가 아직 그 이름으로 알려주는 기기가 있다.
 
 ### 언어 추가하기
 
@@ -271,10 +295,23 @@ addEventListener('securitypolicyviolation', (e) =>
 
 나머지는 자동이다 — 번역 파일은 `import.meta.glob` 이 끌어모으고, 언어 선택 목록의 이름은
 `Intl.DisplayNames` 가 **그 언어 자신의 이름**으로 뽑고(`한국어`, `English`), 빌드는
-`dist/<코드>/index.html` 을 하나 더 찍는다.
+`dist/<코드>/index.html` 을 하나 더 찍는다. `SUPPORTED_LANGUAGES` 에 넣은 자리가 곧 선택
+상자에서의 자리다.
 
 언어 이름을 그 언어로 적는 이유는, 자기 언어를 못 읽는 사람은 목록에서 자기 언어를 찾을 수
 없기 때문이다.
+
+### 오른쪽에서 왼쪽으로 읽는 언어
+
+아랍어(`ar-eg`)가 들어오면서 `<html dir>` 이 필요해졌다. `languages.ts` 의 `dirOf()` 가
+언어의 기본 부분을 보고 정하고, 빌드는 그 값을 언어별 `index.html` 에 박아 넣는다
+(`localizedPages`). 실행 시점에도 앱이 다시 맞춘다 — 404 폴백으로 다른 언어의 셸이 올 수
+있기 때문이다.
+
+화면 쪽은 Tailwind 의 **논리 속성**으로 적어 둔다. `ml-`·`pr-`·`left-`·`text-left`·
+`float-right` 대신 `ms-`·`pe-`·`start-`·`text-start`·`float-end` 를 쓴다 — 이쪽은 `dir` 을
+보고 스스로 뒤집힌다. 방향이 의미인 아이콘(이전·다음 · 뒤로가기 화살표)에는 `rtl:rotate-180`
+을 붙인다. 재생 삼각형처럼 **방향이 의미가 아닌 아이콘은 뒤집지 않는다.**
 
 ### 언어별로 진짜 HTML 파일이 나온다
 

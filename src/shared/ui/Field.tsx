@@ -42,7 +42,7 @@ export function Field({ label, hint, error, htmlFor, className, inline, children
           <div className="min-w-0 flex-1">{children}</div>
         </div>
         {/* 힌트·에러는 라벨 폭만큼 들여 써서 입력칸과 왼쪽 끝을 맞춘다. */}
-        {message && <div className="mobile:pl-[6.75rem]">{message}</div>}
+        {message && <div className="mobile:ps-[6.75rem]">{message}</div>}
       </div>
     );
   }

@@ -1,0 +1,403 @@
+{
+  "seo": {
+    "tag": "vi-VN",
+    "ogLocale": "vi_VN",
+    "hreflang": [
+      "vi-VN",
+      "vi"
+    ],
+    "title": "Xuất cuộc trò chuyện Telegram — ngay trong trình duyệt, không lưu gì trên máy chủ | Telegram Exporter",
+    "shareTitle": "Xuất cuộc trò chuyện Telegram — ngay trong trình duyệt, không lưu gì trên máy chủ",
+    "description": "Xuất các cuộc trò chuyện Telegram của bạn ra tệp zip. Mọi thứ chạy bên trong trình duyệt và không có gì được lưu trên máy chủ — số điện thoại, mã đăng nhập và tin nhắn của bạn không bao giờ được gửi đi đâu khác. Không cần cài đặt gì.",
+    "shareDescription": "Xuất cuộc trò chuyện Telegram ra tệp zip ngay trong trình duyệt. Không lưu gì trên máy chủ."
+  },
+  "app": {
+    "title": "Telegram Exporter",
+    "tagline": "Sao lưu cuộc trò chuyện Telegram hoàn toàn trong trình duyệt"
+  },
+  "common": {
+    "next": "Tiếp",
+    "back": "Quay lại",
+    "cancel": "Hủy",
+    "retry": "Thử lại",
+    "refresh": "Làm mới",
+    "source": "Mã nguồn",
+    "language": "Ngôn ngữ",
+    "signOut": "Đăng xuất"
+  },
+  "trust": {
+    "purpose": "Trang này ra đời để bạn sao lưu các cuộc trò chuyện Telegram của mình một cách đơn giản.",
+    "lede": "Nó lưu cuộc trò chuyện thành tệp nén (zip). Trình duyệt là chương trình bạn dùng để xem Internet, chẳng hạn Chrome hay Safari — và mọi xử lý đều kết thúc bên trong đó.",
+    "how": {
+      "title": "Cách hoạt động",
+      "noServer": {
+        "title": "Không có máy chủ nào của chúng tôi ở giữa",
+        "body": "Phần lớn website gửi những gì bạn nhập về máy chủ của họ. Trang này hoàn toàn không có máy chủ như vậy. Trình duyệt của bạn nói chuyện trực tiếp với Telegram."
+      },
+      "credentials": {
+        "title": "Số điện thoại và mã đăng nhập chỉ đi tới Telegram",
+        "body": "Các giá trị cần cho việc đăng nhập không được dùng vào việc gì ngoài yêu cầu gửi tới Telegram. Không có đường nào để chúng tôi nhìn thấy chúng."
+      },
+      "download": {
+        "title": "Tin nhắn của bạn thành tệp ngay lập tức",
+        "body": "Tin nhắn được hiển thị trên màn hình, và khi bạn bấm xuất, chúng được nén rồi lưu vào máy của chính bạn. Không có gì được tải lên đâu cả."
+      }
+    },
+    "verify": {
+      "title": "Cách tự kiểm chứng",
+      "csp": "Trang này bị khóa sao cho <strong>không thể kết nối tới bất kỳ địa chỉ nào</strong> ngoài Telegram (<code>wss://*.web.telegram.org</code>). Quy tắc ấy do trình duyệt của bạn bắt buộc, nên ngay cả người viết trang cũng không phá được.",
+      "devtools": "Bấm F12 (⌥⌘I trên Mac) rồi mở thẻ <strong>Network</strong> để thấy toàn bộ địa chỉ mà trang này thực sự kết nối tới.",
+      "source": "Toàn bộ mã nguồn đều công khai.",
+      "peek": "Hãy tự xem trang này không thể kết nối đi đâu khác.",
+      "cspAnalytics": "Trang này không thể kết nối tới đâu ngoài Telegram (<code>wss://*.web.telegram.org</code>) và Google Analytics để đếm lượt truy cập — <strong>không gì khác.</strong> Trình duyệt bắt buộc quy tắc này, nên trang web không thể tự ý thay đổi."
+    },
+    "stored": {
+      "title": "Những gì còn lại trong trình duyệt này",
+      "lede": "Không lưu thông tin cá nhân và không lưu nội dung tin nhắn. Chỉ còn lại thứ mà ai cũng nhìn thấy giống nhau, cùng giá trị giữ cho bạn ở trạng thái đã đăng nhập. Bảng dưới đây là danh sách đầy đủ.",
+      "colKind": "Cái gì",
+      "colWhere": "Lưu ở đâu",
+      "colUntil": "Khi nào bị xóa",
+      "sessionKind": "Trạng thái đăng nhập",
+      "sessionWhere": "Chỉ bên trong thẻ này",
+      "sessionUntil": "Khi đóng thẻ · sau {{minutes}} phút không dùng · khi đăng xuất",
+      "sessionNote": "Chỉ được lưu nếu bạn chọn “giữ đăng nhập”, để tải lại trang không phải đăng nhập lại. Các thẻ và cửa sổ khác không thấy được.",
+      "stickerKind": "Ảnh nhãn dán",
+      "stickerWhere": "Trình duyệt này",
+      "stickerUntil": "Khi đăng xuất · cũ nhất trước, nếu vượt 20MB",
+      "stickerNote": "Nhãn dán trông giống nhau với mọi người dùng Telegram nên không phải thông tin cá nhân. Ai gửi và gửi lúc nào đều không được lưu, chỉ còn ảnh. Chúng được giữ lại vì tải lại mỗi lần rất chậm.",
+      "peek": "Chỉ hai thứ: trạng thái đăng nhập và ảnh nhãn dán. Không có nội dung tin nhắn."
+    },
+    "never": {
+      "title": "Những gì không bao giờ được lưu",
+      "body": "Nội dung trò chuyện · ảnh và tệp đính kèm · số điện thoại · danh bạ · mã đăng nhập. Không thứ nào được lưu, và không thứ nào đi đâu ngoài Telegram."
+    },
+    "analytics": {
+      "title": "Thống kê lượt truy cập có kết nối tới Google",
+      "peek": "Chỉ đếm lượt truy cập. Không có nội dung trò chuyện hay số điện thoại.",
+      "lede": "Trang này dùng <strong>Google Analytics</strong> để đếm số người ghé thăm.",
+      "network": "Nghĩa là trang này <strong>cũng kết nối tới Google</strong>, không chỉ Telegram. Nó tải mã phân tích từ <code>googletagmanager.com</code> và gửi bản ghi lượt truy cập tới <code>google-analytics.com</code>. Đó là kết nối ra ngoài duy nhất ngoài Telegram, và bạn thấy được nó trong thẻ Network của công cụ dành cho nhà phát triển.",
+      "sent": "Thứ được gửi: rằng trang đầu đã được mở, và bằng ngôn ngữ nào.",
+      "notSent": "Thứ không bao giờ được gửi: nội dung trò chuyện, số điện thoại, mã đăng nhập, hay bạn đã mở cuộc trò chuyện nào. Địa chỉ cuộc trò chuyện chứa id của cuộc trò chuyện, nên những địa chỉ đó được cố tình không gửi đi.",
+      "block": "Chặn nó bằng trình chặn quảng cáo hay tính năng chống theo dõi của trình duyệt cũng không làm hỏng công cụ này.",
+      "selfHost": "Nếu bạn không muốn ngay cả điều đó, <strong>hãy tải mã nguồn về và chạy trên máy của mình.</strong> Cấu hình phân tích chỉ được đưa vào khi xuất bản trang này, nên bản bạn tự dựng không hề có phân tích — kết nối tới Google biến mất khỏi mã."
+    },
+    "ads": {
+      "title": "Có hiển thị quảng cáo",
+      "peek": "Có quảng cáo Google AdSense. Không liên quan gì tới nội dung trò chuyện của bạn.",
+      "body": "Trang này có quảng cáo <strong>Google AdSense</strong>. Vì vậy nó cũng kết nối tới mạng quảng cáo của Google (<code>googlesyndication.com</code> · <code>doubleclick.net</code>), và quảng cáo chạy trong một khung riêng (iframe).",
+      "isolation": "Mã quảng cáo không đọc được bất cứ thứ gì trên trang này. Nội dung trò chuyện, số điện thoại và mã đăng nhập của bạn không bao giờ được chia sẻ với nhà quảng cáo. <strong>Màn hình đăng nhập và màn hình trò chuyện không đặt quảng cáo.</strong>",
+      "selfHost": "Để dùng mà không có quảng cáo, <strong>hãy tải mã nguồn về và chạy trên máy của mình.</strong> Cấu hình quảng cáo chỉ được đưa vào khi xuất bản trang này, nên bản bạn tự dựng không hề có mã quảng cáo."
+    },
+    "device": {
+      "title": "Tốc độ phụ thuộc vào thiết bị bạn đang dùng",
+      "body": "Không có máy chủ ở giữa cũng có nghĩa là chính chiếc máy tính hay điện thoại bạn đang dùng làm toàn bộ việc tải về và nén lại. Vì thế cùng một cuộc trò chuyện có thể mất thời gian khác nhau trên các thiết bị khác nhau.",
+      "bigChat": "Với những cuộc trò chuyện có rất nhiều tin nhắn, hãy dùng máy tính. Điện thoại ít bộ nhớ trống hơn nên việc xuất có thể chậm hoặc dừng giữa chừng.",
+      "keepOpen": "Hãy giữ thẻ này mở trong lúc xuất. Nếu màn hình tắt hoặc bạn chuyển sang ứng dụng khác, trình duyệt sẽ làm chậm hoặc tạm dừng công việc.",
+      "rate": "Telegram giới hạn tốc độ yêu cầu, nên cuộc trò chuyện lớn vẫn phải chờ dù thiết bị nhanh. Đó không phải là treo.",
+      "peek": "Vì không có máy chủ ở giữa, thời gian phụ thuộc vào chính máy tính hay điện thoại của bạn."
+    },
+    "warning": {
+      "title": "Công cụ này hỏi mã đăng nhập của bạn",
+      "principle": "Telegram khuyên bạn đừng bao giờ chia sẻ mã đăng nhập với ai. Lời khuyên đó đúng. Đừng coi trang này là ngoại lệ — hãy nghi ngờ nó y như vậy.",
+      "why": "Dù vậy, công cụ này đăng nhập vào Telegram với danh nghĩa của bạn để lấy tin nhắn. Không có số điện thoại và mã đăng nhập thì nó chẳng làm được gì. Những giá trị đó chỉ dùng cho yêu cầu gửi tới Telegram và không bao giờ được lưu ở đâu.",
+      "storage": "Sau khi đăng nhập, thứ duy nhất còn lại là một giá trị giữ kết nối, và nó cũng chỉ sống bên trong thẻ bạn đang xem — đóng thẻ là mất.",
+      "selfHost": "Nếu vẫn chưa yên tâm, đừng tin lời ai cả. Hãy tự đọc mã nguồn, hoặc tải về và chạy trên máy của mình. Khi đó bạn vẫn có đúng màn hình này, nhưng chạy bằng mã do chính bạn kiểm chứng."
+    }
+  },
+  "credentials": {
+    "title": "Bắt đầu",
+    "modeShared": "Bắt đầu ngay (khuyên dùng)",
+    "modeSharedHint": "Dùng khóa ứng dụng đi kèm trang này. Bạn chỉ cần số điện thoại.",
+    "modeCustom": "Dùng api_id của riêng tôi",
+    "modeCustomHint": "Dùng khóa bạn tự đăng ký tại my.telegram.org.",
+    "apiId": "api_id",
+    "apiHash": "api_hash",
+    "open": "Mở trang đăng ký",
+    "guide": {
+      "title": "Cách lấy api_id",
+      "step1": "Nhập số điện thoại tại my.telegram.org. Mã xác nhận đến trong ứng dụng Telegram chứ không qua SMS — hãy mở sẵn Telegram trên một thiết bị khác.",
+      "step2": "Sau khi đăng nhập, mở <b>API development tools</b> và điền như bên dưới. Chỉ dùng <b>chữ Latinh và chữ số</b> — bất cứ thứ gì khác đều làm nó thất bại mà không nói lý do.",
+      "step3": "Gửi đi, bạn sẽ nhận được api_id và api_hash. Dán cả hai vào các ô ở trên.",
+      "fields": {
+        "appTitle": "App title",
+        "shortName": "Short name",
+        "url": "URL",
+        "platform": "Platform",
+        "description": "Description"
+      },
+      "empty": "để trống",
+      "shortNameNote": "5–32 ký tự, chỉ chữ cái và chữ số. Phải là duy nhất trên toàn cầu, và tên đã có người dùng chỉ hiện ra ERROR — hãy thử thêm một con số.",
+      "trouble": {
+        "title": "Nếu chỉ nhận được ERROR",
+        "intro": "Trang đó không bao giờ cho biết vì sao thất bại. Hãy kiểm tra theo thứ tự khả năng từ cao xuống thấp.",
+        "reload": "<b>Hãy tải lại trang trước đã.</b> Ứng dụng thường đã được tạo dù ERROR hiện ra.",
+        "vpn": "<b>Tắt VPN hoặc proxy.</b> Nếu quốc gia của IP khác quốc gia của số điện thoại, Telegram sẽ chặn. Đây là nguyên nhân phổ biến nhất.",
+        "extensions": "<b>Thử lại trong cửa sổ ẩn danh với mọi tiện ích mở rộng đã tắt.</b> Trình chặn quảng cáo chặn ngay việc gửi biểu mẫu.",
+        "shortName": "<b>Thử một short name khác.</b> Tên bị trùng cũng chỉ hiện ra ERROR.",
+        "spambot": "<b>Kiểm tra hạn chế của tài khoản.</b> Tài khoản mới hoặc bị gắn cờ spam không thể tạo ứng dụng. Nhắn cho @SpamBot trên Telegram để biết.",
+        "wait": "<b>Chờ 15–60 phút rồi thử đúng một lần.</b> Việc thử đi thử lại tự nó đã bị giới hạn."
+      }
+    },
+    "remember": "Ghi nhớ api_id trong trình duyệt này. Đó là mã định danh ứng dụng chứ không phải quyền truy cập tài khoản, nên lưu lại vẫn an toàn.",
+    "keepSignedIn": "Giữ đăng nhập trong thẻ này",
+    "keepSignedInHint": "Tải lại trang sẽ không phải đăng nhập lại. Đóng thẻ hoặc để yên {{minutes}} phút sẽ xóa nó. Hãy tắt khi dùng máy tính chung.",
+    "forget": "Xóa api_id đã lưu",
+    "submit": "Kết nối tới Telegram",
+    "errors": {
+      "required": "Trường này là bắt buộc.",
+      "apiIdFormat": "api_id phải là một số.",
+      "apiHashFormat": "api_hash phải gồm 32 ký tự thập lục phân."
+    }
+  },
+  "sessionNotice": {
+    "confirm": "OK",
+    "expired": {
+      "title": "Phiên của bạn đã hết hạn",
+      "body": "Bạn đã không dùng thẻ này quá {{minutes}} phút, nên thông tin đăng nhập lưu trong trình duyệt đã bị xóa. Tài khoản của bạn vẫn nguyên vẹn — chỉ cần đăng nhập lại."
+    },
+    "invalid": {
+      "title": "Vui lòng đăng nhập lại",
+      "body": "Không thể tiếp tục với thông tin đăng nhập đã lưu. Có thể phiên này đã bị kết thúc từ thiết bị khác, hoặc Telegram đã cho nó hết hạn."
+    }
+  },
+  "auth": {
+    "connecting": "Đang kết nối tới Telegram…",
+    "phone": {
+      "title": "Số điện thoại",
+      "willSend": "Mã sẽ được gửi tới:",
+      "placeholder": "+84 91 234 56 78",
+      "submit": "Gửi mã cho tôi",
+      "country": "Quốc gia",
+      "countrySearch": "Tìm theo tên, mã hoặc số",
+      "countryEmpty": "Không có kết quả",
+      "unverified": "Số này không khớp định dạng của quốc gia đó. Nếu không phải lỗi gõ nhầm, bạn vẫn có thể tiếp tục."
+    },
+    "code": {
+      "titleApp": "Mã đã gửi tới ứng dụng Telegram của bạn",
+      "titleSms": "Mã đã gửi bằng SMS",
+      "hint": "Nhập mã 5 chữ số đã đến Telegram trên một thiết bị khác.",
+      "submit": "Đăng nhập",
+      "changeNumber": "Dùng số khác"
+    },
+    "password": {
+      "title": "Mật khẩu xác minh hai bước",
+      "hint": "Nhập mật khẩu xác minh hai bước đã đặt cho tài khoản của bạn.",
+      "hintLabel": "Gợi ý: {{hint}}",
+      "submit": "Xác nhận"
+    }
+  },
+  "dialogs": {
+    "title": "Cuộc trò chuyện",
+    "subtitle": "Chọn những cuộc trò chuyện bạn muốn sao lưu.",
+    "loading": "Đang tải cuộc trò chuyện…",
+    "empty": "Không có cuộc trò chuyện nào.",
+    "count": "{{count, number}} cuộc",
+    "filtered": "{{shown, number}} trong {{total, number}}",
+    "noMatch": "Không có cuộc trò chuyện nào khớp tên đó.",
+    "searchPlaceholder": "Tìm cuộc trò chuyện theo tên",
+    "searchClear": "Xóa từ khóa",
+    "unread": "{{count}} chưa đọc",
+    "type": {
+      "user": "Cá nhân",
+      "group": "Nhóm",
+      "channel": "Kênh"
+    },
+    "preview": {
+      "you": "Bạn",
+      "photo": "Ảnh",
+      "document": "Tệp",
+      "video": "Video",
+      "audio": "Âm thanh",
+      "sticker": "Nhãn dán",
+      "poll": "Bình chọn",
+      "contact": "Danh bạ",
+      "geo": "Vị trí",
+      "webPage": "Liên kết",
+      "action": "Tin nhắn hệ thống",
+      "other": "Đính kèm"
+    }
+  },
+  "messages": {
+    "loading": "Đang tải tin nhắn…",
+    "empty": "Không có tin nhắn nào ở đây.",
+    "loadOlder": "Tải tin nhắn cũ hơn",
+    "loadNewer": "Tải tin nhắn mới hơn",
+    "albumCount": "{{count, number}} ảnh",
+    "edited": "đã sửa",
+    "photoViewer": "Trình xem ảnh",
+    "previousPhoto": "Ảnh trước",
+    "nextPhoto": "Ảnh sau",
+    "dayEmpty": "Không có tin nhắn ngày {{date}}. Đang hiển thị từ {{landed}}, ngày kế tiếp có tin nhắn.",
+    "jumpToDate": "Nhảy tới ngày",
+    "backToLatest": "Về mới nhất",
+    "export": "Xuất",
+    "media": "Đính kèm: {{type}}",
+    "action": "Tin nhắn hệ thống: {{type}}",
+    "sender": {
+      "bot": "bot",
+      "channel": "kênh"
+    },
+    "mediaKind": {
+      "photo": "ảnh",
+      "sticker": "nhãn dán",
+      "video": "video",
+      "gif": "GIF",
+      "audio": "âm thanh",
+      "file": "tệp",
+      "contact": "danh bạ",
+      "geo": "vị trí",
+      "poll": "bình chọn",
+      "webpage": "liên kết",
+      "venue": "địa điểm",
+      "dice": "xúc xắc",
+      "game": "trò chơi",
+      "invoice": "hóa đơn",
+      "story": "story",
+      "voice": "tin nhắn thoại",
+      "videoNote": "tin nhắn video",
+      "unsupported": "định dạng không hỗ trợ",
+      "geolive": "vị trí trực tiếp",
+      "giveaway": "quay thưởng",
+      "giveawayresults": "kết quả quay thưởng",
+      "paidmedia": "nội dung trả phí"
+    },
+    "actionKind": {
+      "chatadduser": " đã tham gia cuộc trò chuyện",
+      "chatdeleteuser": " đã rời cuộc trò chuyện",
+      "chatjoinedbylink": " đã tham gia qua liên kết mời",
+      "chatjoinedbyrequest": " đã được duyệt tham gia",
+      "chatcreate": " đã tạo cuộc trò chuyện",
+      "channelcreate": " đã tạo kênh",
+      "chatedittitle": " đã đổi tên cuộc trò chuyện",
+      "chateditphoto": " đã đổi ảnh cuộc trò chuyện",
+      "chatdeletephoto": " đã xóa ảnh cuộc trò chuyện",
+      "pinmessage": " đã ghim một tin nhắn",
+      "chatmigrateto": "Cuộc trò chuyện đã thành siêu nhóm",
+      "channelmigratefrom": "Cuộc trò chuyện đã thành siêu nhóm",
+      "historyclear": "Lịch sử đã được xóa",
+      "phonecall": " đã gọi",
+      "groupcall": "Đã có một cuộc trò chuyện thoại",
+      "invitetogroupcall": " đã mời vào cuộc trò chuyện thoại",
+      "screenshottaken": " đã chụp màn hình",
+      "contactsignup": " đã tham gia Telegram",
+      "setmessagesttl": "Hẹn giờ tự xóa đã thay đổi",
+      "setchattheme": " đã đổi giao diện cuộc trò chuyện",
+      "giftpremium": " đã tặng Premium",
+      "topiccreate": " đã tạo một chủ đề",
+      "topicedit": " đã sửa một chủ đề",
+      "suggestprofilephoto": " đã đề xuất ảnh đại diện",
+      "webviewdatasent": " đã gửi một biểu mẫu",
+      "paymentsent": "Thanh toán hoàn tất"
+    },
+    "actionBy": "{{name}}{{what}}"
+  },
+  "calendar": {
+    "prevMonth": "Tháng trước",
+    "nextMonth": "Tháng sau",
+    "check": "Xem những ngày nào có tin nhắn",
+    "checking": "Đang kiểm tra {{date}}… ({{done}}/{{total}})",
+    "checkingDay": "Đang kiểm tra {{date}}…",
+    "dayEmpty": "Không có tin nhắn ngày {{date}}. Hãy chọn ngày khác.",
+    "legendHas": "có tin nhắn",
+    "legendEmpty": "không có tin nhắn",
+    "dayCount": "{{count, number}} tin"
+  },
+  "export": {
+    "title": "Xuất cuộc trò chuyện này",
+    "description": "Tải tin nhắn về dưới dạng zip. Việc nén cũng diễn ra trong trình duyệt và không máy chủ nào tham gia.",
+    "start": "Xuất ra zip",
+    "cancel": "Dừng",
+    "from": "Từ ngày",
+    "to": "Đến ngày",
+    "rangeHint": "Với những cuộc trò chuyện rất cũ, chia nhỏ khoảng thời gian sẽ an toàn hơn.",
+    "wholeHistory": "Xuất toàn bộ lịch sử",
+    "wholeHistoryHint": "Bỏ qua ngày tháng và lấy mọi thứ từ đầu. Cuộc trò chuyện lớn có thể mất rất lâu vì giới hạn của Telegram.",
+    "progress": "Tin nhắn {{count, number}} / {{total, number}}",
+    "waiting": "Đang chờ hết giới hạn tần suất của Telegram. Không phải treo — xin đừng đóng thẻ này.",
+    "done": "Xong. Đã lưu {{count, number}} tin nhắn.",
+    "savedPicked": "Tệp nằm ở nơi bạn đã chọn. Vì lý do bảo mật, trình duyệt không cho biết đường dẫn đầy đủ nên chỉ hiện tên tệp.",
+    "savedDownload": "Tệp nằm trong thư mục tải về của trình duyệt.",
+    "memoryFallback": "Trình duyệt này không ghi thẳng vào tệp được, nên zip sẽ được dựng xong rồi mới tải về ở cuối. Với cuộc trò chuyện rất lớn, Chrome hoặc Edge an toàn hơn.",
+    "presets": "Chọn nhanh",
+    "presetToday": "Hôm nay",
+    "presetWeek": "7 ngày qua",
+    "presetMonth": "30 ngày qua",
+    "stats": {
+      "total": "Tổng tin nhắn",
+      "messages": "{{count, number}}",
+      "period": "Khoảng thời gian"
+    },
+    "includeTitle": "Kèm theo tệp đính kèm",
+    "includePhotos": "Ảnh",
+    "includePhotosHint": "Lưu ảnh nguyên cỡ trong cuộc trò chuyện này cùng với tin nhắn. Không gồm nhãn dán. Nhiều ảnh nghĩa là tốn thêm rất nhiều thời gian và dung lượng.",
+    "includeNote": "Những tệp đính kèm không được lấy vẫn xuất hiện trong danh sách (attachments.jsonl) kèm loại và id tệp. Chỉ thiếu bản thân tệp — còn ghi chép về những gì đã trao đổi thì vẫn đầy đủ.",
+    "progressFiles": "Đính kèm {{files, number}} / {{totalFiles, number}}",
+    "deviceTitle": "Việc này do chính thiết bị bạn đang dùng làm",
+    "deviceBody": "Không có máy chủ ở giữa, nên chiếc máy tính hoặc điện thoại này tự làm toàn bộ việc tải về và nén — nghĩa là thời gian phụ thuộc rất nhiều vào thiết bị. Với cuộc trò chuyện lớn, hoặc khi kèm ảnh, hãy dùng máy tính và giữ thẻ này mở tới khi xong.",
+    "doneTitle": "Đã xuất xong",
+    "doneRange": "Khoảng thời gian",
+    "doneWhole": "Toàn bộ lịch sử",
+    "doneMessages": "Tin nhắn",
+    "doneFiles": "Tệp đã lưu",
+    "doneSize": "Kích thước tệp",
+    "doneCount": "{{count, number}}",
+    "again": "Bắt đầu lần xuất mới",
+    "includeExcludedTitle": "Không bao gồm",
+    "includeExcluded": "Video · âm thanh · tài liệu không phải ảnh",
+    "layoutTitle": "Đặt tôi ở đâu",
+    "layoutChat": "Bên phải (mặc định) — bên phải, như trong ứng dụng",
+    "layoutFlat": "Bên trái — bên trái, để không lộ rõ bên nào là tôi",
+    "layoutHint": "Đặt tất cả về một bên sẽ giấu được đâu là bạn. Bù lại, tên bạn cũng hiện trên chính tin nhắn của bạn.",
+    "includeStickers": "Nhãn dán",
+    "includeStickersHint": "Mỗi nhãn dán chỉ lưu một lần dù được gửi bao nhiêu lần. Một cuộc trò chuyện thường có vài chục loại, nên chỉ tốn vài MB.",
+    "progressCounting": "Đã xuất {{count, number}} tin nhắn…"
+  },
+  "errors": {
+    "title": "Lỗi",
+    "API_ID_INVALID": "api_id hoặc api_hash không hợp lệ.",
+    "API_ID_PUBLISHED_FLOOD": "Telegram đã hạn chế khóa ứng dụng này. Vui lòng đăng ký api_id của riêng bạn tại my.telegram.org rồi thử lại.",
+    "AUTH_RESTART": "Cần thực hiện lại việc xác thực từ đầu.",
+    "AUTH_USER_CANCEL": "Việc xác thực đã bị hủy.",
+    "FLOOD_WAIT": "Quá nhiều yêu cầu. Vui lòng thử lại sau {{duration}}.",
+    "PASSWORD_HASH_INVALID": "Mật khẩu xác minh hai bước không đúng.",
+    "PHONE_CODE_EXPIRED": "Mã đăng nhập đã hết hạn. Vui lòng lấy mã mới.",
+    "PHONE_CODE_INVALID": "Mã đăng nhập không đúng.",
+    "PHONE_NUMBER_BANNED": "Số điện thoại này đã bị cấm.",
+    "PHONE_NUMBER_INVALID": "Số điện thoại có vẻ không đúng. Hãy kiểm tra xem bạn đã thêm mã quốc gia chưa.",
+    "PHONE_NUMBER_UNOCCUPIED": "Không có tài khoản Telegram nào ứng với số này.",
+    "PHONE_PASSWORD_FLOOD": "Nhập mật khẩu sai quá nhiều lần. Hãy chờ một lát rồi thử lại.",
+    "SESSION_PASSWORD_NEEDED": "Cần mật khẩu xác minh hai bước.",
+    "PEER_NOT_CACHED": "Thông tin cuộc trò chuyện này đã hết hạn. Hãy quay lại danh sách và chọn lại.",
+    "SESSION_REVOKED": "Phiên đã bị kết thúc. Vui lòng đăng nhập lại.",
+    "UPDATE_APP_TO_LOGIN": "Telegram không còn cho phép đăng nhập theo cách này.",
+    "UNKNOWN": "Đã xảy ra lỗi: {{raw}}",
+    "duration": {
+      "seconds": "{{count}} giây",
+      "minutes": "{{count}} phút",
+      "hours": "{{count}} giờ"
+    }
+  },
+  "mediaInfo": {
+    "title": "Chi tiết tệp đính kèm",
+    "id": "Id tệp",
+    "messageId": "Id tin nhắn",
+    "kind": "Loại",
+    "fileName": "Tên tệp",
+    "mimeType": "Kiểu MIME",
+    "size": "Kích thước ảnh",
+    "bytes": "Dung lượng",
+    "uploaded": "Thời điểm tải lên",
+    "dc": "Trung tâm dữ liệu",
+    "accessHash": "access hash",
+    "copy": "Sao chép tất cả",
+    "duration": "Thời lượng"
+  },
+  "errorPage": {
+    "title": "Đã xảy ra sự cố khi mở màn hình này",
+    "body": "Có thể chỉ là tạm thời. Hãy thử lại, nếu vẫn lỗi hãy quay về màn hình đầu.",
+    "notFound": "Không tìm thấy trang",
+    "notFoundBody": "Địa chỉ có thể đã thay đổi hoặc bị nhập sai.",
+    "home": "Về màn hình đầu",
+    "details": "Chi tiết lỗi"
+  }
+}

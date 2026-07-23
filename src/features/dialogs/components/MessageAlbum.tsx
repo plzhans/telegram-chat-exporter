@@ -104,7 +104,7 @@ export function MessageAlbum({ messages, showSender = true }: MessageAlbumProps)
                     // flex 비율이 곧 사진 비율이라, 칸과 사진의 모양이 정확히 일치한다.
                     <div key={message.id} className="relative" style={{ flex: ratioOf(message) }}>
                       <MessagePhoto message={message} dark={first.out} tile albumKeys={albumKeys} />
-                      <MediaInfoButton message={message} className="absolute right-1 top-1" />
+                      <MediaInfoButton message={message} className="absolute end-1 top-1" />
                     </div>
                   ))}
                 </div>
@@ -117,7 +117,7 @@ export function MessageAlbum({ messages, showSender = true }: MessageAlbumProps)
               {caption}
               <span
                 className={cn(
-                  'float-right ml-2 mt-1 select-none text-[0.65rem] leading-none',
+                  'float-end ms-2 mt-1 select-none text-[0.65rem] leading-none',
                   first.out ? 'text-primary-100' : 'text-slate-400',
                 )}
               >
@@ -125,7 +125,7 @@ export function MessageAlbum({ messages, showSender = true }: MessageAlbumProps)
               </span>
             </p>
           ) : (
-            <span className="absolute bottom-1.5 right-1.5 rounded-full bg-slate-900/55 px-1.5 py-0.5 text-[0.65rem] leading-none text-white">
+            <span className="absolute bottom-1.5 end-1.5 rounded-full bg-slate-900/55 px-1.5 py-0.5 text-[0.65rem] leading-none text-white">
               {formatTime(first.date, locale)}
             </span>
           )}
