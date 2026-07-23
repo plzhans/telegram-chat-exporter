@@ -91,7 +91,23 @@ export function MessageRow({ message, showSender = true }: MessageRowProps) {
           <span className="h-7 w-7 shrink-0" />
         ))}
 
-      <div className={cn('flex min-w-0 flex-col gap-0.5', message.out ? 'items-end' : 'items-start')}>
+      {/*
+        `flex-1` 이 있어야 말풍선의 `max-w-*` 가 제대로 계산된다.
+
+        이 열은 원래 내용 크기대로 줄어드는 상자였다. 그러면 열의 폭이 곧 **글의 자연
+        너비**가 되고, 말풍선의 `max-w-[74%]` 는 그 74% - 다시 말해 자기 글 너비의 74% 가
+        된다. 옆에 500px 이 남아 있어도 모든 말풍선이 1.4줄쯤으로 접혔다("감기몸살이
+        떨어지질 않네 / 아이고").
+
+        열이 남은 자리를 다 차지하면 그 74% 는 **대화 폭의 74%** 가 된다. 말풍선 자체는
+        `items-start`/`items-end` 로 여전히 내용만큼만 넓어지므로 짧은 말은 짧게 남는다.
+      */}
+      <div
+        className={cn(
+          'flex min-w-0 flex-1 flex-col gap-0.5',
+          message.out ? 'items-end' : 'items-start',
+        )}
+      >
         {/*
           이름은 **말풍선 안 첫 줄**에 둔다.
 

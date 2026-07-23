@@ -174,11 +174,29 @@ export interface HtmlReportMeta {
  *
  * 그래서 "왜 이렇게 했는가"는 전부 이 주석에 남기고, 나가는 CSS 에는 짧은 영어 표시만 둔다.
  *
+ * ## 치수는 앱 화면에서 그대로 가져온다
+ *
+ * 같은 대화를 앱에서 보다가 이 파일을 열면 **같은 것으로 보여야 한다.** 그래서 말풍선의
+ * 크기·색·여백·글자 크기를 눈대중으로 비슷하게 맞추지 않고, 앱이 쓰는 Tailwind 값을 그대로
+ * 옮겨 적었다(px-3 py-2 = 0.75rem 0.5rem, rounded-2xl = 1rem, bg-slate-100, ...).
+ *
+ * 그래서 **루트 글자 크기를 17px 로 둔다.** 앱이 `globals.css` 에서 그렇게 정해 놨고,
+ * Tailwind 의 값은 전부 rem 이라 이 하나가 어긋나면 대화 폭(48rem)부터 말풍선 글자까지
+ * 6% 씩 작아진다. 실제로 그랬다 - 앱은 816px 칸에 14.3px 글자, 이 문서는 768px 칸에
+ * 13.5px 글자였다.
+ *
+ * 픽셀로 적힌 값(사진 256/320px 처럼)은 앱에서도 픽셀이라 그대로 픽셀로 둔다.
+ *
  * ## 왜 이런 규칙인가
  *
  * - **대화 자리에 테두리(.chat)** - 바탕을 희게 바꾸고 나니 대화가 어디서 시작해 어디서
  *   끝나는지가 사라졌다. 선 한 줄이면 "여기부터 저기까지가 그 대화"라고 말해 준다.
- *   위아래 안쪽 여백이 다른 이유는 메시지마다 위쪽에만 간격이 붙어 있어서다(.row).
+ *
+ * - **열(.col)이 줄의 남은 자리를 다 차지한다** - 말풍선의 `max-width:74%` 가 무엇의 74%
+ *   인지를 정하는 값이다. 열이 내용만큼만 넓으면 그 74% 는 **글 자신의 너비**의 74% 가
+ *   되어, 옆이 텅 비어 있는데도 모든 말풍선이 1.4줄로 접힌다. 실제로 그랬다. 열이 줄을
+ *   가득 채우면 74% 는 대화 폭의 74% 가 되고, 말풍선은 `align-items` 덕에 여전히 자기
+ *   내용만큼만 넓어진다.
  *
  * - **머리말 접기(details)** - 브라우저가 원래 하는 일이라 코드가 필요 없고, 페이지 내
  *   찾기(Ctrl+F)가 접힌 안쪽까지 뒤져서 펴 준다. 인쇄할 때는 접혀 있어도 펼쳐 찍는다 -
@@ -187,9 +205,9 @@ export interface HtmlReportMeta {
  * - **아바타는 contain** - 메시지에 딸려 온 미리보기는 몇십 px 이라, cover 로 잘리면 남는
  *   게 없다. 네모난 그림에는 둘이 같으므로 손해 보는 경우가 없다.
  *
- * - **말풍선이 스스로 색을 갖는다** - 바탕이 흰색이라 흰 말풍선은 묻혀 사라진다. 받은 말은
- *   연한 파랑, 보낸 말은 진한 파랑. 같은 계열의 밝기 차이로 나누면 조용하면서 구별은
- *   확실하고, 평평하게 놓은 문서에서는 모두 연한 파랑으로 통일되어 어느 쪽도 안 도드라진다.
+ * - **말풍선 색도 앱 그대로** - 받은 말은 회색(slate-100), 보낸 말은 파랑. 한때 받은 말을
+ *   연한 파랑에 테두리까지 둘렀는데, 앱과 나란히 놓으면 다른 프로그램에서 나온 것처럼
+ *   보였다. 흰 바탕에서 회색 말풍선이 묻히지 않는다는 건 앱 화면이 이미 증명한다.
  *
  * - **미디어는 말풍선 밖** - 앱 화면과 같은 규칙이다. 사진에 말풍선 배경이 깔리면 사진
  *   자체의 경계가 흐려진다.
@@ -202,12 +220,15 @@ export interface HtmlReportMeta {
  */
 const STYLE = `
 *,*::before,*::after{box-sizing:border-box}
-/* The column width is shared: the jump button anchors to this column, not the window. */
-:root{--col:48rem}
+/*
+  The column width is shared: the jump button anchors to this column, not the window.
+  17px is the app's root size; every rem below is one of the app's own values.
+*/
+:root{--col:48rem;font-size:17px}
 body{margin:0;background:#fff;color:#0F172A;
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
   font-size:13.5px;line-height:1.6;-webkit-text-size-adjust:100%}
-.wrap{max-width:var(--col);margin:0 auto;padding:16px}
+.wrap{max-width:var(--col);margin:0 auto;padding:1rem}
 /* provenance line, always visible but never loud */
 .brand{margin:0 0 8px;font-size:11px;color:#94A3B8;text-align:right}
 .brand a{color:#64748B;text-decoration:none}
@@ -229,47 +250,69 @@ body{margin:0;background:#fff;color:#0F172A;
 .head dd{margin:0;font-weight:600}
 .head dd a{color:#2563EB}
 /* conversation */
-.chat{border:1px solid #E2E8F0;border-radius:16px;padding:4px 12px 12px}
-.day{display:flex;justify-content:center;margin:20px 0 12px}
-.day span{background:#CBD5E1;color:#1E293B;font-size:12px;font-weight:700;
-  padding:3px 12px;border-radius:999px}
-.sys{text-align:center;color:#64748B;font-size:12px;margin:8px 0}
-.row{display:flex;gap:8px;margin-top:8px;align-items:flex-end}
+.chat{border:1px solid #E2E8F0;border-radius:1rem;padding:0.75rem}
+.chat>:first-child{margin-top:0}
+/* date divider: a pill between two rules, as in the app */
+.day{display:flex;align-items:center;gap:0.75rem;margin-top:0.5rem;padding:0.25rem 0}
+.day::before,.day::after{content:"";flex:1 1 0;height:1px;background:#E2E8F0}
+.day span{background:#F1F5F9;color:#64748B;font-size:0.75rem;font-weight:600;
+  padding:0.25rem 0.625rem;border-radius:999px}
+.sys{text-align:center;color:#94A3B8;font-size:0.75rem;margin-top:0.5rem;padding:0.25rem 0}
+.row{display:flex;gap:0.5rem;margin-top:0.5rem;align-items:flex-end}
 .row.own{flex-direction:row-reverse}
-.row.tight{margin-top:2px}
-.col{min-width:0;max-width:calc(100% - 40px);display:flex;flex-direction:column}
+/*
+  The column fills the rest of the row. A shrink-to-fit column would make the bubble's
+  percentage max-width resolve against the text's own width, wrapping every line early.
+*/
+.col{flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:0.125rem;
+  align-items:flex-start}
 .row.own .col{align-items:flex-end}
 /* avatar: contain, never crop */
-.av{width:28px;height:28px;border-radius:999px;flex:0 0 28px;color:#fff;
-  font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;
+.av{width:1.75rem;height:1.75rem;border-radius:999px;flex:0 0 1.75rem;color:#fff;
+  font-size:0.7rem;font-weight:600;display:flex;align-items:center;justify-content:center;
   background-size:contain;background-repeat:no-repeat;background-position:center;overflow:hidden}
 .av.hole{background:none}
-.who{font-size:12px;color:#475569;margin-bottom:2px}
+.who{font-size:0.75rem;font-weight:600;color:#64748B;padding:0 0.25rem}
 /* sender name: first line inside the bubble */
 /* max-content keeps a name longer than the message from wrapping inside a narrow bubble. */
-.nmline{display:block;width:max-content;max-width:100%;font-size:12px;margin-bottom:1px}
-.nm{font-weight:700}
-.bot{background:#E2E8F0;color:#475569;border-radius:4px;padding:0 4px;
-  font-size:11px;font-weight:700;margin-left:4px;vertical-align:1px}
+.nmline{display:block;width:max-content;max-width:100%;font-size:0.75rem;
+  color:#1D4ED8;margin-bottom:0.125rem}
+.nm{font-weight:600}
+.bot{background:#E2E8F0;color:#475569;border-radius:4px;padding:0 0.25rem;
+  font-size:0.65rem;font-weight:700;margin-left:0.25rem;vertical-align:1px}
 /* bubbles */
 /*
   The bubble stops well short of the column, like the app does. A bubble that runs the
   full width reads as a paragraph, not as one person's turn - the ragged right edge is
   what makes a conversation scannable.
+  flow-root makes the floated timestamp count towards the bubble's height.
 */
-.bub{background:#EFF6FF;border:1px solid #DBEAFE;border-radius:16px;padding:6px 10px;
-  max-width:74%;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere}
-.row.own .bub{background:#2563EB;border-color:#2563EB;color:#fff}
-.at{font-size:11px;color:#64748B;margin-left:8px;float:right;position:relative;top:6px}
-.row.own .at{color:#BFDBFE}
-.edit{font-style:normal;font-size:11px;color:#B45309;margin-right:4px}
+.bub{display:flow-root;background:#F1F5F9;color:#1E293B;border-radius:1rem;
+  padding:0.5rem 0.75rem;max-width:74%;font-size:0.84375rem;line-height:1.5;
+  white-space:pre-wrap;overflow-wrap:break-word}
+.row.own .bub{background:#2563EB;color:#fff}
+.at{float:right;margin-left:0.5rem;margin-top:0.25rem;
+  font-size:0.7rem;line-height:1;color:#94A3B8}
+.row.own .at{color:#DBEAFE}
+.edit{font-style:normal;font-size:0.7rem;color:#B45309;margin-right:0.25rem}
 .row.own .edit{color:#FDE68A}
 /* media sits outside the bubble */
-.med{margin-top:4px;max-width:min(320px,100%)}
-.med img{display:block;width:100%;height:auto;border-radius:12px;background:#E2E8F0}
-.med.stick img{border-radius:0;background:none;max-width:180px}
-.alb{display:grid;grid-template-columns:1fr 1fr;gap:2px;border-radius:12px;overflow:hidden}
-.alb img{border-radius:0}
+/* 256/320 are pixels in the app too - they size the picture, not the type. */
+.med{position:relative;width:min(256px,100%)}
+.med img{display:block;width:100%;height:auto;max-height:320px;border-radius:1rem;
+  border:1px solid rgba(15,23,42,.15);background:#E2E8F0}
+.med.stick{width:clamp(120px,30vw,220px)}
+.med.stick img{border:0;border-radius:0;background:none;max-height:none}
+/* album: two per row, each row as tall as the photos' own ratios make it */
+.alb{border-radius:1rem;overflow:hidden;border:1px solid rgba(15,23,42,.15)}
+.arow{display:flex}
+.alb .zoom{min-width:0}
+.alb img{width:100%;height:100%;object-fit:cover;border:0;border-radius:0;max-height:none}
+.cnt{font-size:0.65rem;color:#94A3B8;padding:0 0.25rem}
+/* the time sits on the picture when there is no bubble to carry it */
+.ovt{position:absolute;bottom:0.375rem;right:0.375rem;background:rgba(15,23,42,.55);
+  color:#fff;border-radius:999px;padding:0.125rem 0.375rem;font-size:0.7rem;line-height:1}
+.ovt .edit{color:#FDE68A}
 /* click to enlarge, CSS only (:target) */
 .face{display:block;cursor:default;text-decoration:none}
 .head .face{flex:0 0 44px}
@@ -287,8 +330,8 @@ body{margin:0;background:#fff;color:#0F172A;
   background:rgba(15,23,42,.92);align-items:flex-start;justify-content:flex-end;
   padding:12px 16px;color:#fff;font-size:28px;line-height:1;text-decoration:none;cursor:zoom-out}
 /* attachment kept out of this backup */
-.miss{border:1px dashed #CBD5E1;border-radius:12px;padding:8px 10px;background:#F8FAFC;
-  color:#475569;font-size:13px}
+.miss{max-width:100%;border:1px dashed #CBD5E1;border-radius:1rem;padding:0.5rem 0.75rem;
+  background:#F8FAFC;color:#475569;font-size:0.84375rem}
 .fid{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;color:#64748B;
   word-break:break-all}
 .foot{margin:24px 0 8px;text-align:center;color:#94A3B8;font-size:12px;line-height:1.8}
@@ -318,8 +361,7 @@ body{margin:0;background:#fff;color:#0F172A;
   .wrap{padding:8px 0}
   .brand{padding:0 8px}
   .head{border-radius:0;border-inline:0;padding:12px 10px}
-  .chat{border-radius:0;border-inline:0;padding:2px 6px 8px}
-  .col{max-width:calc(100% - 34px)}
+  .chat{border-radius:0;border-inline:0;padding:0.375rem}
   .bub{max-width:82%}
   .foot{padding:0 8px}
 }
@@ -615,7 +657,7 @@ export class HtmlReport {
       줄에서 시작하고, 말풍선 색도 구별되지 않는다.
     */
     const own = message.out && this.meta.alignOwnRight;
-    const classes = ['row', own ? 'own' : '', repeated ? 'tight' : ''].filter(Boolean);
+    const classes = ['row', own ? 'own' : ''].filter(Boolean);
     out += `<div class="${classes.join(' ')}">`;
 
     if (repeated) {
@@ -660,11 +702,16 @@ export class HtmlReport {
 
       글이 없는 메시지(사진만 보낸 경우)는 담을 말풍선이 없으므로 위에 둔다.
     */
+    /*
+      이름 색은 **모두 같다.** 한때 발신자마다 다른 색을 줬는데, 앱 화면은 이름을 한 가지
+      파랑으로 적고 사람을 가르는 일은 아바타 색이 맡는다 - 이 문서에도 그 아바타가 그대로
+      있으므로, 이름까지 색을 달리하면 같은 구실을 두 번 하면서 앱과 달라 보이기만 했다.
+    */
     const label =
       !repeated && !own
-        ? `<b class="nm" style="color:${colorOf(message.senderId)}">${escapeHtml(
-            message.senderName ?? '',
-          )}</b>${message.senderKind === 'bot' ? '<span class="bot">BOT</span>' : ''}`
+        ? `<b class="nm">${escapeHtml(message.senderName ?? '')}</b>${
+            message.senderKind === 'bot' ? '<span class="bot">BOT</span>' : ''
+          }`
         : '';
 
     if (label && !message.text) out += `<div class="who">${label}</div>`;
@@ -678,10 +725,25 @@ export class HtmlReport {
       }${escapeHtml(timeOf(message.date))}</span></div>`;
     }
 
-    if (message.mediaType) out += this.renderMedia(message, group);
+    /*
+      글이 없으면 시각을 실어 줄 말풍선이 없다. 그때는 **사진 위 오른쪽 아래**에 얹는다 -
+      앱이 하는 그 자리다. 사진 아래에 한 줄로 적으면 그 줄이 다음 메시지의 이름처럼 보인다.
+      그릴 사진이 없는 경우(파일을 안 담은 백업)에만 아래 줄로 물러난다.
+    */
+    const stamp = message.text
+      ? ''
+      : `<span class="ovt">${
+          message.editDate ? '<i class="edit">edited</i>' : ''
+        }${escapeHtml(timeOf(message.date))}</span>`;
 
-    // 글이 없으면 시각을 실어 줄 말풍선이 없다. 미디어 아래에 따로 적는다.
-    if (!message.text) {
+    let stamped = false;
+    if (message.mediaType) {
+      const media = this.renderMedia(message, group, stamp);
+      out += media.html;
+      stamped = media.stamped;
+    }
+
+    if (!message.text && !stamped) {
       out += `<div class="who">${
         message.editDate ? '<i class="edit">edited</i>' : ''
       }${escapeHtml(timeOf(message.date))}</div>`;
@@ -690,7 +752,17 @@ export class HtmlReport {
     return `${out}</div></div>`;
   }
 
-  private renderMedia(message: MessageSummary, group?: MessageSummary[]): string {
+  /**
+   * 첨부를 그린다.
+   *
+   * `stamp` 는 글이 없는 메시지의 시각 표시다. **그림을 실제로 그린 경우에만** 그 위에
+   * 얹고(`stamped: true`), 그리지 못했으면 부르는 쪽이 아래 줄로 적게 돌려준다.
+   */
+  private renderMedia(
+    message: MessageSummary,
+    group: MessageSummary[] | undefined,
+    stamp: string,
+  ): { html: string; stamped: boolean } {
     const items = group ?? [message];
     const drawable = items.filter((item) => this.pathOf(item));
 
@@ -700,17 +772,20 @@ export class HtmlReport {
       사진인지 이 문서만 보고도 맞출 수 있다.
     */
     if (drawable.length === 0) {
-      return `<div class="med"><div class="miss">${items
-        .map((item) => {
-          const info = item.mediaInfo;
-          const size = formatBytes(info?.size);
-          return `not included · ${escapeHtml(item.mediaType ?? '')}${
-            size ? ` · ${escapeHtml(size)}` : ''
-          }${info?.fileName ? ` · ${escapeHtml(info.fileName)}` : ''}<div class="fid">id=${escapeHtml(
-            info?.id ?? 'unknown',
-          )}</div>`;
-        })
-        .join('<hr>')}</div></div>`;
+      return {
+        html: `<div class="miss">${items
+          .map((item) => {
+            const info = item.mediaInfo;
+            const size = formatBytes(info?.size);
+            return `not included · ${escapeHtml(item.mediaType ?? '')}${
+              size ? ` · ${escapeHtml(size)}` : ''
+            }${
+              info?.fileName ? ` · ${escapeHtml(info.fileName)}` : ''
+            }<div class="fid">id=${escapeHtml(info?.id ?? 'unknown')}</div>`;
+          })
+          .join('<hr>')}</div>`,
+        stamped: false,
+      };
     }
 
     const sticker = message.mediaType === 'sticker';
@@ -720,38 +795,69 @@ export class HtmlReport {
       `.webm` 이라 `<img>` 로는 안 나온다. 깨진 그림 아이콘을 보여주느니, 파일이 어디 있는지
       적어 두는 편이 낫다 — 열어 볼 방법은 받은 사람이 안다.
     */
-    const playable = drawable.filter((item) => /\.(jpe?g|png|gif|webp|bmp|avif)$/i.test(this.pathOf(item)!));
+    const playable = drawable.filter((item) =>
+      /\.(jpe?g|png|gif|webp|bmp|avif)$/i.test(this.pathOf(item)!),
+    );
     if (playable.length === 0) {
-      return `<div class="med"><div class="miss">${drawable
-        .map(
-          (item) =>
-            `${escapeHtml(item.mediaType ?? '')} · <span class="fid">${escapeHtml(
-              this.pathOf(item)!,
-            )}</span>`,
-        )
-        .join('<hr>')}</div></div>`;
+      return {
+        html: `<div class="miss">${drawable
+          .map(
+            (item) =>
+              `${escapeHtml(item.mediaType ?? '')} · <span class="fid">${escapeHtml(
+                this.pathOf(item)!,
+              )}</span>`,
+          )
+          .join('<hr>')}</div>`,
+        stamped: false,
+      };
     }
 
-    const tags = playable
-      .map((item) => {
-        const path = this.pathOf(item)!;
-        const alt = `${item.mediaType ?? ''} ${item.mediaInfo?.id ?? ''}`.trim();
-        // loading=lazy 를 붙여야 사진 수천 장짜리 문서도 스크롤이 버틴다.
-        const img = `<img src="${escapeHtml(path)}" alt="${escapeHtml(alt)}" loading="lazy">`;
-        if (sticker) return img;
-        /*
-          닫기 판(.cl)을 그림 **바로 뒤**에 둔다. `~` 는 같은 부모의 뒤쪽 형제만 볼 수
-          있어서, 떨어뜨려 놓으면 열려도 판이 안 나타난다.
-        */
-        const anchor = `m${item.id}`;
-        return `<a class="zoom" id="${anchor}" href="#${anchor}">${img}</a><a class="cl" href="#_">&times;</a>`;
-      })
-      .join('');
+    const tagOf = (item: MessageSummary, style = '') => {
+      const path = this.pathOf(item)!;
+      const alt = `${item.mediaType ?? ''} ${item.mediaInfo?.id ?? ''}`.trim();
+      // loading=lazy 를 붙여야 사진 수천 장짜리 문서도 스크롤이 버틴다.
+      const img = `<img src="${escapeHtml(path)}" alt="${escapeHtml(alt)}" loading="lazy">`;
+      if (sticker) return img;
+      /*
+        닫기 판(.cl)을 그림 **바로 뒤**에 둔다. `~` 는 같은 부모의 뒤쪽 형제만 볼 수
+        있어서, 떨어뜨려 놓으면 열려도 판이 안 나타난다.
+      */
+      const anchor = `m${item.id}`;
+      return `<a class="zoom" id="${anchor}" href="#${anchor}"${style}>${img}</a><a class="cl" href="#_">&times;</a>`;
+    };
 
     if (playable.length > 1) {
-      return `<div class="med"><div class="alb">${tags}</div></div>`;
+      /*
+        **앨범은 두 장씩 한 줄이다.** 앱과 같은 셈을 쓴다 - 줄의 높이를 하나로 두고 가로를
+        사진 비율대로 나누면, 칸의 비율이 사진 비율과 같아져서 **잘리지도 빈 자리가 남지도
+        않는다.** 폭 W 를 두 장이 나눠 갖고 높이 h 가 같다면 `W = h·r₁ + h·r₂` 이므로
+        줄의 가로세로비가 곧 비율의 합이다.
+
+        치수를 모르는 사진은 1:1 로 본다. 짐작이지만 격자가 무너지지는 않는다.
+      */
+      const ratioOf = (item: MessageSummary) =>
+        item.mediaWidth && item.mediaHeight ? item.mediaWidth / item.mediaHeight : 1;
+
+      let grid = '';
+      for (let index = 0; index < playable.length; index += 2) {
+        const row = playable.slice(index, index + 2);
+        const total = row.reduce((sum, item) => sum + ratioOf(item), 0);
+        grid += `<div class="arow" style="aspect-ratio:${total.toFixed(4)}">${row
+          .map((item) => tagOf(item, ` style="flex:${ratioOf(item).toFixed(4)}"`))
+          .join('')}</div>`;
+      }
+
+      return {
+        // 몇 장짜리 묶음인지 적어 둔다. 앱과 같다 - 잘려 보이는 장이 있어도 수는 남는다.
+        html: `<div class="med"><div class="alb">${grid}</div>${stamp}</div><div class="cnt">${playable.length} photos</div>`,
+        stamped: Boolean(stamp),
+      };
     }
-    return `<div class="med${sticker ? ' stick' : ''}">${tags}</div>`;
+
+    return {
+      html: `<div class="med${sticker ? ' stick' : ''}">${tagOf(playable[0])}${stamp}</div>`,
+      stamped: Boolean(stamp),
+    };
   }
 
   /**

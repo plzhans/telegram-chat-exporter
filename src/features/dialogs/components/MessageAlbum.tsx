@@ -82,7 +82,14 @@ export function MessageAlbum({ messages, showSender = true }: MessageAlbumProps)
           <span className="h-7 w-7 shrink-0" />
         ))}
 
-      <div className={cn('flex min-w-0 flex-col gap-0.5', first.out ? 'items-end' : 'items-start')}>
+      {/* `flex-1` 인 이유는 MessageRow 와 같다 - 없으면 아래 `max-w-[80%]` 가 앨범 자기
+          너비의 80%(256 → 205px)가 되어 격자가 이유 없이 쪼그라든다. */}
+      <div
+        className={cn(
+          'flex min-w-0 flex-1 flex-col gap-0.5',
+          first.out ? 'items-end' : 'items-start',
+        )}
+      >
         {incoming && showSender && first.senderName && (
           <span className="px-1 text-[0.7rem] font-semibold text-slate-500">{first.senderName}</span>
         )}
