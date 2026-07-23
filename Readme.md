@@ -481,10 +481,18 @@ Cloudflare 는 루트 배포라 `--base` 없이 `pnpm build` 그대로 올리면
 릴리스를 만들어 첨부한다.
 
 ```bash
-# package.json 의 version 을 먼저 올린다. 그다음 태그.
-git tag release/v1.0.0
-git push origin release/v1.0.0
+# version 을 올리고, 커밋하고, 태그까지 한 번에.
+pnpm release minor          # patch · minor · major, 또는 1.0.0 같은 정확한 값
+git push --follow-tags
 ```
+
+`pnpm release` 는 `pnpm version` 에 `--tag-version-prefix=release/v` 를 붙인 것뿐이다.
+`package.json` 을 고치고, 그 버전만 적힌 커밋을 만들고, `release/v1.0.0` 태그를 단다 —
+셋이 항상 같이 움직이니 버전을 어긋나게 밀어 넣을 수가 없다. (프리픽스를 `.npmrc` 의
+`tag-version-prefix` 에 적어 두는 방법은 **pnpm 이 읽지 않아서** 안 된다. 그래서 스크립트다.)
+
+태그는 annotated 라 `--follow-tags` 로 커밋과 함께 올라간다. 작업 트리가 지저분하면
+`pnpm version` 이 먼저 멈춘다.
 
 **태그와 `package.json` 의 버전이 다르면 워크플로가 멈춘다.** 화면 하단과 내보낸 문서에
 찍히는 버전은 `package.json` 에서 오기 때문이다 — 태그만 올리면 `v1.0.0` 이라는 이름으로

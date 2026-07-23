@@ -9,7 +9,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "build:standalone": "tsc -b && vite build --mode standalone",
-    "preview": "vite preview --port 5176 --strictPort"
+    "preview": "vite preview --port 5176 --strictPort",
+    "release": "pnpm version --tag-version-prefix=release/v"
   },
   "dependencies": {
     "@radix-ui/react-popover": "^1.1.19",
