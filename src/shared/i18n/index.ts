@@ -63,7 +63,72 @@ export function pathForLanguage(lang: SupportedLanguage, pathname = window.locat
   return import.meta.env.BASE_URL + [langSegment(lang), ...parts].filter(Boolean).join('/');
 }
 
-const active = languageFromPath();
+/**
+ * 단일 파일 배포에서 고른 언어를 적어 두는 자리.
+ *
+ * 주소가 파일 경로라 언어를 담을 수 없어서 브라우저에 남긴다. 언어 취향은 비밀이 아니고
+ * 다음에 열 때도 유지되어야 하므로 sessionStorage 가 아니라 localStorage 다
+ * (세션 문자열을 왜 반대로 두는지는 shared/telegram/session.ts 참고).
+ */
+const LANGUAGE_KEY = 'tce.language';
+
+function storedLanguage(): SupportedLanguage | null {
+  try {
+    const v = localStorage.getItem(LANGUAGE_KEY)?.toLowerCase() ?? '';
+    return isLanguage(v) ? v : null;
+  } catch {
+    // 사생활 보호 모드 등에서 막혀 있을 수 있다. 그때는 브라우저 설정으로 떨어진다.
+    return null;
+  }
+}
+
+/** 브라우저 설정에서 고른다. 지역까지 맞는 게 없으면 언어만 같은 것도 받는다. */
+function browserLanguage(): SupportedLanguage | null {
+  for (const tag of navigator.languages?.length ? navigator.languages : [navigator.language]) {
+    const lower = (tag ?? '').toLowerCase();
+    const hit = SUPPORTED_LANGUAGES.find(
+      (l) => l === lower || l.split('-')[0] === lower.split('-')[0],
+    );
+    if (hit) return hit;
+  }
+  return null;
+}
+
+/**
+ * 지금 보여 줄 언어.
+ *
+ * 웹 배포는 주소가 정한다(`languageFromPath` 주석). 단일 파일 배포는 주소가 아무것도 말해
+ * 주지 않으므로 **고른 값 → 브라우저 설정 → 기본 언어** 순으로 잡는다.
+ */
+export function activeLanguage(): SupportedLanguage {
+  if (!__STANDALONE__) return languageFromPath();
+  return storedLanguage() ?? browserLanguage() ?? DEFAULT_LANGUAGE;
+}
+
+/**
+ * 언어를 바꾼다.
+ *
+ * 글자만 갈아 끼우지 않고 문서를 다시 연다. 그래야 주소와 `<html lang>`, 그리고 화면이
+ * 이미 그려 둔 문구까지 한 언어로 맞는다.
+ */
+export function switchLanguage(next: SupportedLanguage): void {
+  if (!__STANDALONE__) {
+    window.location.assign(pathForLanguage(next) + window.location.search);
+    return;
+  }
+
+  try {
+    localStorage.setItem(LANGUAGE_KEY, next);
+  } catch {
+    // 저장이 막혔으면 다음에 열 때 되돌아가겠지만, 지금 화면만이라도 바꿔 준다.
+    void i18n.changeLanguage(next);
+    document.documentElement.lang = seoOf(next).tag;
+    return;
+  }
+  window.location.reload();
+}
+
+const active = activeLanguage();
 
 void i18n.use(initReactI18next).init({
   resources,

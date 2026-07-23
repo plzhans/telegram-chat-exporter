@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect } from 'react';
 import {
   createBrowserRouter,
+  createHashRouter,
   Navigate,
   Outlet,
   RouterProvider,
@@ -61,19 +62,28 @@ const pages: RouteObject[] = [
   */
 const basename = import.meta.env.BASE_URL + langSegment(languageFromPath());
 
-const router = createBrowserRouter(
-  [
-    {
-      element: (
-        <Suspense fallback={<PageLoader />}>
-          <MainLayout />
-        </Suspense>
-      ),
-      children: pages,
-    },
-  ],
-  { basename },
-);
+const tree = [
+  {
+    element: (
+      <Suspense fallback={<PageLoader />}>
+        <MainLayout />
+      </Suspense>
+    ),
+    children: pages,
+  },
+];
+
+/**
+ * 단일 파일 배포는 해시 라우터여야 한다.
+ *
+ * 주소가 `file:///.../index.html` 이라 경로를 바꿀 대상이 없다. 히스토리 API 로
+ * `/dialogs` 를 밀어 넣으면 브라우저가 **파일시스템 경로**를 고치려 드는 셈이라 막히고,
+ * 설령 됐다 해도 새로고침하면 없는 파일을 열게 된다. 해시(`#/dialogs`)는 문서가 그대로라
+ * 서버 없이도 성립한다.
+ *
+ * 웹 배포는 그대로 둔다. 해시는 검색엔진이 별개 주소로 보지 않아서 언어별 색인이 깨진다.
+ */
+const router = __STANDALONE__ ? createHashRouter(tree) : createBrowserRouter(tree, { basename });
 
 /** 저장된 세션의 유휴 만료 시각을 밀어 주는 주기. TTL 보다 충분히 짧기만 하면 된다. */
 const TOUCH_INTERVAL_MS = 60_000;

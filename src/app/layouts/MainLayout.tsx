@@ -8,7 +8,7 @@ import { COPYRIGHT, SOURCE_URL, VERSION_LABEL } from '@/shared/config/app';
 import {
   DEFAULT_LANGUAGE,
   SUPPORTED_LANGUAGES,
-  pathForLanguage,
+  switchLanguage,
   type SupportedLanguage,
 } from '@/shared/i18n';
 
@@ -50,10 +50,10 @@ function LanguageSelect() {
   const { t, i18n } = useTranslation();
   const current = (i18n.resolvedLanguage ?? DEFAULT_LANGUAGE) as SupportedLanguage;
 
-  // 글자만 바꾸면 주소와 문서의 신원이 이전 언어로 남는다. 그 언어의 주소로 다시 연다.
+  // 글자만 바꾸면 주소와 문서의 신원이 이전 언어로 남는다. 문서를 다시 연다.
   const switchTo = (next: string) => {
     if (next === current) return;
-    window.location.assign(pathForLanguage(next as SupportedLanguage) + window.location.search);
+    switchLanguage(next as SupportedLanguage);
   };
 
   return (

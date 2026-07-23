@@ -128,6 +128,41 @@ pnpm exec vite build --base=/보낼-경로/
 
 라우터는 이 값을 `import.meta.env.BASE_URL` 로 읽으므로 따로 맞출 게 없다.
 
+### 받아서 실행하는 배포본 (standalone)
+
+웹서버 없이 **`index.html` 을 더블클릭해서** 쓰는 형태다. 릴리스에 zip 으로 올리는 물건이
+이것이다.
+
+```bash
+pnpm build:standalone
+```
+
+`dist-standalone/` 이 나온다. 폴더째 압축을 풀어 `index.html` 을 열면 그대로 동작한다
+(`assets/` 는 같이 있어야 한다 — 링크가 상대경로다).
+
+`file://` 로 열리는 문서라 웹 배포본과 세 가지가 다르다. **셋 다 파일 하나로 합쳐서 푼 게
+아니라, 브라우저가 `file://` 에서 막는 것만 피해 간 것이다.**
+
+| | 웹 배포 (`pnpm build`) | standalone |
+| --- | --- | --- |
+| 스크립트 | `<script type="module">` | 일반 스크립트 한 덩어리 (`assets/app.js`) |
+| 라우터 | 주소 (`/dialogs`) | 해시 (`#/dialogs`) |
+| 언어 | 주소 접두사 (`/en-us/`) | 고른 값을 저장 · 없으면 브라우저 설정 |
+
+- **모듈이 아니다.** `file://` 은 `<script type="module">` 을 CORS 로 막는다(크롬·파이어폭스
+  공통). 그래서 IIFE 한 덩어리로 뽑고 `type="module"`·`crossorigin` 을 떼어낸다.
+  화면 코드의 `lazy(() => import(...))` 는 그대로 두고 `inlineDynamicImports` 로 합친다.
+- **해시 라우터다.** 주소가 파일 경로라 히스토리 API 로 바꿀 대상이 없다. 웹 배포는
+  그대로 둔다 — 해시는 검색엔진이 별개 주소로 보지 않아서 언어별 색인이 깨진다.
+- **언어를 주소에 담을 수 없다.** 그래서 고른 값을 `localStorage` 에 두고 문서를 다시 연다
+  (`src/shared/i18n/index.ts` 의 `switchLanguage`). 처음 열 때는 브라우저 설정을 따른다.
+- **CSP 에 `file:` 이 열린다.** `file://` 문서의 출처는 이름 없는(opaque) 출처라 `'self'` 가
+  아무것도 가리키지 못해서, 옆에 있는 자기 파일조차 못 읽는다. **정작 중요한
+  `connect-src` 는 그대로다** — 이 배포본도 텔레그램 말고는 아무 데도 연결하지 못한다.
+- **애널리틱스·광고는 값이 있어도 꺼진다.** 내려받아 자기 컴퓨터에서 여는 사람에게까지
+  추적을 딸려 보내지 않는다. 그래야 아래 [애널리틱스와 광고](#애널리틱스와-광고)의
+  "직접 받아서 실행하면 둘 다 꺼진다"가 빈말이 아니게 된다.
+
 ---
 
 ## 실행
@@ -172,7 +207,9 @@ addEventListener('securitypolicyviolation', (e) =>
 
 - **SPA 폴백** — `createBrowserRouter` 를 쓰므로 `/dialogs` 로 새로고침해도 `index.html` 을
   돌려줘야 한다. 안 그러면 404 가 뜬다.
-- **`file://` 로 열면 안 된다** — 자산 경로가 절대경로라 로드에 실패한다. 반드시 HTTP 로 띄운다.
+- **`file://` 로 열면 안 된다** — 자산 경로가 절대경로이고, 모듈 스크립트는 `file://` 에서
+  CORS 로 막힌다. 반드시 HTTP 로 띄운다. 파일을 직접 열어 쓸 목적이라면 이 결과물이 아니라
+  [standalone 빌드](#받아서-실행하는-배포본-standalone)를 쓴다.
 
 예를 들어 파이썬 기본 서버로는 SPA 폴백이 안 되므로, 첫 화면만 보고 싶을 때가 아니면 쓰지 않는다.
 
@@ -209,6 +246,10 @@ addEventListener('securitypolicyviolation', (e) =>
 그래서 화면 코드의 `to="/dialogs"` 를 하나도 고치지 않아도 된다. 대신 `basename` 은 라우터를
 만들 때 정해지므로 **언어 전환은 주소를 바꿔 다시 여는 방식**이다. 그게 맞다 — 언어마다
 `index.html` 이 따로 있고 거기에 그 언어의 `<html lang>` 과 검색용 메타가 박혀 있다.
+
+**예외는 [standalone 빌드](#받아서-실행하는-배포본-standalone)다.** 주소가 파일 경로라
+언어를 담을 수 없어서, 고른 값을 `localStorage` 에 두고 문서를 다시 연다. 처음 열 때는
+가리키는 주소가 없으니 브라우저 설정을 따른다 — 이때만 "주소가 우선"이 성립하지 않는다.
 
 ### 언어 코드에 지역을 붙인다
 
@@ -395,6 +436,30 @@ canonical 은 `https://telegram-exporter.plzhans.com/` 을 가리킨다.
 두 파일은 Pages 에서는 그냥 무시된다(빌드 결과물에 포함은 되지만 아무 효과가 없다).
 
 Cloudflare 는 루트 배포라 `--base` 없이 `pnpm build` 그대로 올리면 된다.
+
+### 릴리스 — 내려받아 실행하는 배포본
+
+`.github/workflows/release.yml` 이 **`release/v*` 태그**에 반응한다. 태그가 붙으면
+[standalone 빌드](#받아서-실행하는-배포본-standalone)를 돌려 zip 으로 묶고, 그 이름의
+릴리스를 만들어 첨부한다.
+
+```bash
+# package.json 의 version 을 먼저 올린다. 그다음 태그.
+git tag release/v1.0.0
+git push origin release/v1.0.0
+```
+
+**태그와 `package.json` 의 버전이 다르면 워크플로가 멈춘다.** 화면 하단과 내보낸 문서에
+찍히는 버전은 `package.json` 에서 오기 때문이다 — 태그만 올리면 `v1.0.0` 이라는 이름으로
+`v0.1.0` 이라 적힌 파일이 나가고, 받은 사람은 어느 쪽을 믿어야 할지 알 수 없다.
+
+zip 안은 `telegram-exporter-v1.0.0/` 폴더 하나다. 압축을 풀면 `index.html`, `assets/`,
+그리고 실행 방법과 "무엇이 어디로 가는가"를 적은 `README.txt`(`.github/release-assets/`)가
+들어 있다.
+
+**애널리틱스·광고는 이 경로에 아예 넘기지 않는다.** 넘겨도 standalone 빌드가 무시하지만,
+워크플로에서도 빼 두어 두 군데가 같은 말을 하게 한다. 공용 api_id(Variables)는 웹 배포와
+같은 규칙으로 들어간다 — 받은 사람이 전화번호만 넣고 바로 쓸 수 있어야 하기 때문이다.
 
 ---
 

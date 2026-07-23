@@ -5,6 +5,9 @@
  * CSP 도 같은 값으로 갈라져서 **로컬 빌드에는 구글 도메인이 아예 열리지 않는다**
  * (`vite.config.ts` 참고).
  *
+ * 단일 파일 배포(`build:standalone`)는 값이 있어도 끈다. 내려받아 자기 컴퓨터에서 여는
+ * 사람에게 추적을 딸려 보내지 않는다 — 릴리스로 받은 파일은 CSP 도 텔레그램만 열고 나간다.
+ *
  * ## 붙여 준 스니펫을 그대로 쓰지 않은 이유
  *
  * 원본은 `<script>` 안에 설정 코드가 들어 있는 형태인데, 그러면 CSP 에
@@ -27,7 +30,8 @@
  * `.env.local` 에 두는 건 배포본과 같은 화면(고지 문구 포함)을 빌드해서 확인하기 위해서지,
  * 개발 중에 이벤트를 쏘려는 게 아니다.
  */
-const ID = import.meta.env.PROD ? import.meta.env.VITE_GOOGLE_ANALYTICS_ID : undefined;
+const ID =
+  import.meta.env.PROD && !__STANDALONE__ ? import.meta.env.VITE_GOOGLE_ANALYTICS_ID : undefined;
 
 /**
  * 애널리틱스가 켜진 빌드인가.
@@ -83,7 +87,8 @@ export function initAnalytics(): void {
   gtag('event', 'page_view', { page_path: path });
 }
 
-const ADSENSE = import.meta.env.PROD ? import.meta.env.VITE_GOOGLE_ADSENSE_ID : undefined;
+const ADSENSE =
+  import.meta.env.PROD && !__STANDALONE__ ? import.meta.env.VITE_GOOGLE_ADSENSE_ID : undefined;
 
 /**
  * 광고가 들어간 빌드인가. 화면이 이 값을 보고 고지한다.

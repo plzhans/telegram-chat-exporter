@@ -27,3 +27,10 @@ interface ImportMeta {
 declare const __APP_VERSION__: string;
 declare const __BUILD_COMMIT__: string;
 declare const __BUILD_DATE__: string;
+/**
+ * 단일 파일(`index.html` 하나) 배포인가. `pnpm build:standalone` 에서만 참이다.
+ *
+ * 웹서버가 없다는 뜻이라 주소로 할 수 있는 게 없다 — 라우터는 해시를 쓰고 언어는
+ * 저장값으로 고른다.
+ */
+declare const __STANDALONE__: boolean;
