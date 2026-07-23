@@ -165,8 +165,12 @@
     "phone": {
       "title": "전화번호",
       "willSend": "이 번호로 인증코드를 보냅니다:",
-      "placeholder": "010-1234-5678",
-      "submit": "인증코드 받기"
+      "placeholder": "+82 10 1234 5678",
+      "submit": "인증코드 받기",
+      "country": "국가",
+      "countrySearch": "국가 이름 · 코드 · 번호로 검색",
+      "countryEmpty": "검색 결과가 없습니다",
+      "unverified": "이 나라 번호 형식과 맞지 않습니다. 오타가 아니라면 그대로 진행하셔도 됩니다."
     },
     "code": {
       "titleApp": "텔레그램 앱으로 받은 코드",

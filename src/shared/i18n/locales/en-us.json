@@ -165,8 +165,12 @@
     "phone": {
       "title": "Phone number",
       "willSend": "The code will be sent to:",
-      "placeholder": "010-1234-5678",
-      "submit": "Send me a code"
+      "placeholder": "+1 415 555 0123",
+      "submit": "Send me a code",
+      "country": "Country",
+      "countrySearch": "Search by name, code or number",
+      "countryEmpty": "No matches",
+      "unverified": "This does not match the number format for that country. If it is not a typo, you can continue anyway."
     },
     "code": {
       "titleApp": "Code sent to your Telegram app",
