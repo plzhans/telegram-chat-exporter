@@ -65,8 +65,12 @@
       "peek": "With no server in the middle, how long it takes depends on your own PC or phone."
     },
     "warning": {
-      "title": "Always be suspicious of a site asking for your login code",
-      "body": "Telegram tells you never to share your login code with anyone. This tool is no exception. Please run the checks above yourself, and end this session from the Telegram app once your backup is done."
+      "title": "This tool asks for your login code",
+      "principle": "Telegram tells you never to share your login code with anyone. That advice is right. Don't make an exception for this site — be just as suspicious of it.",
+      "why": "That said, this tool signs in to Telegram as you in order to fetch your messages. Without your phone number and login code there is nothing it can do. Those values are used only for the request to Telegram and are never stored anywhere.",
+      "storage": "After you sign in, the only thing kept is a single value that holds the connection open, and it lives only inside the tab you're looking at — close the tab and it's gone.",
+      "selfHost": "If you're still unconvinced, don't take anyone's word for it. Read the code, or download it and run it on your own machine. You'll get exactly this screen, running code you checked yourself.",
+      "after": "When your backup is done, end this session from the devices list in the Telegram app."
     }
   },
   "credentials": {

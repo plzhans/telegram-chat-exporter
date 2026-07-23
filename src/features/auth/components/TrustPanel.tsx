@@ -201,8 +201,35 @@ export function TrustPanel() {
         </ul>
       </Disclosure>
 
+      {/*
+        마지막에 오는 경고.
+
+        예전 문구는 "의심하세요"와 "그래도 쓰세요" 사이에서 어정쩡했다. 경고만 하고 물러나면
+        읽는 사람은 **그래서 어쩌라는 건지** 알 수 없다. 순서를 이렇게 못 박았다.
+
+        1. 원칙이 옳다고 먼저 인정한다. 부정하면 그때부터 나머지 말이 안 들린다.
+        2. **그럼에도 요구하는 이유**를 밝힌다. 계정으로 접속해야 대화를 가져올 수 있다.
+        3. 그 대신 무엇을 보장하는지 — 어디에도 저장하지 않고, 탭을 닫으면 사라진다.
+        4. **믿지 말고 확인하라**는 길을 준다. 소스를 읽거나 직접 띄우면 된다. 이 마지막이
+           핵심이다 — "믿어 달라"로 끝나는 안내는 사기와 구별되지 않는다. 구별되는 건
+           **안 믿어도 되는 방법을 함께 주는 쪽**이다.
+      */}
       <Alert tone="warning" title={t('trust.warning.title')}>
-        {t('trust.warning.body')}
+        <p>{t('trust.warning.principle')}</p>
+        <p className="mt-1.5">{t('trust.warning.why')}</p>
+        <p className="mt-1.5">{t('trust.warning.storage')}</p>
+        <p className="mt-1.5">
+          {t('trust.warning.selfHost')}{' '}
+          <a
+            href={SOURCE_URL}
+            target="_blank"
+            rel="noreferrer noopener"
+            className="font-semibold underline underline-offset-2"
+          >
+            {t('common.source')}
+          </a>
+        </p>
+        <p className="mt-1.5 font-semibold">{t('trust.warning.after')}</p>
       </Alert>
     </div>
   );

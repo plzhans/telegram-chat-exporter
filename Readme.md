@@ -3,6 +3,209 @@
 브라우저에서만 동작하는 텔레그램 대화 백업 도구. 백엔드가 없고, 정적 사이트로 배포되며,
 사용자 인증 정보를 어디에도 보관하지 않는다.
 
+배포본: <https://plzhans.github.io/telegram-chat-exporter/>
+
+---
+
+## 개요
+
+### 이게 뭔지
+
+텔레그램 대화를 **zip 파일로 내려받는 웹페이지**다. 서버가 없다 — HTML·JS·CSS 몇 개가
+전부고, 텔레그램과의 통신은 사용자 브라우저가 직접 한다.
+
+- **넣는 것** — api_id/api_hash, 전화번호, 인증코드(필요하면 2단계 인증 비밀번호)
+- **나오는 것** — `telegram-<대화방이름>-<날짜>.zip`
+  - `messages.jsonl` — 한 줄에 메시지 하나. 다시 기계로 읽기 위한 원본
+  - `messages.txt` — 사람이 읽는 형태, 시간순
+  - `meta.json` — 대화방 정보, 메시지 수, 내보낸 시각
+- **안 되는 것** — 첨부 파일 실물 다운로드(지금은 첨부의 *종류*만 기록한다)
+
+### 왜 만들었는지
+
+세 가지가 동시에 필요했다.
+
+1. **봇으로는 안 된다.** 텔레그램 Bot API 는 과거 대화 기록을 읽을 수 없고, 개인 대화는
+   접근 자체가 불가능하다. 백업을 하려면 사람 계정으로 붙는 **MTProto 클라이언트 API** 를
+   써야 한다.
+
+2. **설치 없이 쓰고 싶었다.** MTProto 도구는 대개 파이썬·Node 스크립트라 런타임을 깔고
+   터미널을 열어야 한다. 브라우저에서 바로 되면 그 단계가 사라진다. `web.telegram.org` 가
+   실제로 하는 방식(WebSocket)이 그대로 쓰이므로 중계 서버도 필요 없다.
+
+3. **인증 정보를 남한테 넘기고 싶지 않았다.** 이런 도구를 "서비스"로 만들면 사용자의
+   전화번호와 로그인 코드가 남의 서버를 지나간다. 서버를 아예 두지 않으면 지나갈 곳이
+   없고, 그 사실을 **사용자가 개발자도구로 직접 확인**할 수 있다 — CSP 가
+   `connect-src` 를 텔레그램 WebSocket 으로만 열어두기 때문에, 설령 이 코드가 악의적이어도
+   다른 서버로 내보낼 수 없다. 자세한 근거는 아래 [신뢰 모델](#신뢰-모델) 참고.
+
+---
+
+## 빌드
+
+### 빌드 환경
+
+| | 버전 | 근거 |
+| --- | --- | --- |
+| Node | **24.18.0** | `.nvmrc` |
+| pnpm | **11.10.0** | `package.json` 의 `packageManager` |
+
+**pnpm 전용이다.** `preinstall` 에 `only-allow pnpm` 이 걸려 있어서 npm·yarn 으로 설치하면
+거부된다. 락파일이 `pnpm-lock.yaml` 하나뿐이라 다른 도구로 설치하면 의존성 버전이 달라진다 —
+특히 `telegram` 패키지는 **2.26.21 에 정확히 고정**되어야 브라우저에서 동작한다
+(이유는 아래 "`telegram` 버전을 올리지 말 것" 참고).
+
+OS 의존성은 없다. 네이티브 빌드가 필요한 의존성(`bufferutil` 등)은 `pnpm-workspace.yaml`
+에서 전부 꺼 두었다 — 브라우저로만 번들하므로 필요가 없다.
+
+```bash
+# Node 준비 (nvm 을 쓴다면)
+nvm install && nvm use     # .nvmrc 를 읽는다
+
+# pnpm 준비 (둘 중 하나)
+corepack enable            # Node 에 딸린 corepack 사용 — 버전이 자동으로 맞는다
+npm install -g pnpm        # 전역 설치
+
+# 의존성 설치
+pnpm install
+```
+
+### 환경변수
+
+전부 **선택 사항**이다. 하나도 설정하지 않아도 앱은 동작한다.
+
+```bash
+cp .env.example .env.local   # Vite 가 자동으로 읽는다. gitignore 되어 있다.
+```
+
+| 변수 | 없을 때 | 설정하면 |
+| --- | --- | --- |
+| `VITE_TELEGRAM_API_ID` | 첫 화면에 "내 api_id 직접 입력"만 나온다 | "바로 시작" 선택지가 함께 뜬다 |
+| `VITE_TELEGRAM_API_HASH` | 위와 같음 (둘은 항상 같이 넣는다) | 위와 같음 |
+| `VITE_SOURCE_URL` | 이 저장소 주소가 기본값 | 헤더의 "소스 보기" 링크가 바뀐다 |
+| `BASE_PATH` | 루트(`/`)에 배포한다고 가정 | 하위 경로 배포용. 아래 [배포](#배포) 참고 |
+
+`VITE_*` 는 **빌드 시점에 번들에 박힌다.** 실행 중에 바꿀 수 없고, 감춰지지도 않는다.
+공용 api_id 를 넣을지 말지는 정책 판단이라 아래 [api_id 정책](#api_id-정책)에 따로 적었다.
+
+`BASE_PATH` 만 `VITE_` 접두사가 없다 — 앱 코드가 읽는 값이 아니라 Vite 설정이 읽는
+빌드 옵션이라서다.
+
+### 빌드 실행
+
+```bash
+pnpm build
+```
+
+`tsc -b` 로 타입체크를 먼저 하고(**타입 오류가 하나라도 있으면 빌드가 멈춘다**),
+`vite build` 가 `dist/` 를 만든다. 기존 `dist/` 는 지워지고 다시 생성된다.
+
+빌드 결과물은 정적 파일뿐이라 아무 웹서버에나 올리면 된다. `dist/` 는 gitignore 되어 있다.
+
+하위 경로에 올릴 거라면 `BASE_PATH` 를 같이 넘긴다. 안 넘기면 자산 경로가 `/assets/...`
+절대경로로 박혀서, **빌드는 성공하는데 브라우저에서 JS·CSS 가 404 로 죽는다.**
+
+```bash
+BASE_PATH=/telegram-chat-exporter/ pnpm build   # https://example.com/telegram-chat-exporter/ 용
+```
+
+빌드 중 뜨는 청크 크기 경고는 정상이다. MTProto 라이브러리 하나가 수백 KB 라
+기준을 1500KB 로 올려 뒀다.
+
+---
+
+## 실행
+
+### 개발 모드
+
+```bash
+pnpm dev     # http://localhost:5175
+```
+
+포트 5175 는 **고정**이다(`strictPort`). 이미 쓰이고 있으면 다른 포트로 비켜가지 않고
+그냥 실패한다 — 조용히 옮겨가면 지금 어느 프로젝트를 보고 있는지 헷갈리기 때문이다.
+같은 이유로 preview 는 5176 이다.
+
+`host: true` 라 같은 네트워크의 다른 기기(폰 등)에서도 접속할 수 있다. 터미널에 찍히는
+Network 주소를 쓰면 된다.
+
+**개발 모드에는 CSP 가 적용되지 않는다.** Vite HMR 이 `ws://localhost` 로 붙고 React Fast
+Refresh 가 인라인 스크립트를 끼워넣어서, 배포본과 같은 정책을 걸면 dev 서버가 아예 안 뜬다.
+그래서 **CSP 관련 변경은 dev 에서 검증되지 않는다** — 아래 preview 로 확인해야 한다.
+
+### dist 결과물로 실행
+
+빌드해 둔 `dist/` 를 실제 배포본과 같은 조건으로 띄운다.
+
+```bash
+pnpm build
+pnpm preview     # http://localhost:5176
+```
+
+**CSP 를 건드렸다면 반드시 이쪽으로 확인한다.** 배포본에만 들어가는 `<meta>` CSP 가 여기서는
+실제로 걸리므로, 개발자도구 콘솔에 CSP 위반이 찍히는지 보면 된다. 위반을 코드로 세려면:
+
+```js
+// 개발자도구 콘솔에 붙여넣고 앱을 조작해 본다
+addEventListener('securitypolicyviolation', (e) =>
+  console.warn('CSP 위반:', e.violatedDirective, e.blockedURI),
+);
+```
+
+`vite preview` 대신 다른 정적 서버를 써도 되지만 두 가지를 맞춰야 한다.
+
+- **SPA 폴백** — `createBrowserRouter` 를 쓰므로 `/dialogs` 로 새로고침해도 `index.html` 을
+  돌려줘야 한다. 안 그러면 404 가 뜬다.
+- **`file://` 로 열면 안 된다** — 자산 경로가 절대경로라 로드에 실패한다. 반드시 HTTP 로 띄운다.
+
+예를 들어 파이썬 기본 서버로는 SPA 폴백이 안 되므로, 첫 화면만 보고 싶을 때가 아니면 쓰지 않는다.
+
+---
+
+## 배포
+
+**GitHub Actions 로 GitHub Pages 에 올린다.** `.github/workflows/deploy.yml` 이
+`main` 브랜치 푸시마다 빌드→배포를 돌린다. 빌드 결과물을 저장소에 커밋하지 않는다.
+
+저장소 설정에서 한 번만 해 두면 된다: **Settings → Pages → Source 를 `GitHub Actions`** 로.
+
+워크플로가 자동으로 처리하는 것:
+
+- `BASE_PATH` 를 `/<저장소이름>/` 으로 넘긴다 — Pages 는 하위 경로로 서비스된다
+- `VITE_SOURCE_URL` 을 현재 저장소 주소로 채운다
+- **`dist/index.html` 을 `404.html` 로 복사한다** — Pages 에는 리라이트 규칙이 없어서
+  `/dialogs` 로 새로고침하면 없는 파일이 된다. 그때 Pages 가 `404.html` 을 내주므로,
+  그 내용을 `index.html` 과 같게 만들어 두면 라우터가 경로를 읽고 정상 렌더한다.
+  (응답 코드는 404 로 남지만 화면은 정상이다.)
+
+공용 api_id 를 쓸 거라면 **Settings → Secrets and variables → Actions → Variables** 에
+`VITE_TELEGRAM_API_ID` / `VITE_TELEGRAM_API_HASH` 를 넣는다. Secrets 가 아니라 Variables 인
+이유는 어차피 클라이언트 번들에 그대로 박히는 값이라 감춰도 의미가 없기 때문이다 —
+아래 [공용 키 운영](#공용-키-운영--난독화는-하지-않는다) 참고.
+
+### ⚠️ GitHub Pages 는 CSP 를 헤더로 못 건다
+
+이 앱의 신뢰 근거는 CSP 인데, **Pages 는 커스텀 응답 헤더를 지원하지 않는다.** 그래서
+`index.html` 의 `<meta>` CSP 만 적용되고, 다음 차이가 생긴다.
+
+- `frame-ancestors` 가 **동작하지 않는다** (meta 태그에서 지원되지 않는 지시자다).
+  즉 다른 사이트가 이 페이지를 iframe 으로 감쌀 수 있다.
+- meta CSP 는 **HTML 파싱이 시작된 뒤**에 걸린다. 헤더보다 적용 시점이 늦다.
+- `X-Content-Type-Options`, `Referrer-Policy` 등 나머지 보안 헤더도 빠진다.
+
+핵심인 `connect-src`(= 텔레그램 외 어디로도 못 보낸다)는 meta 로도 그대로 강제되므로
+가장 중요한 약속은 유지된다. 그래도 **진짜 헤더가 필요하면 Cloudflare Pages 를 쓴다** —
+`public/_headers` 에 정책이 이미 들어 있고, `public/_redirects` 가 SPA 폴백을 처리한다.
+두 파일은 Pages 에서는 그냥 무시된다(빌드 결과물에 포함은 되지만 아무 효과가 없다).
+
+Cloudflare 로 올릴 때는 루트 배포이므로 `BASE_PATH` 를 넘기지 않는다.
+
+---
+
+## 설계 배경
+
+이 아래는 "왜 이렇게 만들었는가"에 대한 기록이다. 쓰기만 할 거라면 읽지 않아도 된다.
+
 ## 어떻게 서버 없이 되는가
 
 텔레그램 **Bot API 가 아니라 MTProto 클라이언트 API** 를 쓴다. 봇은 과거 대화 기록을 읽을 수
@@ -133,8 +336,8 @@ GramJS 는 모든 연결마다 `InvokeWithLayer(InitConnection({ apiId, deviceMo
 실제로 하는 것:
 
 1. **키를 저장소에 넣지 않는다.** `.env.local` 은 gitignore 되어 있고, 배포 시에는
-   Cloudflare Pages 의 환경변수에만 넣는다. 번들에는 남지만 소스 유통 경로는 막힌다.
-   난독화와 달리 이건 실제 방어다.
+   빌드 환경변수로만 넣는다(GitHub Actions 의 Variables, Cloudflare Pages 의 환경변수).
+   번들에는 남지만 소스 유통 경로는 막힌다. 난독화와 달리 이건 실제 방어다.
 2. **공용 키를 소모품으로 본다.** 폐기되면 환경변수를 바꾸고 재배포하면 끝이다.
    "내 api_id 직접 입력" 폴백이 항상 열려 있어 서비스가 멈추지 않는다.
 3. **사용량이 곧 위험이다.** 차단 신호가 사용 패턴이므로, 트래픽이 커지면 공용 키를 빼고
@@ -165,30 +368,6 @@ medifinder 와 다른 점은 두 가지뿐이고, 각 파일 주석에 이유를
 
 - 웹폰트를 쓰지 않는다 (CSP)
 - i18n 에 URL 접두사를 쓰지 않는다 (색인할 콘텐츠가 없다)
-
-## 실행
-
-```bash
-pnpm install
-cp .env.example .env.local   # 공용 api_id 를 쓸 거라면 값을 채운다. 비워도 동작한다.
-pnpm dev                     # http://localhost:5175
-pnpm build                   # tsc -b && vite build → dist/
-```
-
-Node 24.18.0 (`.nvmrc`), pnpm 전용(`only-allow pnpm`).
-
-## 배포
-
-정적 호스팅이면 어디든 되지만 **Cloudflare Pages 를 권한다.** `public/_headers` 로 진짜 HTTP
-응답 헤더 CSP 를 걸 수 있기 때문이다. GitHub Pages 는 커스텀 헤더를 지원하지 않아
-`index.html` 의 `<meta>` CSP 만 적용되고, 그건 파싱 시작 후에 걸리며 `frame-ancestors` 를
-지원하지 않는다.
-
-빌드 결과물 `dist/` 를 그대로 올리면 된다. `public/_redirects` 가 SPA 폴백을 처리한다.
-
-공용 api_id 를 쓴다면 `VITE_TELEGRAM_API_ID` / `VITE_TELEGRAM_API_HASH` 를
-**호스팅의 환경변수 설정에만** 넣는다. `.env.local` 을 저장소에 커밋하지 않는다 —
-위 "공용 키 운영" 참고.
 
 ## 현재 상태
 

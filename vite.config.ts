@@ -54,6 +54,16 @@ function contentSecurityPolicy(isBuild: boolean): Plugin {
 }
 
 export default defineConfig(({ command }) => ({
+  /**
+   * 배포 위치의 하위 경로. 기본은 루트(`/`)고, GitHub Pages 처럼 저장소 이름이 경로에
+   * 끼는 곳에서만 `BASE_PATH=/telegram-chat-exporter/` 로 넘긴다
+   * (`.github/workflows/deploy.yml` 참고).
+   *
+   * 이 값이 틀리면 빌드는 성공하는데 브라우저에서 JS·CSS 가 404 로 죽는다 — 자산 경로가
+   * 절대경로로 박히기 때문이다. 라우터도 같은 값을 `basename` 으로 받아야 하므로
+   * `src/app/App.tsx` 는 `import.meta.env.BASE_URL` 을 읽는다.
+   */
+  base: process.env.BASE_PATH ?? '/',
   plugins: [
     react(),
     /**

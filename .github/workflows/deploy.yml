@@ -1,0 +1,71 @@
+# main 에 푸시되면 빌드해서 GitHub Pages 로 올린다.
+#
+# Pages 설정에서 Source 를 "GitHub Actions" 로 둬야 동작한다(Settings → Pages).
+# 브랜치 배포(gh-pages) 방식이 아니라서 빌드 결과물을 저장소에 커밋하지 않는다.
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  # 코드 변경 없이 다시 배포하고 싶을 때(환경변수만 바꾼 경우 등) 수동 실행.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  # deploy-pages 가 OIDC 로 배포 토큰을 받아온다. 빠지면 배포 단계에서 권한 오류가 난다.
+  id-token: write
+
+# 배포는 한 번에 하나만. 연달아 푸시하면 앞선 실행을 버리고 마지막 것만 올린다.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # package.json 의 packageManager 필드에서 pnpm 버전을 읽는다.
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm build
+        env:
+          # Pages 는 https://<user>.github.io/<repo>/ 로 서비스되므로 하위 경로를 넘긴다.
+          # 커스텀 도메인을 붙여 루트로 서비스한다면 이 줄을 '/' 로 바꿔야 한다.
+          BASE_PATH: /${{ github.event.repository.name }}/
+          # 앱 화면의 "소스 보기" 링크. 배포본과 같은 커밋이 올라간 저장소를 가리켜야 한다.
+          VITE_SOURCE_URL: ${{ github.server_url }}/${{ github.repository }}
+          # 공용 api_id 를 쓸 경우에만 채운다. Settings → Secrets and variables → Actions →
+          # Variables 에 넣는다. 비어 있으면 앱이 "내 api_id 직접 입력"만 보여준다.
+          # 클라이언트 번들에 그대로 박히는 값이라 Secrets 로 감춰도 의미가 없다 —
+          # Readme 의 "공용 키 운영" 참고.
+          VITE_TELEGRAM_API_ID: ${{ vars.VITE_TELEGRAM_API_ID }}
+          VITE_TELEGRAM_API_HASH: ${{ vars.VITE_TELEGRAM_API_HASH }}
+
+      # SPA 폴백. Pages 에는 리라이트 규칙이 없어서 /dialogs 로 새로고침하면 없는 파일이 된다.
+      # 그때 Pages 가 404.html 을 내주므로, 그걸 index.html 과 같게 만들어 두면 라우터가
+      # 경로를 읽고 정상 렌더한다. (public/_redirects 는 Cloudflare 전용이라 여기선 무시된다.)
+      - run: cp dist/index.html dist/404.html
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

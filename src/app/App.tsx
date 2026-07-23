@@ -52,16 +52,26 @@ const pages: RouteObject[] = [
   { path: '*', element: <Navigate to="/" replace /> },
 ];
 
-const router = createBrowserRouter([
-  {
-    element: (
-      <Suspense fallback={<PageLoader />}>
-        <MainLayout />
-      </Suspense>
-    ),
-    children: pages,
-  },
-]);
+/**
+ * `basename` 은 Vite 의 `base` 에서 그대로 온다(`vite.config.ts` 참고).
+ *
+ * 루트 배포면 `/` 라 아무 일도 일어나지 않고, GitHub Pages 처럼 `/telegram-chat-exporter/`
+ * 아래 놓이면 라우터가 그 접두사를 빼고 경로를 읽는다. 이걸 빼먹으면 첫 화면은 뜨는데
+ * 모든 링크가 `/dialogs` 로 나가서 404 가 된다.
+ */
+const router = createBrowserRouter(
+  [
+    {
+      element: (
+        <Suspense fallback={<PageLoader />}>
+          <MainLayout />
+        </Suspense>
+      ),
+      children: pages,
+    },
+  ],
+  { basename: import.meta.env.BASE_URL },
+);
 
 /** 저장된 세션의 유휴 만료 시각을 밀어 주는 주기. TTL 보다 충분히 짧기만 하면 된다. */
 const TOUCH_INTERVAL_MS = 60_000;
