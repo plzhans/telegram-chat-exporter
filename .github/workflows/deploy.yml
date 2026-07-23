@@ -37,6 +37,12 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
 
+      # 배포 주소를 Pages 설정에서 직접 읽어온다. 커스텀 도메인이면 루트(`/`)와 그 도메인을,
+      # 아니면 `/<저장소이름>/` 과 `https://<소유자>.github.io` 를 준다.
+      # 주소를 워크플로에 적어 두지 않는 이유가 이것이다 - 설정에서 도메인을 바꾸면 그대로 따라간다.
+      - id: pages
+        uses: actions/configure-pages@v5
+
       - run: pnpm install --frozen-lockfile
 
       # 타입체크를 따로 돌린다. 아래 빌드 단계에 `--base` 를 붙여야 해서 `pnpm build`
@@ -45,24 +51,39 @@ jobs:
       - run: pnpm exec tsc -b
 
       - name: Build
-        # Pages 는 https://<user>.github.io/<repo>/ 로 서비스하므로 저장소 이름이 경로에 낀다.
-        # vite.config.ts 의 base 는 `/` 라(로컬 dev·preview 주소를 깨끗하게 두려고) 여기서
-        # 덮어쓴다. GITHUB_REPOSITORY 는 `owner/repo` 형태이고 `#*/` 가 owner 를 떼어낸다.
-        #
-        # 이 값이 틀리면 빌드는 성공하는데 브라우저에서 JS·CSS 가 404 로 죽는다.
-        run: pnpm exec vite build --base="/${GITHUB_REPOSITORY#*/}/"
+        # base 가 틀리면 빌드는 성공하는데 브라우저에서 JS·CSS 가 404 로 죽는다.
+        # configure-pages 가 준 경로를 쓰되, Vite 는 끝에 `/` 가 있어야 하므로 보정한다.
+        run: |
+          BASE="${{ steps.pages.outputs.base_path }}"
+          case "$BASE" in */) ;; *) BASE="$BASE/" ;; esac
+          echo "base=$BASE  origin=${{ steps.pages.outputs.origin }}"
+          pnpm exec vite build --base="$BASE"
         env:
+          # canonical·hreflang·og:url 은 절대 주소여야 하는데, 소스는 자기가 어느 도메인에
+          # 올라가는지 모른다. 비워 두면 빌드가 상대 경로로 떨어진다(로컬 빌드가 그 경우다).
+          SITE_ORIGIN: ${{ steps.pages.outputs.origin }}
           # 앱 화면의 "소스 보기" 링크. 배포본과 같은 커밋이 올라간 저장소를 가리켜야 하므로
           # 손으로 적지 않고 CI 가 아는 값을 그대로 쓴다. 포크하거나 저장소를 옮겨도 따라간다.
           # (.env.local 은 gitignore 라 CI 체크아웃에 없다. Vite 가 process.env 의 VITE_*
           #  를 읽으므로 이 값이 번들에 박힌다.)
           VITE_SOURCE_URL: ${{ github.server_url }}/${{ github.repository }}
+          # 내보낸 문서 하단에 적히는 "이 도구가 돌아가는 곳" 주소. 파일만 건네받은 사람이
+          # 따라올 수 있어야 한다. configure-pages 가 준 실제 배포 주소를 그대로 쓴다.
+          VITE_SITE_URL: ${{ steps.pages.outputs.base_url }}
           # 공용 api_id 를 쓸 경우에만 채운다. Settings → Secrets and variables → Actions →
           # Variables 에 넣는다. 비어 있으면 앱이 "내 api_id 직접 입력"만 보여준다.
           # 클라이언트 번들에 그대로 박히는 값이라 Secrets 로 감춰도 의미가 없다 —
           # Readme 의 "공용 키 운영" 참고.
           VITE_TELEGRAM_API_ID: ${{ vars.VITE_TELEGRAM_API_ID }}
           VITE_TELEGRAM_API_HASH: ${{ vars.VITE_TELEGRAM_API_HASH }}
+          # 구글 애널리틱스 측정 ID. 이 값이 있어야 애널리틱스가 켜지고 CSP 에 구글 도메인이
+          # 열리며, 첫 화면에 외부 연결 고지가 나온다. 비어 있으면 셋 다 꺼진 채로 빌드된다.
+          # Settings → Secrets and variables → Actions → Variables 에 넣는다.
+          # 클라이언트 번들에 그대로 박히는 공개 식별자라 Secrets 가 아니라 Variables 다.
+          VITE_GOOGLE_ANALYTICS_ID: ${{ vars.VITE_GOOGLE_ANALYTICS_ID }}
+          # 구글 애드센스 게시자 ID. 비어 있으면 광고가 들어가지 않고 CSP 도 안 열린다.
+          # 넣는 순간 광고망 호스트가 script/frame/img/connect 에 전부 추가된다.
+          VITE_GOOGLE_ADSENSE_ID: ${{ vars.VITE_GOOGLE_ADSENSE_ID }}
 
       # SPA 폴백. Pages 에는 리라이트 규칙이 없어서 /dialogs 로 새로고침하면 없는 파일이 된다.
       # 그때 Pages 가 404.html 을 내주므로, 그걸 index.html 과 같게 만들어 두면 라우터가

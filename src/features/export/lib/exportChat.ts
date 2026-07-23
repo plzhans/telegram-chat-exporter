@@ -1,4 +1,4 @@
-import type { Api } from 'telegram';
+import { Api } from 'telegram';
 import { requireClient } from '@/shared/auth/useAuth';
 import { describeError } from '@/shared/telegram/errors';
 import {
@@ -10,13 +10,31 @@ import {
   localTimeZone,
   startOfDayUnix,
 } from '@/shared/lib/date';
-import { toMessageSummary, type DialogSummary, type MessageSummary } from '@/features/dialogs/api';
+import {
+  countMessagesBetween,
+  pickThumbSize,
+  toMessageSummary,
+  type DialogSummary,
+  type MessageSummary,
+} from '@/features/dialogs/api';
+import { loadProfilePhoto } from '@/features/dialogs/lib/profilePhoto';
+import { HtmlReport } from './htmlReport';
 import type { ZipSink } from './zipWriter';
 import { ZipWriter } from './zipWriter';
 
 export interface ExportProgress {
   /** 지금까지 내보낸 메시지 수. */
   count: number;
+  /**
+   * 내보내야 할 메시지 수.
+   *
+   * 시작하기 전에 요청 두 번으로 미리 센다. **끝을 모르는 진행 표시는 없는 것과 비슷하다** -
+   * "1,284개 처리함"만 보이면 절반쯤 왔는지 이제 시작인지 알 수가 없다.
+   *
+   * 텔레그램이 주는 값이라 실제로 받는 개수와 한두 건 어긋날 수 있다(그 사이에 새 메시지가
+   * 오거나 지워지면). 진행률을 보여주는 데는 지장이 없다.
+   */
+  totalCount?: number;
   /** 지금까지 파일로 쓴 바이트 수(압축 후). */
   bytes: number;
   /** 마지막으로 처리한 메시지의 시각(Unix 초). 어디쯤 왔는지 보여준다. */
@@ -62,7 +80,14 @@ export interface ExportOptions {
    * 지금은 사진 하나뿐이지만 집합으로 받는다 — 동영상·문서가 붙을 자리를 미리 열어 두면
    * 그때 이 함수의 모양을 바꾸지 않아도 된다.
    */
-  include?: { photos?: boolean };
+  include?: { photos?: boolean; stickers?: boolean };
+  /**
+   * `index.html` 의 배치.
+   *
+   * - `chat` : 메신저 화면 그대로. 내 말이 오른쪽에 선다.
+   * - `flat` : 모두 왼쪽. 누가 말했는지는 이름만이 말한다.
+   */
+  layout?: 'chat' | 'flat';
   onProgress: (progress: ExportProgress) => void;
   signal: AbortSignal;
 }
@@ -209,6 +234,9 @@ const MIME_EXTENSIONS: Record<string, string> = {
   'image/heif': '.heif',
   'image/bmp': '.bmp',
   'image/tiff': '.tiff',
+  // 스티커는 셋 중 하나다 — 정지(webp), 영상(webm), 벡터 애니메이션(tgs, gzip 된 JSON).
+  'application/x-tgsticker': '.tgs',
+  'video/webm': '.webm',
 };
 
 function extensionFor(summary: MessageSummary): string {
@@ -227,6 +255,28 @@ function extensionFor(summary: MessageSummary): string {
  * **스티커는 뺀다.** 대화의 내용이 아니라 표현이고, 텔레그램 누구에게나 같은 그림이라
  * 근거로서 값이 없다. 개수만 늘어난다.
  */
+function isSticker(summary: MessageSummary): boolean {
+  return summary.mediaType === 'sticker';
+}
+
+/**
+ * 스티커가 놓일 자리: `stickers/{파일 id}{확장자}`
+ *
+ * **날짜 폴더에 넣지 않는다.** 스티커는 같은 그림이 몇 백 번씩 오간다. 날짜별로 나누면
+ * 같은 파일을 날마다 새로 받아 새로 담게 된다. 파일 id 는 전역 값이라 그것 하나로 묶으면
+ * **한 종류당 한 벌**만 담긴다.
+ *
+ * 이건 스티커의 성격이기도 하다 — 사진은 그 대화에서만 오간 것이지만 스티커는 텔레그램
+ * 누구에게나 같은 그림이다. 언제 보냈는지는 파일이 아니라 메시지 기록이 말한다.
+ */
+function stickerPathFor(summary: MessageSummary): string | undefined {
+  const id = summary.mediaInfo?.id;
+  if (!id) return undefined;
+  const known = MIME_EXTENSIONS[summary.mediaInfo?.mimeType ?? ''];
+  // 종류를 모르면 webp 로 본다. 실제로 대부분이 정지 스티커다.
+  return `stickers/${id}${known ?? '.webp'}`;
+}
+
 function isPhoto(summary: MessageSummary): boolean {
   if (summary.mediaType === 'sticker') return false;
   if (summary.mediaType === 'photo') return true;
@@ -279,10 +329,65 @@ async function sha256(bytes: Uint8Array): Promise<string | null> {
  */
 const FILE_CONCURRENCY = 3;
 
+/** 브라우저가 `<img>` 로 바로 그릴 수 있는 형식. */
+const DRAWABLE = /\.(jpe?g|png|gif|webp|bmp|avif)$/i;
+
+/**
+ * 이 바이트가 정말 그림인가.
+ *
+ * 확장자는 우리가 붙인 이름일 뿐이라 **안에 무엇이 들었는지는 말해 주지 않는다.** 미리보기를
+ * 달라고 했는데 텔레그램이 원본을 주거나 빈손으로 돌아오는 일이 실제로 있었고, 그 결과가
+ * `.preview.jpg` 라는 이름을 단 압축 덩어리였다. 문서를 여는 사람에게는 "그림이 아니랍니다"
+ * 라는 오류로만 보인다.
+ *
+ * 그래서 **파일 앞머리를 직접 확인한다.** 형식마다 첫 몇 바이트가 정해져 있어서, 그것만
+ * 보면 확장자를 믿지 않고도 알 수 있다.
+ */
+function looksLikeImage(bytes: Uint8Array): boolean {
+  if (bytes.length < 12) return false;
+  const [a, b, c] = bytes;
+  // JPEG
+  if (a === 0xff && b === 0xd8 && c === 0xff) return true;
+  // PNG
+  if (a === 0x89 && b === 0x50 && c === 0x4e) return true;
+  // GIF
+  if (a === 0x47 && b === 0x49 && c === 0x46) return true;
+  // WEBP - RIFF....WEBP
+  const tag = (from: number) => String.fromCharCode(...bytes.subarray(from, from + 4));
+  return tag(0) === 'RIFF' && tag(8) === 'WEBP';
+}
+
+/**
+ * 첨부 껍데기에서 **파일 알맹이**를 꺼낸다.
+ *
+ * `MessageMediaPhoto`·`MessageMediaDocument` 는 봉투일 뿐이고, 미리보기 목록(`sizes`/`thumbs`)은
+ * 그 안의 `Photo`·`Document` 에 들어 있다. 봉투째로 `pickThumbSize` 에 넘기면 **아무것도 없다고
+ * 나온다** - 실제로 그래서 움직이는 스티커의 미리보기가 통째로 빠졌고, 문서에는 있지도 않은
+ * 파일을 가리키는 그림 자리만 남았다.
+ */
+function fileOfMedia(media: Api.TypeMessageMedia): Api.Photo | Api.Document | undefined {
+  if (media instanceof Api.MessageMediaPhoto && media.photo instanceof Api.Photo) {
+    return media.photo;
+  }
+  if (media instanceof Api.MessageMediaDocument && media.document instanceof Api.Document) {
+    return media.document;
+  }
+  return undefined;
+}
+
 /** 두 번째 단계에서 받을 대상. 메시지 전체가 아니라 필요한 것만 들고 있는다. */
 interface PhotoTask {
   messageId: number;
   path: string;
+  /**
+   * 원본이 아니라 미리보기를 받는다.
+   *
+   * 움직이는 스티커(`.tgs`·`.webm`)를 위해 있다. 원본은 브라우저가 그대로는 못 그리는
+   * 형식이라 문서에 넣어 봐야 빈칸이 된다. 텔레그램은 그런 파일에도 **정지 미리보기**를
+   * 함께 보관하므로, 그걸 따로 받아 문서에 싣는다. 원본 파일도 그대로 담긴다 -
+   * 보여줄 수 있는 것과 보관해야 하는 것은 다르다.
+   */
+  thumb?: boolean;
   /**
    * `downloadMedia` 에 그대로 넘길 값.
    *
@@ -347,6 +452,7 @@ export async function exportChat({
   sink,
   range,
   include,
+  layout,
   onProgress,
   signal,
 }: ExportOptions): Promise<void> {
@@ -362,6 +468,31 @@ export async function exportChat({
    * 그대로 목록이 된다.
    */
   const pushAttachments = zip.startFile('attachments.jsonl');
+  /**
+   * 사람이 **대화로** 읽는 파일.
+   *
+   * jsonl 은 기계용이고 txt 는 한 줄씩 늘어놓은 것이라, 둘 다 대화로는 안 읽힌다. 누가
+   * 무엇에 답했는지, 사진이 어느 말 뒤에 붙었는지가 눈에 안 들어온다. 근거로 내밀 자료라면
+   * 읽는 사람이 화면에서 보던 것과 같은 모양이어야 한다.
+   *
+   * 이름을 `index.html` 로 두는 이유는, 압축을 푼 사람이 **무엇을 먼저 열어야 하는지**
+   * 고민하지 않게 하기 위해서다.
+   */
+  const pushHtml = zip.startFile('index.html');
+  const report = new HtmlReport({
+    dialogTitle: dialog.title,
+    dialogId: dialog.id,
+    // 받은 계정은 index.html 에 넣지 않는다. 출처 기록은 meta.json 이 맡는다(htmlReport 참고).
+    // index.html 의 글자는 영어로 고정한다(htmlReport 참고). 이 값도 거기 실린다.
+    rangeLabel:
+      range.from || range.to ? `${range.from ?? 'start'} ~ ${range.to ?? 'end'}` : 'All history',
+    timezone: localTimeZone(),
+    exportedAt: formatExportTimestamp(Math.floor(Date.now() / 1000)),
+    // 목록에서 이미 받아 둔 값이라 요청이 더 들지 않는다.
+    dialogPhoto: dialog.photo,
+    alignOwnRight: layout !== 'flat',
+    photosIncluded: Boolean(include?.photos),
+  });
 
   let count = 0;
   let attachmentCount = 0;
@@ -377,25 +508,50 @@ export async function exportChat({
    * 여기 쌓이는 건 파일 내용이 아니라 그 위치 정보뿐이라 부담이 작다.
    */
   const photoTasks: PhotoTask[] = [];
+  /** 이미 줄 세운 경로. 같은 스티커가 수백 번 와도 파일은 한 벌만 담는다. */
+  const queuedPaths = new Set<string>();
+  /**
+   * 메시지 id → **원본 파일**의 경로.
+   *
+   * `report.paths` 와 따로 두는 이유는 둘이 가리키는 것이 다르기 때문이다. 저쪽은 문서에
+   * 그려 넣을 그림(움직이는 스티커면 미리보기)이고, 이쪽은 목록에 적을 실제 파일이다.
+   */
+  const filePaths = new Map<number, string>();
   let jsonlBuffer = '';
   let textBuffer = '';
   let attachmentBuffer = '';
+  let htmlBuffer = report.head();
 
   const flush = (last = false) => {
     pushJsonl(jsonlBuffer, last);
     pushText(textBuffer, last);
     pushAttachments(attachmentBuffer, last);
+    pushHtml(htmlBuffer, last);
     jsonlBuffer = '';
     textBuffer = '';
     attachmentBuffer = '';
+    htmlBuffer = '';
   };
 
   // 끝 날짜는 그 날 전체를 포함해야 하므로 23:59:59 까지 잡는다.
   const toSeconds = range.to ? endOfDayUnix(range.to) : undefined;
+  const fromSeconds = range.from ? startOfDayUnix(range.from) : undefined;
   const previousThreshold = client.floodSleepThreshold;
   client.floodSleepThreshold = EXPORT_FLOOD_SLEEP_THRESHOLD;
 
   try {
+    /*
+      **먼저 몇 개인지 센다.** 요청 두 번이면 끝나는 일이고, 이걸 알아야 진행률에 끝이 생긴다.
+      실패해도 내보내기를 멈추지는 않는다 - 끝을 모른 채 세는 것이 아예 안 되는 것보다 낫다.
+    */
+    let totalCount: number | undefined;
+    try {
+      totalCount = await countMessagesBetween(peer, fromSeconds, toSeconds);
+    } catch {
+      /* 개수를 못 세도 내보내기 자체는 할 수 있다. */
+    }
+    onProgress({ count: 0, bytes: 0, totalCount, phase: 'messages' });
+
     /**
      * `limit: undefined` 면 GramJS 가 끝까지 훑는다. `offsetDate` 는 reverse 와 함께 쓰면
      * "이 시각 이후부터"가 된다. 끝 경계는 API 에 없으므로 우리가 직접 멈춘다.
@@ -416,18 +572,60 @@ export async function exportChat({
       // 끝 경계를 넘었다. 시간순으로 오고 있으므로 여기서 멈추면 된다.
       if (toSeconds !== undefined && summary.date > toSeconds) break;
 
+      /*
+        **사진 경로를 먼저 정한다.**
+
+        담기로 한 종류면 zip 안의 어디에 놓일지를 미리 계산해 둔다. 실제로 받는 건 나중이지만
+        경로는 지금 알 수 있다 — 날짜와 파일 id 로만 정해지기 때문이다.
+
+        이 계산이 `report.push` 보다 **앞에 있어야 한다.** 한때 뒤에 있었는데, 그러면 HTML 을
+        그리는 시점에 경로가 아직 없어서 함께 담은 사진이 "not included" 로 나왔다.
+      */
+      if (summary.mediaType) {
+        const media = (message as Api.Message).media;
+        const path =
+          include?.photos && isPhoto(summary)
+            ? filePathFor(summary)
+            : include?.stickers && isSticker(summary)
+              ? stickerPathFor(summary)
+              : undefined;
+        if (path && media) {
+          /*
+            같은 스티커를 또 받지 않는다. 경로가 파일 id 로만 정해지므로, 이미 줄 서 있는
+            경로면 **그 파일은 이미 담기기로 되어 있다.** 메시지는 자기 경로만 알면 된다.
+          */
+          if (!queuedPaths.has(path)) {
+            queuedPaths.add(path);
+            photoTasks.push({ messageId: summary.id, path, media });
+          }
+          filePaths.set(summary.id, path);
+
+          /*
+            브라우저가 못 그리는 형식이면 **미리보기를 하나 더 받는다.** 움직이는 스티커가
+            그렇다. 원본은 원본대로 담고, 문서에는 이 정지 그림을 싣는다.
+
+            **미리보기가 실제로 있는지 먼저 확인한다.** 없는데도 경로만 적어 두면 문서가
+            존재하지 않는 파일을 가리키게 되고, 그 자리는 깨진 그림으로 남는다. 없으면
+            원본 경로를 적어서 "파일은 여기 있다"고만 알린다 - 못 그리는 것과 없는 것은
+            다른 이야기다.
+          */
+          let shown = path;
+          if (!DRAWABLE.test(path) && pickThumbSize(fileOfMedia(media))) {
+            shown = `${path.replace(/\.[^.]+$/, '')}.preview.jpg`;
+            if (!queuedPaths.has(shown)) {
+              queuedPaths.add(shown);
+              photoTasks.push({ messageId: summary.id, path: shown, media, thumb: true });
+            }
+          }
+          // HTML 이 <img src> 로 가리킬 자리. 실제 파일은 두 번째 단계에서 채워진다.
+          report.paths.set(summary.id, shown);
+        }
+      }
+
       jsonlBuffer += `${JSON.stringify(toExportRecord(summary))}\n`;
       textBuffer += toReadableLine(summary);
+      htmlBuffer += report.push(summary);
       if (summary.mediaType) {
-        /*
-          담기로 한 종류면 zip 안의 어디에 놓일지를 **미리 정해 이 줄에 적는다.** 실제로
-          받는 건 나중이지만 경로는 지금 계산할 수 있고(날짜와 파일 id 로만 정해진다),
-          그래야 목록과 파일이 같은 값을 가리킨다.
-        */
-        const media = (message as Api.Message).media;
-        const path = include?.photos && isPhoto(summary) ? filePathFor(summary) : undefined;
-        if (path && media) photoTasks.push({ messageId: summary.id, path, media });
-
         attachmentBuffer += `${JSON.stringify({
           messageId: summary.id,
           date: summary.date,
@@ -437,7 +635,7 @@ export async function exportChat({
           tlClass: summary.mediaClass ?? null,
           file: summary.mediaInfo ?? null,
           /** zip 안의 위치. null 이면 이 백업에 파일이 담기지 않았다는 뜻이다. */
-          path: path && media ? path : null,
+          path: filePaths.get(summary.id) ?? null,
         })}\n`;
         attachmentCount += 1;
       }
@@ -447,11 +645,33 @@ export async function exportChat({
       if (count % BATCH_SIZE === 0) {
         flush();
         await zip.drain();
-        onProgress({ count, bytes: zip.bytesWritten, lastDate });
+        onProgress({ count, bytes: zip.bytesWritten, lastDate, totalCount, phase: 'messages' });
         await yieldToUi();
       }
     }
 
+    /**
+     * 선명한 프로필 사진을 받아 온다.
+     *
+     * 메시지에 딸려 오는 그림은 몇십 px 짜리 미리보기라 아바타 크기로 줄여도 뿌옇다.
+     * 원본은 따로 받아야 하는데 **사람 하나당 요청 하나**다 — 대화가 24만 건이든 참여자가
+     * 열 명이면 요청도 열 번이다. 그래서 훑기가 끝난 지금 한 번에 처리한다.
+     *
+     * `loadProfilePhoto` 는 자체 대기열로 동시 요청을 제한하고, 실패한 사람은 null 로
+     * 굳혀 다시 시도하지 않는다. 사진이 없는 계정은 이름 첫 글자 아바타로 남는다.
+     */
+    await Promise.all(
+      [...report.avatarIds].map(async (id) => {
+        if (signal.aborted) return;
+        const sharp = await loadProfilePhoto(id);
+        if (sharp) report.setAvatar(id, sharp);
+      }),
+    );
+
+    /*
+      HTML 은 닫는 태그가 있어야 문서가 된다. 마지막 배치를 내보내기 **전에** 채워 넣는다.
+    */
+    htmlBuffer += report.foot();
     flush(true);
 
     /**
@@ -473,7 +693,15 @@ export async function exportChat({
     }[] = [];
 
     if (photoTasks.length > 0) {
-      onProgress({ count, bytes: zip.bytesWritten, lastDate, phase: 'files', files: 0, totalFiles: photoTasks.length });
+      onProgress({
+        count,
+        bytes: zip.bytesWritten,
+        lastDate,
+        totalCount,
+        phase: 'files',
+        files: 0,
+        totalFiles: photoTasks.length,
+      });
 
       for (let index = 0; index < photoTasks.length; index += FILE_CONCURRENCY) {
         if (signal.aborted) throw new Error('EXPORT_CANCELLED');
@@ -483,11 +711,24 @@ export async function exportChat({
         const downloaded = await Promise.all(
           batch.map(async (task) => {
             try {
-              const buffer = await client.downloadMedia(task.media);
+              const buffer = task.thumb
+                ? await client.downloadMedia(task.media, {
+                    thumb: pickThumbSize(fileOfMedia(task.media)),
+                  })
+                : await client.downloadMedia(task.media);
               if (!buffer || typeof buffer === 'string' || buffer.length === 0) {
                 return { task, error: 'EMPTY' };
               }
-              return { task, bytes: new Uint8Array(buffer) };
+              const bytes = new Uint8Array(buffer);
+              /*
+                미리보기 자리에 그림이 아닌 것이 오면 **담지 않는다.** 담아 두면 문서가 그걸
+                그림으로 가리키고, 열어 본 사람은 파일이 깨졌다고 여긴다. 없는 편이 낫다 -
+                원본은 어차피 따로 담겨 있고, 목록에 왜 빠졌는지도 남는다.
+              */
+              if (task.thumb && !looksLikeImage(bytes)) {
+                return { task, error: 'NOT_AN_IMAGE' };
+              }
+              return { task, bytes };
             } catch (err) {
               return { task, error: describeError(err).code };
             }
@@ -519,6 +760,7 @@ export async function exportChat({
           count,
           bytes: zip.bytesWritten,
           lastDate,
+          totalCount,
           phase: 'files',
           files: saved.length,
           totalFiles: photoTasks.length,
@@ -554,8 +796,12 @@ export async function exportChat({
            * 한다.** 사진을 안 담기로 하고 받은 백업과, 담으려 했는데 다 실패한 백업은
            * 폴더 모양이 같다. 그 둘을 가르는 건 이 세 값뿐이다.
            */
+          /** index.html 의 배치. 문서 모양이 왜 그런지 나중에 설명할 근거다. */
+          layout: layout ?? 'chat',
           attachments: {
-            included: include?.photos ? ['photo'] : [],
+            included: [include?.photos ? 'photo' : '', include?.stickers ? 'sticker' : ''].filter(
+              Boolean,
+            ),
             savedCount: saved.length - failed,
             failedCount: failed,
           },
@@ -577,7 +823,7 @@ export async function exportChat({
     );
 
     await zip.finish();
-    onProgress({ count, bytes: zip.bytesWritten, lastDate });
+    onProgress({ count, bytes: zip.bytesWritten, lastDate, totalCount });
   } catch (err) {
     await zip.abort();
     if (signal.aborted) throw new Error('EXPORT_CANCELLED');

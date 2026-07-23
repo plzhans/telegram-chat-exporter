@@ -133,8 +133,21 @@ export function CredentialsForm({
           </Button>
         </div>
       ) : (
-        <form className="space-y-4" onSubmit={(e) => void submitCustom(e)}>
+        <form className="space-y-3" onSubmit={(e) => void submitCustom(e)}>
+          {/*
+            발급 안내를 입력칸 **위**로 올린다.
+
+            전에는 아래에 뒀다. "이미 키를 가진 사람에게 긴 안내가 먼저 나올 이유가 없다"는
+            생각이었는데, 순서가 실제와 반대였다. 이 화면에서 막히는 사람은 대부분 **키가
+            없어서** 막힌다. 빈 칸 두 개를 먼저 보여주고 안내를 아래에 숨겨 두면, 무엇을
+            넣어야 하는지 모르는 사람이 스스로 찾아 내려가야 한다.
+
+            안내 자체가 접혀 있어서(ApiIdGuide 참고) 이미 키가 있는 사람에게는 한 줄이다.
+          */}
+          <ApiIdGuide />
+
           <Field
+            inline
             label={t('credentials.apiId')}
             htmlFor="apiId"
             error={errors.apiId && t(`credentials.errors.${errors.apiId.message}`)}
@@ -149,6 +162,7 @@ export function CredentialsForm({
           </Field>
 
           <Field
+            inline
             label={t('credentials.apiHash')}
             htmlFor="apiHash"
             hint={t('credentials.remember')}
@@ -184,12 +198,6 @@ export function CredentialsForm({
               </Button>
             )}
           </div>
-
-          {/*
-            발급 안내는 입력칸 **아래**에 둔다. 이미 키를 가진 사람에게는 긴 안내가 먼저
-            나올 이유가 없고, 없는 사람은 빈 칸을 보고 자연스럽게 아래로 내려온다.
-          */}
-          <ApiIdGuide />
         </form>
       )}
     </div>

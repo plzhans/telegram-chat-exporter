@@ -1,43 +1,93 @@
 import i18n from 'i18next';
-import LanguageDetector from 'i18next-browser-languagedetector';
 import { initReactI18next } from 'react-i18next';
-import ko from './locales/ko.json';
-import en from './locales/en.json';
+import {
+  DEFAULT_LANGUAGE,
+  SUPPORTED_LANGUAGES,
+  langSegment,
+  type SeoMeta,
+  type SupportedLanguage,
+} from './languages';
 
-export const SUPPORTED_LANGUAGES = ['ko', 'en'] as const;
-export type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number];
-
-export const DEFAULT_LANGUAGE: SupportedLanguage = 'ko';
+export {
+  SUPPORTED_LANGUAGES,
+  DEFAULT_LANGUAGE,
+  PREFIXED_LANGUAGES,
+  langSegment,
+  type SeoMeta,
+  type SupportedLanguage,
+} from './languages';
 
 /**
- * **여기는 medifinder-web 과 다르게 URL 접두사를 쓰지 않는다.**
- *
- * medifinder 는 `/en-us/...` 처럼 경로로 언어를 고정한다. 검색엔진이 긁는 콘텐츠 사이트라
- * "같은 URL = 같은 내용"이 지켜져야 하기 때문이다.
- *
- * 이 도구에는 색인할 콘텐츠가 없다. 화면은 전부 로그인 뒤에만 의미가 있고, 공유되는 링크도
- * 첫 화면 하나뿐이다. 그래서 URL 을 언어로 쪼개는 대신 브라우저 언어를 그대로 따른다 —
- * 처음 온 사람이 자기 언어로 바로 읽는 게 이 앱에서는 더 중요하다.
+ * 로케일 파일을 알아서 끌어모은다. 언어를 늘릴 때 이 파일을 고칠 일이 없다.
  */
-void i18n
-  .use(LanguageDetector)
-  .use(initReactI18next)
-  .init({
-    resources: {
-      ko: { translation: ko },
-      en: { translation: en },
-    },
-    fallbackLng: DEFAULT_LANGUAGE,
-    supportedLngs: SUPPORTED_LANGUAGES,
-    // `en-US` 같은 지역 서브태그를 `en` 으로 접어서 리소스 키와 맞춘다.
-    load: 'languageOnly',
-    lowerCaseLng: true,
-    detection: {
-      order: ['localStorage', 'navigator'],
-      lookupLocalStorage: 'telegram-chat-exporter:lang',
-      caches: ['localStorage'],
-    },
-    interpolation: { escapeValue: false },
-  });
+const files = import.meta.glob<{ default: Record<string, unknown> }>('./locales/*.json', {
+  eager: true,
+});
+
+const resources = Object.fromEntries(
+  Object.entries(files).map(([path, mod]) => [
+    path.replace('./locales/', '').replace('.json', ''),
+    { translation: mod.default },
+  ]),
+);
+
+export function seoOf(lang: SupportedLanguage): SeoMeta {
+  return (resources[lang]?.translation as { seo: SeoMeta }).seo;
+}
+
+function stripBase(pathname: string): string[] {
+  const base = import.meta.env.BASE_URL;
+  const rest = pathname.startsWith(base) ? pathname.slice(base.length) : pathname.replace(/^\//, '');
+  return rest.split('/').filter(Boolean);
+}
+
+const isLanguage = (v: string): v is SupportedLanguage =>
+  (SUPPORTED_LANGUAGES as readonly string[]).includes(v);
+
+/**
+ * 주소가 가리키는 언어. 접두사가 없으면 기본 언어다.
+ *
+ * 브라우저 설정보다 주소가 우선한다. `/en-us/` 링크를 받은 사람은 브라우저가 한국어여도
+ * 영어를 봐야 한다 — 링크를 준 쪽이 그걸 의도했고, 검색엔진이 그 주소에 무엇이 있다고
+ * 색인해 둔 것과도 맞아야 한다.
+ */
+export function languageFromPath(pathname: string = window.location.pathname): SupportedLanguage {
+  const first = stripBase(pathname)[0]?.toLowerCase() ?? '';
+  return isLanguage(first) ? first : DEFAULT_LANGUAGE;
+}
+
+/** 같은 화면의 다른 언어 주소. */
+export function pathForLanguage(lang: SupportedLanguage, pathname = window.location.pathname) {
+  const parts = stripBase(pathname);
+  if (isLanguage(parts[0]?.toLowerCase() ?? '')) parts.shift();
+  return import.meta.env.BASE_URL + [langSegment(lang), ...parts].filter(Boolean).join('/');
+}
+
+const active = languageFromPath();
+
+void i18n.use(initReactI18next).init({
+  resources,
+  lng: active,
+  fallbackLng: DEFAULT_LANGUAGE,
+  supportedLngs: SUPPORTED_LANGUAGES,
+  /**
+   * 없으면 번역이 통째로 안 나온다.
+   *
+   * i18next 는 `ko-kr` 을 `ko-KR` 로 고쳐 잡는데(지역 부분을 대문자로), 리소스 키와
+   * `supportedLngs` 는 소문자라 그 이름으로는 아무것도 못 찾는다. 해석 후보가 빈 배열이
+   * 되어 폴백조차 걸리지 않고 키 문자열이 그대로 화면에 나온다.
+   */
+  lowerCaseLng: true,
+  interpolation: { escapeValue: false },
+});
+
+/**
+ * 문서의 언어를 실제로 보고 있는 언어에 맞춘다.
+ *
+ * 정적 셸은 언어마다 따로 나가지만, SPA 폴백으로 다른 언어의 셸이 올 수 있다
+ * (`/en-us/dialogs` 새로고침). 그때 `<html lang>` 이 틀린 채로 남으면 화면 낭독기와
+ * 브라우저 번역이 잘못된 언어로 읽는다.
+ */
+document.documentElement.lang = seoOf(active).tag;
 
 export default i18n;

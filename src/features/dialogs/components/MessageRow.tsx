@@ -51,9 +51,19 @@ export function MessageRow({ message, showSender = true }: MessageRowProps) {
    * 말풍선으로 그리면 누가 한 말인 것처럼 보인다.
    */
   if (message.actionType && !message.text) {
+    /*
+      "chatdeleteuser" 같은 **텔레그램 내부 이름을 그대로 보여주면 안 된다.** 사람이 읽는
+      화면이고, 실제로는 "누가 나갔다"는 흔한 일이다.
+
+      아는 종류는 문장으로 바꾸고, 모르는 종류는 원래 이름을 그대로 둔다 - 새 종류가
+      생겼을 때 "알 수 없음"으로 뭉개면 무슨 일이 있었는지 되짚을 수가 없다.
+    */
+    const what = t(`messages.actionKind.${message.actionType}`, { defaultValue: '' });
     return (
-      <li className="py-1 text-center text-[0.7rem] text-slate-400">
-        {t('messages.action', { type: message.actionType })}
+      <li className="py-1 text-center text-xs text-slate-400">
+        {what
+          ? t('messages.actionBy', { name: message.senderName ?? '', what })
+          : t('messages.action', { type: message.actionType })}
       </li>
     );
   }
@@ -82,16 +92,17 @@ export function MessageRow({ message, showSender = true }: MessageRowProps) {
         ))}
 
       <div className={cn('flex min-w-0 flex-col gap-0.5', message.out ? 'items-end' : 'items-start')}>
-        {incoming && showSender && message.senderName && (
-          <span className="flex items-center gap-1 px-1 text-[0.7rem] font-semibold text-slate-500">
-            {message.senderName}
-            {/* 봇은 이름만으로 구분되지 않는다. 사람 이름을 쓰는 봇도 흔하다. */}
-            {message.senderKind !== 'user' && (
-              <span className="rounded bg-slate-200 px-1 py-px text-[0.6rem] font-bold uppercase text-slate-600">
-                {t(`messages.sender.${message.senderKind}`)}
-              </span>
-            )}
-          </span>
+        {/*
+          이름은 **말풍선 안 첫 줄**에 둔다.
+
+          밖에 두면 말풍선과 이름 사이에 틈이 생겨서, 이름이 그 말풍선의 것인지 바로 위
+          미디어의 것인지 눈으로 한 번 더 짚어야 한다. 안에 넣으면 이름과 말이 한 덩어리가
+          되어 그 판단이 필요 없어진다.
+
+          글이 없는 메시지(사진만 보낸 경우)는 담을 말풍선이 없으므로 예전처럼 위에 둔다.
+        */}
+        {incoming && showSender && message.senderName && !message.text && (
+          <SenderLabel message={message} />
         )}
 
         {/*
@@ -120,7 +131,7 @@ export function MessageRow({ message, showSender = true }: MessageRowProps) {
 
             {/* 글이 없으면 시각을 얹을 자리가 여기뿐이다. */}
             {!message.text && (
-              <span className="absolute bottom-1.5 right-1.5 rounded-full bg-slate-900/55 px-1.5 py-0.5 text-[0.65rem] leading-none text-white">
+              <span className="absolute bottom-1.5 right-1.5 rounded-full bg-slate-900/55 px-1.5 py-0.5 text-[0.7rem] leading-none text-white">
                 <EditedMark message={message} muted="" />
                 {formatTime(message.date, locale)}
               </span>
@@ -130,7 +141,7 @@ export function MessageRow({ message, showSender = true }: MessageRowProps) {
 
         {/* 사진이 아닌 첨부(파일·위치·투표 등)는 종류만 알린다. 이것도 말풍선 밖이다. */}
         {message.mediaType && !message.mediaKey && (
-          <span className="flex items-center gap-1 rounded-xl bg-slate-100 px-2.5 py-1.5 text-xs text-slate-600">
+          <span className="flex items-center gap-1 rounded-xl bg-slate-100 px-2.5 py-1.5 text-sm text-slate-600">
             <Paperclip className="h-3 w-3 shrink-0" />
             {t('messages.media', {
               type: t(`messages.mediaKind.${message.mediaType}`, {
@@ -139,7 +150,7 @@ export function MessageRow({ message, showSender = true }: MessageRowProps) {
             })}
             <MediaInfoButton message={message} className="ml-0.5" />
             {!message.text && (
-              <span className="ml-1 text-[0.65rem] text-slate-400">
+              <span className="ml-1 text-[0.7rem] text-slate-400">
                 <EditedMark message={message} muted="" />
                 {formatTime(message.date, locale)}
               </span>
@@ -158,14 +169,17 @@ export function MessageRow({ message, showSender = true }: MessageRowProps) {
           */
           <p
             className={cn(
-              'flow-root max-w-[80%] whitespace-pre-wrap break-words rounded-2xl px-3 py-2 text-sm',
+              'flow-root max-w-[80%] whitespace-pre-wrap break-words rounded-2xl px-3 py-2 text-base',
               message.out ? 'bg-primary text-white' : 'bg-slate-100 text-slate-800',
             )}
           >
+            {incoming && showSender && message.senderName && (
+              <SenderLabel message={message} inBubble />
+            )}
             {message.text}
             <span
               className={cn(
-                'float-right ml-2 mt-1 select-none text-[0.65rem] leading-none',
+                'float-right ml-2 mt-1 select-none text-[0.7rem] leading-none',
                 message.out ? 'text-primary-100' : 'text-slate-400',
               )}
             >
@@ -176,6 +190,33 @@ export function MessageRow({ message, showSender = true }: MessageRowProps) {
         )}
       </div>
     </li>
+  );
+}
+
+/**
+ * 발신자 이름 한 줄.
+ *
+ * 말풍선 안과 밖 두 군데에서 쓴다. 같은 것을 두 번 적어 두면 봇 배지 같은 것을 한쪽에만
+ * 고치는 일이 생긴다.
+ */
+function SenderLabel({ message, inBubble = false }: { message: MessageSummary; inBubble?: boolean }) {
+  const { t } = useTranslation();
+  return (
+    <span
+      className={cn(
+        'flex items-center gap-1 text-xs font-semibold',
+        // 말풍선 안에서는 본문 위에 한 줄로 서고, 밖에서는 예전처럼 살짝 들여쓴다.
+        inBubble ? 'mb-0.5 text-primary-700' : 'px-1 text-slate-500',
+      )}
+    >
+      {message.senderName}
+      {/* 봇은 이름만으로 구분되지 않는다. 사람 이름을 쓰는 봇도 흔하다. */}
+      {message.senderKind !== 'user' && (
+        <span className="rounded bg-slate-200 px-1 py-px text-[0.65rem] font-bold uppercase text-slate-600">
+          {t(`messages.sender.${message.senderKind}`)}
+        </span>
+      )}
+    </span>
   );
 }
 
@@ -197,7 +238,7 @@ export function DateDivider({ unixSeconds }: { unixSeconds: number }) {
   return (
     <li className="flex items-center gap-3 py-1" aria-hidden>
       <span className="h-px flex-1 bg-slate-200" />
-      <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[0.7rem] font-semibold text-slate-500">
+      <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-500">
         {label}
       </span>
       <span className="h-px flex-1 bg-slate-200" />

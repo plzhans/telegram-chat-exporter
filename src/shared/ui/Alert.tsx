@@ -26,7 +26,11 @@ export function Alert({
     <div className={cn('flex gap-3 rounded-xl px-4 py-3 text-sm', box, className)}>
       <Icon className="mt-0.5 h-4 w-4 shrink-0" />
       <div className="space-y-1 leading-relaxed">
-        {title && <p className="font-semibold">{title}</p>}
+        {/*
+          제목은 본문 크기를 따라가지 않는다. 호출부가 본문을 줄이더라도(className 으로
+          text-xs 를 주는 식) **무엇에 대한 알림인지는 그대로 눈에 띄어야** 한다.
+        */}
+        {title && <p className="text-sm font-semibold">{title}</p>}
         <div>{children}</div>
       </div>
     </div>

@@ -7,6 +7,7 @@ import { Spinner } from '@/shared/ui/Spinner';
 import { useAuth } from '@/shared/auth/useAuth';
 import { AuthStepForm } from '../components/AuthStepForm';
 import { CredentialsForm } from '../components/CredentialsForm';
+import { LoginCodeNotice } from '../components/LoginCodeNotice';
 import { PhoneForm } from '../components/PhoneForm';
 import { SessionNotice } from '../components/SessionNotice';
 import { TrustPanel } from '../components/TrustPanel';
@@ -56,14 +57,25 @@ export default function SignIn() {
         </div>
       )}
 
+      {/*
+        전화번호와 코드를 실제로 적는 두 단계에서만 경고를 띄운다.
+
+        **첫 화면에 있을 때는 아무도 안 읽었다.** 그때는 아직 남의 일이라 그냥 지나친다.
+        그 말이 무게를 갖는 건 입력칸에 번호를 적으려고 손이 멈추는 순간이다.
+      */}
       {step === 'phone' && (
-        <div className="rounded-2xl border border-slate-200 bg-white p-4">
-          <PhoneForm busy={busy} onSubmit={submitPhone} footer={cancelButton} />
+        <div className="space-y-3">
+          <LoginCodeNotice />
+          <div className="rounded-2xl border border-slate-200 bg-white p-4">
+            <PhoneForm busy={busy} onSubmit={submitPhone} footer={cancelButton} />
+          </div>
         </div>
       )}
 
       {step === 'code' && (
-        <div className="rounded-2xl border border-slate-200 bg-white p-4">
+        <div className="space-y-3">
+          <LoginCodeNotice />
+          <div className="rounded-2xl border border-slate-200 bg-white p-4">
           <AuthStepForm
             key="code"
             label={t(codeViaApp ? 'auth.code.titleApp' : 'auth.code.titleSms')}
@@ -92,6 +104,7 @@ export default function SignIn() {
               placeholder: '12345',
             }}
           />
+          </div>
         </div>
       )}
 

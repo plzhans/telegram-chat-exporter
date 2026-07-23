@@ -20,6 +20,25 @@ export interface DialogSummary {
   date: number;
   /** 프로필 사진 data URL. 사진이 없는 대화방이면 undefined. */
   photo?: string;
+  /**
+   * 마지막 메시지 한 줄.
+   *
+   * **추가 요청이 없다.** `messages.getDialogs` 는 대화방 목록과 함께 각 방의 마지막
+   * 메시지를 같은 응답에 실어 준다(GramJS `client/dialogs.js` 가 `topMessage` 로 짝지어
+   * `dialog.message` 에 붙여 둔다). 메신저들이 목록에 마지막 말을 띄우는 것도 같은 이유다.
+   */
+  preview?: DialogPreview;
+}
+
+export interface DialogPreview {
+  /** 본문. 미디어만 있는 메시지면 빈 문자열이다. */
+  text: string;
+  /** 사진·파일처럼 글자가 아닌 것. 화면에서 번역해 붙인다. */
+  mediaKind?: string;
+  /** 내가 보낸 메시지인가. 앞에 "나:" 를 붙일지 정한다. */
+  out: boolean;
+  /** 여러 사람이 말하는 방에서만 쓴다. 1:1 은 누구 말인지 뻔하다. */
+  senderName?: string;
 }
 
 /**
@@ -75,6 +94,43 @@ export function getCachedPeer(id: string): Api.TypeInputPeer | undefined {
   return peerCache.get(id);
 }
 
+/**
+ * 목록에 띄울 마지막 메시지 한 줄.
+ *
+ * `describeMedia` 를 쓰지 않는다. 그건 내보내기용이라 파일 id·크기까지 캐내는데, 목록은
+ * "사진인지 파일인지"만 알면 되고 200개 방마다 그 계산을 돌릴 이유가 없다.
+ */
+function toPreview(dialog: Dialog): DialogPreview | undefined {
+  const message = dialog.message;
+  if (!message) return undefined;
+
+  const text = message.message ?? '';
+  const mediaKind = message.media ? shortTypeName(message.media, 'MessageMedia') : undefined;
+  const action = message.action ? shortTypeName(message.action, 'MessageAction') : undefined;
+
+  // 글자도 미디어도 없으면 "들어왔습니다" 같은 시스템 알림이다. 그것도 없으면 보여줄 게 없다.
+  if (!text && !mediaKind && !action) return undefined;
+
+  /*
+    보낸 사람 이름은 **여러 사람이 말하는 방에서만** 쓴다. 1:1 은 상대 아니면 나라서
+    이름을 적어 봐야 자리만 먹는다.
+  */
+  const senderName =
+    dialog.isGroup || dialog.isChannel
+      ? ((message.sender as { firstName?: string; title?: string; username?: string } | undefined)
+          ?.firstName ??
+        (message.sender as { title?: string } | undefined)?.title ??
+        undefined)
+      : undefined;
+
+  return {
+    text,
+    mediaKind: mediaKind ?? (action ? 'action' : undefined),
+    out: Boolean(message.out),
+    senderName,
+  };
+}
+
 function kindOf(dialog: Dialog): DialogKind {
   if (dialog.isUser) return 'user';
   // isChannel 을 먼저 본다. 슈퍼그룹은 isGroup 과 isChannel 이 동시에 참이라 순서를 바꾸면
@@ -108,6 +164,7 @@ export function useDialogsQuery() {
             unreadCount: dialog.unreadCount,
             date: dialog.date,
             photo: extractPhoto(dialog.entity),
+            preview: toPreview(dialog),
           };
         });
       } catch (err) {
@@ -811,6 +868,33 @@ export async function fetchDayCounts(
  * 점프하면 텔레그램이 그 뒤의 아무 날이나 보여주는데, 그러면 사용자는 자기가 고른 날을
  * 본다고 착각한다.
  */
+/**
+ * 어떤 기간에 메시지가 몇 개인지. 요청 두 번이면 끝난다.
+ *
+ * 내보내기 진행률에 쓴다. 이게 없으면 "지금까지 1,284개"만 보여줄 수 있는데, 그 숫자만으로는
+ * **절반쯤 왔는지 시작인지 알 수 없다.** 끝을 모르는 진행 표시는 없는 것과 비슷하다.
+ *
+ * 경계를 비우면 그쪽 끝까지다 — 전체 기간이면 둘 다 비운다.
+ */
+export async function countMessagesBetween(
+  peer: Api.TypeInputPeer,
+  fromUnix?: number,
+  toUnix?: number,
+): Promise<number> {
+  /*
+    `countNewerThan(t)` 는 "t 보다 새로운 것의 개수"다. 시작 경계에서 센 값에서 끝 경계에서
+    센 값을 빼면 그 사이에 있는 개수가 남는다. 경계가 없으면 각각 전체 개수와 0 이다.
+  */
+  const newerThanFrom = fromUnix === undefined ? undefined : await countNewerThan(peer, fromUnix);
+  const newerThanTo = toUnix === undefined ? 0 : await countNewerThan(peer, toUnix);
+
+  if (newerThanFrom !== undefined) return Math.max(newerThanFrom - newerThanTo, 0);
+
+  // 시작이 열려 있으면 전체에서 끝 경계보다 새로운 것만 덜어낸다.
+  const all = await countNewerThan(peer, 0);
+  return Math.max(all - newerThanTo, 0);
+}
+
 export async function countMessagesOnDay(
   peer: Api.TypeInputPeer,
   dayStartUnix: number,

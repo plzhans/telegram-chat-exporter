@@ -1,9 +1,9 @@
 import { Trans, useTranslation } from 'react-i18next';
 import { ShieldCheck } from 'lucide-react';
-import { Alert } from '@/shared/ui/Alert';
 import { Disclosure } from '@/shared/ui/Disclosure';
 import { SOURCE_URL } from '@/shared/config/app';
 import { IDLE_TTL_MINUTES } from '@/shared/telegram/session';
+import { ADS_ENABLED, ANALYTICS_ENABLED } from '@/shared/analytics/gtag';
 
 /**
  * 첫 화면 맨 위에 붙는 설명.
@@ -26,8 +26,13 @@ import { IDLE_TTL_MINUTES } from '@/shared/telegram/session';
 export function TrustPanel() {
   const { t } = useTranslation();
 
-  /** 동작 방식 세 가지. 화면 순서가 곧 신뢰의 순서다 — 서버 없음이 가장 먼저다. */
-  const points = ['noServer', 'credentials', 'download'] as const;
+  /**
+   * 동작 방식. 화면 순서가 곧 신뢰의 순서다 — 서버 없음이 가장 먼저다.
+   *
+   * 전화번호·로그인 코드 이야기는 여기서 뺐다. 첫 화면에서는 아직 남의 일이라 그냥 넘어가고,
+   * 정작 그 말이 필요한 곳은 **입력칸 바로 위**다(LoginCodeNotice 참고).
+   */
+  const points = ['noServer', 'download'] as const;
 
   /**
    * 남는 것의 전체 목록.
@@ -88,22 +93,29 @@ export function TrustPanel() {
       </section>
 
       {/*
-        아래 둘은 **접어 둔다.**
+        아래 셋은 **접어서, 한 상자에 묶어 둔다.**
 
         이 도구를 믿을지 판단하려는 사람에게는 꼭 필요한 글이지만, 다 펼쳐 두면 정작 로그인
         칸이 화면 한참 아래로 밀린다. 신뢰를 설명하려다 도구를 못 쓰게 만드는 셈이다.
 
+        상자를 각자 두르지 않는 이유도 같다. 카드 세 개는 그만큼 자리를 더 먹고, 서로 다른
+        이야기처럼 보인다. 실은 **"이 사이트를 믿어도 되나"라는 한 질문에 대한 세 갈래**다.
+
         대신 접힌 상태에서도 **무슨 이야기인지 한 줄로 알 수 있게** 요약을 붙인다. 제목만
         있으면 열어 봐야 아는지 몰라 그냥 지나친다.
       */}
-      <Disclosure title={t('trust.verify.title')} summary={t('trust.verify.peek')}>
+      <div className="divide-y divide-slate-200 overflow-hidden rounded-2xl border border-slate-200 bg-white">
+      <Disclosure bare title={t('trust.verify.title')} summary={t('trust.verify.peek')}>
         <ul className="space-y-1 text-xs leading-relaxed text-slate-600">
           <li className="flex gap-2">
             <span aria-hidden className="text-slate-400">
               1.
             </span>
             <span>
-              <Trans i18nKey="trust.verify.csp" components={inline} />
+              <Trans
+                i18nKey={ANALYTICS_ENABLED ? 'trust.verify.cspAnalytics' : 'trust.verify.csp'}
+                components={inline}
+              />
             </span>
           </li>
           <li className="flex gap-2">
@@ -133,7 +145,7 @@ export function TrustPanel() {
         </ul>
       </Disclosure>
 
-      <Disclosure title={t('trust.stored.title')} summary={t('trust.stored.peek')}>
+      <Disclosure bare title={t('trust.stored.title')} summary={t('trust.stored.peek')}>
         <p className="text-xs leading-relaxed text-slate-600">{t('trust.stored.lede')}</p>
 
         {/*
@@ -187,7 +199,56 @@ export function TrustPanel() {
         사용자는 그걸 고장으로 읽는다. 서버가 없다는 것과 내 기기가 다 한다는 것은 같은
         사실의 양면이라, 같은 화면에서 함께 말해야 한다.
       */}
-      <Disclosure title={t('trust.device.title')} summary={t('trust.device.peek')}>
+      {/*
+        애널리틱스를 켠 빌드에서만 나온다. 이 앱은 "다른 곳으로 연결하지 못한다"를 근거로
+        신뢰를 청하므로, 유일한 예외를 숨기면 그 근거 전체가 무너진다.
+      */}
+      {ANALYTICS_ENABLED && (
+        <Disclosure bare title={t('trust.analytics.title')} summary={t('trust.analytics.peek')}>
+          <p className="text-xs leading-relaxed text-slate-600">
+            <Trans i18nKey="trust.analytics.lede" components={inline} />
+          </p>
+          <p className="mt-1.5 text-xs leading-relaxed text-slate-600">
+            <Trans i18nKey="trust.analytics.network" components={inline} />
+          </p>
+          <ul className="mt-2 space-y-1 text-xs leading-relaxed text-slate-600">
+            <li>{t('trust.analytics.sent')}</li>
+            <li>
+              <Trans i18nKey="trust.analytics.notSent" components={inline} />
+            </li>
+          </ul>
+          <p className="mt-2 text-xs leading-relaxed text-slate-500">
+            {t('trust.analytics.block')}
+          </p>
+          <p className="mt-2 text-xs leading-relaxed text-slate-600">
+            <Trans i18nKey="trust.analytics.selfHost" components={inline} />{' '}
+            <a
+              href={SOURCE_URL}
+              target="_blank"
+              rel="noreferrer noopener"
+              className="font-semibold text-primary underline underline-offset-2"
+            >
+              {t('common.source')}
+            </a>
+          </p>
+        </Disclosure>
+      )}
+
+      {ADS_ENABLED && (
+        <Disclosure bare title={t('trust.ads.title')} summary={t('trust.ads.peek')}>
+          <p className="text-xs leading-relaxed text-slate-600">
+            <Trans i18nKey="trust.ads.body" components={inline} />
+          </p>
+          <p className="mt-1.5 text-xs leading-relaxed text-slate-600">
+            <Trans i18nKey="trust.ads.isolation" components={inline} />
+          </p>
+          <p className="mt-2 text-xs leading-relaxed text-slate-600">
+            <Trans i18nKey="trust.ads.selfHost" components={inline} />
+          </p>
+        </Disclosure>
+      )}
+
+      <Disclosure bare title={t('trust.device.title')} summary={t('trust.device.peek')}>
         <p className="text-xs leading-relaxed text-slate-600">{t('trust.device.body')}</p>
         <ul className="mt-2 space-y-1 text-xs leading-relaxed text-slate-600">
           {(['bigChat', 'keepOpen', 'rate'] as const).map((key) => (
@@ -200,6 +261,7 @@ export function TrustPanel() {
           ))}
         </ul>
       </Disclosure>
+      </div>
 
       {/*
         마지막에 오는 경고.
@@ -214,23 +276,6 @@ export function TrustPanel() {
            핵심이다 — "믿어 달라"로 끝나는 안내는 사기와 구별되지 않는다. 구별되는 건
            **안 믿어도 되는 방법을 함께 주는 쪽**이다.
       */}
-      <Alert tone="warning" title={t('trust.warning.title')}>
-        <p>{t('trust.warning.principle')}</p>
-        <p className="mt-1.5">{t('trust.warning.why')}</p>
-        <p className="mt-1.5">{t('trust.warning.storage')}</p>
-        <p className="mt-1.5">
-          {t('trust.warning.selfHost')}{' '}
-          <a
-            href={SOURCE_URL}
-            target="_blank"
-            rel="noreferrer noopener"
-            className="font-semibold underline underline-offset-2"
-          >
-            {t('common.source')}
-          </a>
-        </p>
-        <p className="mt-1.5 font-semibold">{t('trust.warning.after')}</p>
-      </Alert>
     </div>
   );
 }

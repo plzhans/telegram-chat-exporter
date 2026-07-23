@@ -4,7 +4,11 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { I18nextProvider } from 'react-i18next';
 import i18n from '@/shared/i18n';
 import App from '@/app/App';
+import { initAds, initAnalytics } from '@/shared/analytics/gtag';
 import './globals.css';
+
+initAnalytics();
+initAds();
 
 const queryClient = new QueryClient({
   defaultOptions: {

@@ -10,6 +10,7 @@ import { MainLayout } from './layouts/MainLayout';
 import { Spinner } from '@/shared/ui/Spinner';
 import { useAuth } from '@/shared/auth/useAuth';
 import { touchStoredSession } from '@/shared/telegram/session';
+import { langSegment, languageFromPath } from '@/shared/i18n';
 
 const SignIn = lazy(() => import('@/features/auth/pages/SignIn'));
 const Dialogs = lazy(() => import('@/features/dialogs/pages/Dialogs'));
@@ -53,12 +54,13 @@ const pages: RouteObject[] = [
 ];
 
 /**
- * `basename` 은 Vite 의 `base` 에서 그대로 온다(`vite.config.ts` 참고).
- *
- * 루트 배포면 `/` 라 아무 일도 일어나지 않고, GitHub Pages 처럼 `/telegram-chat-exporter/`
- * 아래 놓이면 라우터가 그 접두사를 빼고 경로를 읽는다. 이걸 빼먹으면 첫 화면은 뜨는데
- * 모든 링크가 `/dialogs` 로 나가서 404 가 된다.
- */
+  * `base`(배포 위치) + 언어 조각. 기본 언어는 조각이 비어 있다.
+  *
+  * 언어를 라우트 트리가 아니라 basename 에 넣었다. 그래서 화면 코드의 `to="/dialogs"` 를
+  * 하나도 안 고쳐도 라우터가 앞에 붙여 준다.
+  */
+const basename = import.meta.env.BASE_URL + langSegment(languageFromPath());
+
 const router = createBrowserRouter(
   [
     {
@@ -70,7 +72,7 @@ const router = createBrowserRouter(
       children: pages,
     },
   ],
-  { basename: import.meta.env.BASE_URL },
+  { basename },
 );
 
 /** 저장된 세션의 유휴 만료 시각을 밀어 주는 주기. TTL 보다 충분히 짧기만 하면 된다. */

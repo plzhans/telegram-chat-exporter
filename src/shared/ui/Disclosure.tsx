@@ -18,6 +18,7 @@ export function Disclosure({
   summary,
   children,
   defaultOpen = false,
+  bare = false,
   className,
 }: {
   title: string;
@@ -25,16 +26,24 @@ export function Disclosure({
   summary?: string;
   children: ReactNode;
   defaultOpen?: boolean;
+  /**
+   * 자기 테두리를 두르지 않는다.
+   *
+   * 여러 개를 붙여 놓을 때 쓴다. 각자 상자를 두르면 카드 세 개가 되어 자리를 그만큼 더
+   * 먹고, 서로 다른 이야기처럼 보인다. 하나로 묶고 가운데만 선으로 나누는 편이 낫다.
+   */
+  bare?: boolean;
   className?: string;
 }) {
   return (
     <details
       open={defaultOpen}
-      className={cn('group rounded-2xl border border-slate-200 bg-white', className)}
+      className={cn('group', !bare && 'rounded-2xl border border-slate-200 bg-white', className)}
     >
       <summary
         className={cn(
-          'flex cursor-pointer list-none items-start gap-2 rounded-2xl p-4',
+          'flex cursor-pointer list-none items-start gap-2 px-4 py-3',
+          !bare && 'rounded-2xl',
           // 사파리는 기본 삼각형을 이 가상 요소로 그린다. 없애야 우리 아이콘만 남는다.
           '[&::-webkit-details-marker]:hidden',
         )}
@@ -50,7 +59,7 @@ export function Disclosure({
           )}
         </span>
       </summary>
-      <div className="px-4 pb-4">{children}</div>
+      <div className="px-4 pb-3">{children}</div>
     </details>
   );
 }

@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ChevronRight } from 'lucide-react';
 import { dateKeyOf, toDateKey } from '@/shared/lib/date';
-import type { DialogSummary } from '../api';
+import type { DialogPreview, DialogSummary } from '../api';
 import { Avatar } from './Avatar';
 
 /**
@@ -19,6 +19,21 @@ function formatDialogTime(unixSeconds: number, locale: string): string {
   }
   const key = dateKeyOf(unixSeconds);
   return date.getFullYear() === now.getFullYear() ? key.slice(5).replace('-', '.') : key.replace(/-/g, '.');
+}
+
+type T = (key: string, opts?: Record<string, unknown>) => string;
+
+/** 미디어 종류 이름. 모르는 종류는 뭉뚱그린다 — 목록에서 정확한 분류가 값어치 있지 않다. */
+function mediaLabel(preview: DialogPreview, t: T): string {
+  const known = ['photo', 'document', 'video', 'audio', 'sticker', 'poll', 'contact', 'geo', 'webPage', 'action'];
+  const key = preview.mediaKind && known.includes(preview.mediaKind) ? preview.mediaKind : 'other';
+  return t(`dialogs.preview.${key}`);
+}
+
+/** "나: " 또는 "홍길동: ". 1:1 상대의 말에는 아무것도 안 붙인다. */
+function prefixOf(preview: DialogPreview, t: T): string {
+  if (preview.out) return `${t('dialogs.preview.you')}: `;
+  return preview.senderName ? `${preview.senderName}: ` : '';
 }
 
 export function DialogRow({ dialog }: { dialog: DialogSummary }) {
@@ -54,7 +69,22 @@ export function DialogRow({ dialog }: { dialog: DialogSummary }) {
               {formatDialogTime(dialog.date, i18n.resolvedLanguage ?? 'ko')}
             </span>
           </span>
-          <span className="block text-xs text-slate-500">{t(`dialogs.type.${dialog.kind}`)}</span>
+          {/*
+            마지막 메시지. 이것도 목록 응답에 이미 들어 있어 요청이 늘지 않는다
+            (features/dialogs/api.ts 의 toPreview 주석 참고).
+          */}
+          {dialog.preview ? (
+            <span className="block truncate text-xs text-slate-500">
+              {prefixOf(dialog.preview, t)}
+              {dialog.preview.text ? (
+                dialog.preview.text
+              ) : (
+                <span className="text-slate-400">{mediaLabel(dialog.preview, t)}</span>
+              )}
+            </span>
+          ) : (
+            <span className="block text-xs text-slate-500">{t(`dialogs.type.${dialog.kind}`)}</span>
+          )}
         </span>
 
         {dialog.unreadCount > 0 && (

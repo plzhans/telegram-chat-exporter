@@ -1,4 +1,16 @@
 {
+  "seo": {
+    "tag": "en-US",
+    "ogLocale": "en_US",
+    "hreflang": [
+      "en-US",
+      "en"
+    ],
+    "title": "Export Telegram chats — in your browser, nothing stored on a server | Telegram Exporter",
+    "shareTitle": "Export Telegram chats — in your browser, nothing stored on a server",
+    "description": "Export your Telegram conversations to a zip file. Everything runs inside your browser and nothing is stored on a server — your phone number, login code and messages are never sent anywhere else. Nothing to install.",
+    "shareDescription": "Export Telegram chats to a zip file, right in your browser. Nothing is stored on a server."
+  },
   "app": {
     "title": "Telegram Exporter",
     "tagline": "Back up Telegram chats entirely in your browser"
@@ -9,6 +21,7 @@
     "cancel": "Cancel",
     "retry": "Try again",
     "source": "Source code",
+    "language": "Language",
     "signOut": "Sign out and terminate session"
   },
   "trust": {
@@ -34,7 +47,8 @@
       "csp": "This page is locked so that it <strong>cannot connect to any address</strong> other than Telegram (<code>wss://*.web.telegram.org</code>). Your browser enforces that rule, so not even the author of this page can break it.",
       "devtools": "Press F12 (⌥⌘I on a Mac) and open the <strong>Network</strong> tab to see every address this page actually connects to.",
       "source": "The full source code is public.",
-      "peek": "See for yourself that this page cannot connect anywhere else."
+      "peek": "See for yourself that this page cannot connect anywhere else.",
+      "cspAnalytics": "This page cannot connect anywhere except Telegram (<code>wss://*.web.telegram.org</code>) and Google Analytics for visit counts — <strong>nothing else.</strong> The browser enforces this rule, so the site cannot change it."
     },
     "stored": {
       "title": "What stays in this browser",
@@ -54,7 +68,24 @@
     },
     "never": {
       "title": "What is never kept",
-      "body": "Message content · photos and attachments · your phone number · your contacts · your login code. None of it is stored, and none of it is sent anywhere."
+      "body": "Conversations, photos and attachments, phone number, contacts, login code. None of it is stored, and none of it goes anywhere except to Telegram."
+    },
+    "analytics": {
+      "title": "Visit statistics connect to Google",
+      "peek": "Visit counts only. No conversations or phone numbers.",
+      "lede": "This site uses <strong>Google Analytics</strong> to count visitors.",
+      "network": "That means this page <strong>also connects to Google</strong>, not only Telegram. It loads the analytics script from <code>googletagmanager.com</code> and sends visit records to <code>google-analytics.com</code>. This is the only outbound connection besides Telegram, and you can see it in the Network tab of your developer tools.",
+      "sent": "What is sent: that the landing page was opened, and which language.",
+      "notSent": "What is never sent: your conversations, phone number, login code, or which chats you opened. Chat URLs contain the chat id, so those addresses are deliberately withheld.",
+      "block": "Blocking it with an ad blocker or your browser's tracking protection does not break this tool.",
+      "selfHost": "If you do not want even this, <strong>download the code and run it on your own machine.</strong> The analytics setting is supplied only when this site is deployed, so a copy you build yourself contains no analytics at all — the connection to Google is simply not in the code."
+    },
+    "ads": {
+      "title": "Ads are shown",
+      "peek": "Google AdSense ads are present. Unrelated to your conversations.",
+      "body": "This site carries <strong>Google AdSense</strong> ads. It therefore also connects to Google's ad network (<code>googlesyndication.com</code>, <code>doubleclick.net</code>), and ads run inside a separate frame.",
+      "isolation": "Ad code cannot read anything on this page. Your conversations, phone number and login code are never shared with advertisers. <strong>No ads are placed on the sign-in or conversation screens.</strong>",
+      "selfHost": "To use it without ads, <strong>download the code and run it on your own machine.</strong> The ad setting is supplied only when this site is deployed, so a copy you build yourself contains no ad code at all."
     },
     "device": {
       "title": "Speed depends on the device you're using",
@@ -168,7 +199,21 @@
       "group": "Group",
       "channel": "Channel"
     },
-    "mediaNote": "Attachments such as photos and files are not downloaded yet. Only message text and the attachment type are saved."
+    "mediaNote": "Attachments such as photos and files are not downloaded yet. Only message text and the attachment type are saved.",
+    "preview": {
+      "you": "You",
+      "photo": "Photo",
+      "document": "File",
+      "video": "Video",
+      "audio": "Voice",
+      "sticker": "Sticker",
+      "poll": "Poll",
+      "contact": "Contact",
+      "geo": "Location",
+      "webPage": "Link",
+      "action": "System message",
+      "other": "Attachment"
+    }
   },
   "messages": {
     "loading": "Loading messages…",
@@ -213,7 +258,36 @@
       "giveaway": "giveaway",
       "giveawayresults": "giveaway results",
       "paidmedia": "paid media"
-    }
+    },
+    "actionKind": {
+      "chatadduser": " joined the chat",
+      "chatdeleteuser": " left the chat",
+      "chatjoinedbylink": " joined via invite link",
+      "chatjoinedbyrequest": " was approved to join",
+      "chatcreate": " created the chat",
+      "channelcreate": " created the channel",
+      "chatedittitle": " changed the chat name",
+      "chateditphoto": " changed the chat photo",
+      "chatdeletephoto": " removed the chat photo",
+      "pinmessage": " pinned a message",
+      "chatmigrateto": "The chat became a supergroup",
+      "channelmigratefrom": "The chat became a supergroup",
+      "historyclear": "The history was cleared",
+      "phonecall": " made a call",
+      "groupcall": "There was a voice chat",
+      "invitetogroupcall": " invited someone to a voice chat",
+      "screenshottaken": " took a screenshot",
+      "contactsignup": " joined Telegram",
+      "setmessagesttl": "The auto-delete timer changed",
+      "setchattheme": " changed the chat theme",
+      "giftpremium": " gifted Premium",
+      "topiccreate": " created a topic",
+      "topicedit": " edited a topic",
+      "suggestprofilephoto": " suggested a profile photo",
+      "webviewdatasent": " sent a form",
+      "paymentsent": "Payment completed"
+    },
+    "actionBy": "{{name}}{{what}}"
   },
   "calendar": {
     "prevMonth": "Previous month",
@@ -236,7 +310,7 @@
     "rangeHint": "For very old chats, exporting in slices is safer.",
     "wholeHistory": "Export the whole history",
     "wholeHistoryHint": "Ignores the dates and takes everything from the start. Large chats can take a very long time because of Telegram's rate limits.",
-    "progress": "Exported {{count, number}} so far…",
+    "progress": "Messages {{count, number}} / {{total, number}}",
     "waiting": "Waiting out a Telegram rate limit. It hasn't stalled — please keep this tab open.",
     "done": "Done. Saved {{count, number}} messages.",
     "savedPicked": "It's in the location you picked. Browsers don't reveal the full path for security, so only the file name is shown.",
@@ -254,10 +328,27 @@
     "includeTitle": "Include attachments",
     "includePhotos": "Photos",
     "includePhotosHint": "Saves the full-size photos from this chat alongside the messages. Stickers are not included. Many photos means much more time and space.",
-    "includeNote": "Even without this, a list of what was sent is always included.",
-    "progressFiles": "Saving photos… {{files, number}}/{{totalFiles, number}}",
+    "includeNote": "Attachments that aren't included still appear in the list (attachments.jsonl) with their kind and file id. Only the file itself is missing — the record of what was sent is complete.",
+    "progressFiles": "Attachments {{files, number}} / {{totalFiles, number}}",
     "deviceTitle": "This work is done by the device you're on",
-    "deviceBody": "There is no server in the middle, so this PC or phone does all the fetching and compressing itself — which means the time it takes depends heavily on the device. For large chats, or when including photos, use a PC and keep this tab open until it finishes."
+    "deviceBody": "There is no server in the middle, so this PC or phone does all the fetching and compressing itself — which means the time it takes depends heavily on the device. For large chats, or when including photos, use a PC and keep this tab open until it finishes.",
+    "doneTitle": "Export complete",
+    "doneRange": "Period",
+    "doneWhole": "Whole history",
+    "doneMessages": "Messages",
+    "doneFiles": "Files saved",
+    "doneSize": "File size",
+    "doneCount": "{{count, number}}",
+    "again": "Start another export",
+    "includeExcludedTitle": "Not included",
+    "includeExcluded": "Videos · audio · non-image documents",
+    "layoutTitle": "Where to put me",
+    "layoutChat": "Right (default) — on the right, as in the app",
+    "layoutFlat": "Left — on the left, so it isn't obvious which side is me",
+    "layoutHint": "Keeping everyone on the left hides which side is you. Your own name is then shown on your messages too.",
+    "includeStickers": "Stickers",
+    "includeStickersHint": "Each sticker is stored once no matter how often it was sent. A chat usually has a few dozen kinds, so this stays within a few MB.",
+    "progressCounting": "Exported {{count, number}} messages so far…"
   },
   "errors": {
     "title": "Error",
