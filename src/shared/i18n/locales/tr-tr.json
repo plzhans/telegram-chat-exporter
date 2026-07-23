@@ -163,6 +163,7 @@
   },
   "auth": {
     "connecting": "Telegram'a bağlanılıyor…",
+    "rateLimit": "Kısa sürede birkaç kez kod isterseniz Telegram bu numarayı geçici olarak kısıtlar, bazen bir güne kadar. Kod gecikse bile tekrar istemeden önce biraz bekleyin.",
     "phone": {
       "title": "Telefon numarası",
       "willSend": "Kod şu numaraya gönderilecek:",

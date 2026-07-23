@@ -164,6 +164,7 @@
   },
   "auth": {
     "connecting": "Kumokonekta sa Telegram…",
+    "rateLimit": "Kapag paulit-ulit kang humingi ng code sa maikling panahon, pansamantalang nililimitahan ng Telegram ang numerong ito, minsan umaabot ng isang araw. Kung matagal dumating ang code, maghintay muna bago humiling ulit.",
     "phone": {
       "title": "Numero ng telepono",
       "willSend": "Ipapadala ang code sa:",

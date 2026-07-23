@@ -104,7 +104,16 @@ export default function SignIn() {
           <AuthStepForm
             key="code"
             label={t(codeViaApp ? 'auth.code.titleApp' : 'auth.code.titleSms')}
-            hint={t('auth.code.hint')}
+            hint={
+              /*
+                코드가 안 오면 사람은 "다른 번호로 로그인" 을 눌러 처음으로 돌아가 다시
+                요청한다. 그 길의 입구가 이 화면이라, 여기에도 같은 말을 둔다.
+              */
+              <>
+                {t('auth.code.hint')}
+                <span className="mt-1 block">{t('auth.rateLimit')}</span>
+              </>
+            }
             submitLabel={t('auth.code.submit')}
             busy={busy}
             onSubmit={submitCode}

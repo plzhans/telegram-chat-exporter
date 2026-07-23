@@ -163,6 +163,7 @@
   },
   "auth": {
     "connecting": "正在連線到 Telegram…",
+    "rateLimit": "短時間內多次要求驗證碼，Telegram 會暫時限制這個號碼，最長可達一天。就算驗證碼遲了，也請稍等一會再重新要求。",
     "phone": {
       "title": "電話號碼",
       "willSend": "驗證碼會送到：",

@@ -163,6 +163,7 @@
   },
   "auth": {
     "connecting": "Conectando con Telegram…",
+    "rateLimit": "Si pides el código varias veces en poco tiempo, Telegram limita este número de forma temporal, a veces hasta por un día. Si el código tarda, espera un poco antes de volver a pedirlo.",
     "phone": {
       "title": "Número de teléfono",
       "willSend": "El código se enviará a:",

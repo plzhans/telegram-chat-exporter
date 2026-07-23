@@ -91,6 +91,19 @@ export function PhoneForm({ busy, onSubmit, notice, footer }: PhoneFormProps) {
         <p className="text-xs leading-relaxed text-amber-700">{t('auth.phone.unverified')}</p>
       )}
 
+      {/*
+        **누르기 전에 알려준다.**
+
+        같은 번호로 인증코드를 거듭 요청하면 텔레그램이 길게는 하루까지 제한을 건다. 걸린
+        뒤에 알려주는 건 늦다 — 그때는 이미 기다리는 것 말고 할 수 있는 일이 없다. 코드가
+        안 왔을 때 사람이 가장 먼저 하는 행동이 이 버튼을 다시 누르는 것이라, 그 손이 가는
+        자리에 미리 적어 둔다.
+
+        경고 상자로 세우지 않는다. 바로 위에 로그인 코드 경고가 이미 서 있어서, 상자를
+        하나 더 놓으면 둘 다 배경으로 물러난다.
+      */}
+      <p className="text-xs leading-relaxed text-slate-500">{t('auth.rateLimit')}</p>
+
       {notice}
 
       <Button type="submit" size="lg" className="w-full" loading={busy} disabled={!value}>

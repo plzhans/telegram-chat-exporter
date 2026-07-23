@@ -163,6 +163,7 @@
   },
   "auth": {
     "connecting": "Đang kết nối tới Telegram…",
+    "rateLimit": "Yêu cầu mã nhiều lần trong thời gian ngắn sẽ khiến Telegram tạm thời hạn chế số này, có khi đến một ngày. Nếu mã đến chậm, hãy đợi một lát rồi mới yêu cầu lại.",
     "phone": {
       "title": "Số điện thoại",
       "willSend": "Mã sẽ được gửi tới:",

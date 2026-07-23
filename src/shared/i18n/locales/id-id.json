@@ -163,6 +163,7 @@
   },
   "auth": {
     "connecting": "Menyambung ke Telegram…",
+    "rateLimit": "Meminta kode berkali-kali dalam waktu singkat membuat Telegram membatasi nomor ini untuk sementara, kadang sampai sehari. Kalau kodenya lama datang, tunggu sebentar sebelum meminta lagi.",
     "phone": {
       "title": "Nomor telepon",
       "willSend": "Kode akan dikirim ke:",
