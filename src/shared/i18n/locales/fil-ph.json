@@ -185,7 +185,9 @@
       "hint": "Ilagay ang password ng two-step verification na nakatakda sa account mo.",
       "hintLabel": "Pahiwatig: {{hint}}",
       "submit": "Kumpirmahin"
-    }
+    },
+    "confirmSignOutTitle": "Mag-sign out?",
+    "confirmSignOutBody": "Matatapos din ang session na ito sa iyong Telegram account. Kailangan ng bagong login code para gamitin ulit."
   },
   "dialogs": {
     "title": "Mga chat",
@@ -318,15 +320,15 @@
     "done": "Tapos na. Na-save ang {{count, number}} mensahe.",
     "savedPicked": "Nasa lokasyong pinili mo ito. Dahil sa seguridad, hindi ibinubunyag ng browser ang buong path, kaya pangalan lang ng file ang ipinapakita.",
     "savedDownload": "Nasa downloads folder ito ng browser mo.",
-    "memoryFallback": "Hindi kayang sumulat nang diretso sa file ang browser na ito, kaya binubuo muna ang zip at dina-download sa dulo. Para sa napakalaking chat, mas ligtas ang Chrome o Edge.",
+    "memoryFallback": "Para sa malaking backup, mas bagay ang Chrome o Edge: mapipili mo kung saan ise-save, at isinusulat agad sa file ang datos. Binubuo muna ng browser na ito ang buong file bago i-download nang sabay-sabay.",
     "presets": "Mabilisang pili",
+    "range": "Panahon",
     "presetToday": "Ngayon",
     "presetWeek": "Huling 7 araw",
     "presetMonth": "Huling 30 araw",
     "stats": {
       "total": "Kabuuang mensahe",
-      "messages": "{{count, number}}",
-      "period": "Panahon"
+      "messages": "{{count, number}}"
     },
     "includeTitle": "Isama ang mga attachment",
     "includePhotos": "Mga larawan",
@@ -351,7 +353,18 @@
     "layoutHint": "Kapag nasa isang panig ang lahat, hindi halata kung alin ka. Kapalit nito, lalabas din ang pangalan mo sa sarili mong mga mensahe.",
     "includeStickers": "Mga sticker",
     "includeStickersHint": "Isang beses lang naise-save ang bawat sticker gaano man kadalas ipinadala. Karaniwan ay ilang dosenang uri lang sa isang chat, kaya ilang MB lang ito.",
-    "progressCounting": "{{count, number}} mensahe na ang na-export…"
+    "progressCounting": "{{count, number}} mensahe na ang na-export…",
+    "waitingFor": "Naghihintay ng {{remain}} dahil sa limitasyon ng Telegram. Hindi ito huminto — huwag isara ang tab.",
+    "confirmWholeTitle": "I-export ang buong kasaysayan?",
+    "confirmWholeBody": "Ang abalang chat ay maaaring tumagal nang ilang oras. Kailangang nakabukas ang tab na ito, at kapag naputol ay uulitin mula sa simula. Mas ligtas na hatiin sa mas maikling saklaw.",
+    "confirmWholeOk": "I-export pa rin ang lahat",
+    "confirmDataTitle": "Suriin ang paggamit ng data",
+    "confirmDataBody": "Mula rito ay talagang idino-download ang mga mensahe at attachment. Sa mobile network, malaki ang magagamit na data. Mas ligtas ang Wi-Fi.",
+    "confirmDataOk": "Ituloy ang pag-export",
+    "confirmAbortTitle": "Ihinto ang pag-export?",
+    "confirmAbortBody": "Hindi mase-save ang nadownload na. Ang muling pagsisimula ay mula sa umpisa.",
+    "confirmAbortOk": "Ihinto",
+    "confirmKeep": "Magpatuloy"
   },
   "errors": {
     "title": "Error",

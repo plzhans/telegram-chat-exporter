@@ -184,7 +184,9 @@
       "hint": "Hesabınızda tanımlı iki adımlı doğrulama parolasını girin.",
       "hintLabel": "İpucu: {{hint}}",
       "submit": "Onayla"
-    }
+    },
+    "confirmSignOutTitle": "Çıkış yapılsın mı?",
+    "confirmSignOutBody": "Telegram hesabınızdaki bu oturum da sonlandırılır. Yeniden kullanmak için yeni bir giriş kodu gerekir."
   },
   "dialogs": {
     "title": "Sohbetler",
@@ -317,15 +319,15 @@
     "done": "Tamamlandı. {{count, number}} mesaj kaydedildi.",
     "savedPicked": "Dosya, seçtiğiniz konumda. Tarayıcılar güvenlik gereği tam yolu bildirmediği için yalnızca dosya adı gösteriliyor.",
     "savedDownload": "Dosya, tarayıcınızın indirilenler klasöründe.",
-    "memoryFallback": "Bu tarayıcı doğrudan dosyaya yazamadığı için zip önce tamamen oluşturulup sonunda indiriliyor. Çok büyük sohbetlerde Chrome veya Edge daha güvenli.",
+    "memoryFallback": "Büyük bir yedek için Chrome veya Edge daha uygun: kaydetme yerini seçebilir, veriler geldikçe dosyaya yazılır. Bu tarayıcı önce dosyanın tamamını hazırlar, sonra tek seferde indirir.",
     "presets": "Hızlı seçim",
+    "range": "Dönem",
     "presetToday": "Bugün",
     "presetWeek": "Son 7 gün",
     "presetMonth": "Son 30 gün",
     "stats": {
       "total": "Toplam mesaj",
-      "messages": "{{count, number}}",
-      "period": "Dönem"
+      "messages": "{{count, number}}"
     },
     "includeTitle": "Ekleri de aktar",
     "includePhotos": "Fotoğraflar",
@@ -350,7 +352,18 @@
     "layoutHint": "Herkesi sola koymak hangi tarafın siz olduğunu gizler. Karşılığında kendi mesajlarınızda da adınız görünür.",
     "includeStickers": "Çıkartmalar",
     "includeStickersHint": "Her çıkartma kaç kez gönderilmiş olursa olsun bir kez saklanır. Bir sohbette genelde birkaç düzine tür bulunur, bu yüzden birkaç MB'ı geçmez.",
-    "progressCounting": "Şimdiye dek {{count, number}} mesaj aktarıldı…"
+    "progressCounting": "Şimdiye dek {{count, number}} mesaj aktarıldı…",
+    "waitingFor": "Telegram istek sınırı nedeniyle {{remain}} bekleniyor. Takılmadı — sekmeyi açık tutun.",
+    "confirmWholeTitle": "Tüm geçmiş dışa aktarılsın mı?",
+    "confirmWholeBody": "Yoğun bir sohbet saatler sürebilir. Bu sekmenin açık kalması gerekir ve kesilirse baştan başlar. Kısa aralıklara bölmek daha güvenlidir.",
+    "confirmWholeOk": "Yine de tümünü aktar",
+    "confirmDataTitle": "Veri kullanımını kontrol edin",
+    "confirmDataBody": "Buradan sonra mesajlar ve ekler gerçekten indirilir. Mobil ağda bu çok veri harcayabilir. Wi-Fi daha güvenlidir.",
+    "confirmDataOk": "Dışa aktarmayı sürdür",
+    "confirmAbortTitle": "Dışa aktarma durdurulsun mu?",
+    "confirmAbortBody": "Şimdiye kadar indirilenler kaydedilmez. Yeniden başlamak baştan almak demektir.",
+    "confirmAbortOk": "Durdur",
+    "confirmKeep": "Devam et"
   },
   "errors": {
     "title": "Hata",

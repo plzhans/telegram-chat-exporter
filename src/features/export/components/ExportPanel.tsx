@@ -1,10 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Download, HardDrive } from 'lucide-react';
+import { Download, Hourglass } from 'lucide-react';
 import { Alert } from '@/shared/ui/Alert';
 import { Button } from '@/shared/ui/Button';
 import { Checkbox } from '@/shared/ui/Checkbox';
 import { ErrorNotice } from '@/shared/ui/ErrorNotice';
+import { Modal } from '@/shared/ui/Modal';
+import { isMobileDevice, prefersReducedData } from '@/shared/lib/device';
+import { useDuration } from '@/shared/lib/duration';
 import { Field } from '@/shared/ui/Field';
 import { Input } from '@/shared/ui/Input';
 import type { TelegramErrorInfo } from '@/shared/telegram/errors';
@@ -123,16 +126,39 @@ export function ExportPanel({ dialog, defaultFrom, defaultTo }: ExportPanelProps
    */
   useEffect(() => () => abortRef.current?.abort(), []);
 
+  /**
+   * 남은 대기 시간(초). 대기 중이 아니면 null.
+   *
+   * 진행 정보는 **끝나는 시각**만 실어 온다(ExportProgress.floodWaitUntil). 그동안 다른
+   * 숫자는 하나도 안 바뀌므로, 여기서 1초마다 다시 계산해야 세어 내려가는 것으로 보인다.
+   */
+  const [remainSeconds, setRemainSeconds] = useState<number | null>(null);
+
+  /**
+   * 되돌릴 수 없는 동작 앞에 한 번 더 묻는 자리.
+   *
+   * 세 가지가 여기 걸린다 - 전체 기간, 실제 내려받기 시작, 중단. 셋 다 누른 뒤에 "아차"
+   * 해도 되돌릴 방법이 없다. 전체 기간은 몇 시간을 잡아먹고, 내려받기는 데이터 요금을
+   * 쓰고, 중단은 여태 받은 것을 버린다.
+   */
+  const [confirm, setConfirm] = useState<'whole' | 'data' | 'abort' | null>(null);
+  const formatDuration = useDuration();
+
   useEffect(() => {
     if (phase !== 'running') {
       setStalled(false);
+      setRemainSeconds(null);
       return;
     }
-    const timer = setInterval(() => {
+    const tick = () => {
       setStalled(Date.now() - lastTickRef.current > STALL_THRESHOLD_MS);
-    }, 1000);
+      const until = progress.floodWaitUntil;
+      setRemainSeconds(until ? Math.max(0, Math.ceil((until - Date.now()) / 1000)) : null);
+    };
+    tick();
+    const timer = setInterval(tick, 1000);
     return () => clearInterval(timer);
-  }, [phase]);
+  }, [phase, progress.floodWaitUntil]);
 
   /**
    * 오늘을 끝으로 두고 `back` 일 만큼 거슬러 올라간 기간을 넣는다.
@@ -151,6 +177,15 @@ export function ExportPanel({ dialog, defaultFrom, defaultTo }: ExportPanelProps
     [firstKey, lastKey],
   );
 
+  /**
+   * 시작 버튼이 부르는 자리.
+   *
+   * 휴대전화에서는 데이터 안내를 한 번 거친다. **셀룰러인지 와이파이인지는 알 수 없어서**
+   * 기기 종류로 판단한다(`shared/lib/device.ts`). 와이파이로 붙은 휴대전화에도 뜨지만,
+   * 요금이 나가는 상황을 놓치는 것보다 한 번 더 묻는 편이 낫다.
+   *
+   * 데이터 절약 모드를 켜 둔 사람은 기기와 무관하게 묻는다 - 요금을 신경 쓴다는 뜻이다.
+   */
   const start = useCallback(async () => {
     const peer = getCachedPeer(dialog.id);
     if (!peer) {
@@ -210,53 +245,102 @@ export function ExportPanel({ dialog, defaultFrom, defaultTo }: ExportPanelProps
     }
   }, [dialog, from, to, wholeHistory, includePhotos, includeStickers, layout, me]);
 
+  /**
+   * 시작 버튼이 부르는 자리.
+   *
+   * 휴대전화에서는 데이터 안내를 한 번 거친다. 셀룰러인지 와이파이인지는 알 수 없어서
+   * 기기 종류로 판단한다(`shared/lib/device.ts`).
+   *
+   * **`useCallback` 으로 감싸지 않는다.** 한때 의존성을 비운 채 감쌌다가 첫 렌더의 `start`
+   * 가 그대로 굳었고, 그 `start` 는 첫 렌더의 설정값(전체 기간 꺼짐·기본 날짜·첨부 미포함)
+   * 을 붙들고 있었다. 그래서 데스크톱에서는 무엇을 바꾸든 초기 설정으로 내보내졌다.
+   * 클릭 한 번에 쓰는 함수라 새로 만드는 비용이 문제가 될 자리가 아니다.
+   */
+  const requestStart = () => {
+    if (isMobileDevice() || prefersReducedData()) {
+      setConfirm('data');
+      return;
+    }
+    void start();
+  };
+
   const running = phase === 'running';
+
+  /**
+   * 무엇이 담기고 있는지 숫자로 보여 준다.
+   *
+   * **진행 중과 완료 후에 같은 것을 쓴다.** 받는 동안 숫자가 자라는 것을 보다가 끝나면 그
+   * 자리에 최종값이 남으므로, 사용자는 "지금 몇 개까지 왔나" 와 "결국 몇 개였나" 를 같은
+   * 자리에서 읽는다. 완료 화면에만 두면 진행 중에는 진행률 막대 말고 볼 것이 없고, 끝나는
+   * 순간 처음 보는 표가 튀어나온다.
+   *
+   * 근거로 쓸 자료라면 나중에 파일을 열었을 때 개수가 맞는지 대조할 값이 있어야 한다.
+   */
+  const ExportSummary = () => (
+    <dl className="grid grid-cols-2 gap-x-3 gap-y-2 rounded-xl bg-slate-50 p-3 text-xs">
+      <div className="col-span-2">
+        <dt className="text-slate-500">{t('export.doneRange')}</dt>
+        <dd className="font-semibold text-slate-900">
+          {done?.wholeHistory ? t('export.doneWhole') : `${done?.from} ~ ${done?.to}`}
+        </dd>
+      </div>
+      <div>
+        <dt className="text-slate-500">{t('export.doneMessages')}</dt>
+        <dd className="font-semibold tabular-nums text-slate-900">
+          {t('export.doneCount', { count: progress.count })}
+        </dd>
+      </div>
+      {/* 사진을 담지 않기로 했으면 0 이 아니라 아예 안 보여준다. 0 은 실패로 읽힌다. */}
+      {(done?.photos || done?.stickers) && (
+        <div>
+          <dt className="text-slate-500">{t('export.doneFiles')}</dt>
+          <dd className="font-semibold tabular-nums text-slate-900">
+            {t('export.doneCount', { count: progress.files ?? 0 })}
+          </dd>
+        </div>
+      )}
+      <div>
+        <dt className="text-slate-500">{t('export.doneSize')}</dt>
+        <dd className="font-semibold tabular-nums text-slate-900">{formatBytes(progress.bytes)}</dd>
+      </div>
+    </dl>
+  );
 
   return (
     <section className="space-y-3 edge-card bg-white p-4">
       <div className="flex items-start gap-3">
-        <div className="min-w-0 flex-1">
-          <h2 className="text-sm font-bold text-slate-900">{t('export.title')}</h2>
-          <p className="mt-0.5 text-xs leading-relaxed text-slate-500">{t('export.description')}</p>
-        </div>
+        <h2 className="min-w-0 flex-1 text-sm font-bold text-slate-900">{t('export.title')}</h2>
 
         {running && (
-          <Button variant="secondary" size="sm" onClick={() => abortRef.current?.abort()}>
+          <Button variant="secondary" size="sm" onClick={() => setConfirm('abort')}>
             {t('export.cancel')}
-          </Button>
-        )}
-        {phase === 'idle' && (
-          <Button size="sm" onClick={() => void start()}>
-            <Download className="h-3.5 w-3.5" />
-            {t('export.start')}
           </Button>
         )}
       </div>
 
       {/*
-        내보내기 전에 규모를 알려준다. 이게 없으면 사용자는 몇 시간짜리인지도 모르는 작업을
-        무작정 시작하게 된다. 요청 두 번이면 구할 수 있는 정보다(useChatStatsQuery 참고).
+        이 화면이 무엇을 하는지 한 줄로 말하는 자리다. 회색 잔글씨로 두면 제목 아래 딸린
+        부연으로 읽혀 그냥 지나친다. 상자에 담아 두면 설정을 만지기 전에 한 번은 눈이 멎는다.
       */}
-      {stats.data && phase !== 'done' && (
-        <dl className="grid grid-cols-2 gap-3 rounded-xl bg-slate-50 p-3 text-xs">
-          <div>
-            <dt className="text-slate-500">{t('export.stats.total')}</dt>
-            <dd className="font-semibold text-slate-900">
-              {t('export.stats.messages', { count: stats.data.total })}
-            </dd>
-          </div>
-          <div>
-            <dt className="text-slate-500">{t('export.stats.period')}</dt>
-            <dd className="font-semibold text-slate-900">
-              {stats.data.firstDate
-                ? `${dateKeyOf(stats.data.firstDate)} ~ ${
-                    stats.data.lastDate ? dateKeyOf(stats.data.lastDate) : ''
-                  }`
-                : '—'}
-            </dd>
-          </div>
-        </dl>
+      <p className="rounded-xl border border-primary-100 bg-primary-50 p-3 text-xs leading-relaxed text-slate-700">
+        {t('export.description')}
+      </p>
+
+      {/*
+        **크로뮴 계열이 아닐 때만** 뜬다. 브라우저 이름이 아니라 기능이 있는지로 가른다 -
+        `showSaveFilePicker` 는 파일에 바로 쓰는 API 라, 있으면 크롬·엣지·오페라이고
+        없으면 사파리·파이어폭스다.
+
+        **맨 위에 둔다.** 이건 기간이나 첨부를 고르기 전에, 아예 브라우저를 바꿀지 말지를
+        판단하라고 있는 글이다. 아래에 두면 다 설정하고 누르기 직전에야 읽게 되는데,
+        그때는 이미 여기서 하기로 마음먹은 뒤다.
+      */}
+      {phase === 'idle' && !window.showSaveFilePicker && (
+        <Alert tone="warning">
+          {t('export.memoryFallback')}
+        </Alert>
       )}
+
 
       {/*
         완료하면 설정 칸을 **되돌려 놓지 않는다.**
@@ -268,79 +352,101 @@ export function ExportPanel({ dialog, defaultFrom, defaultTo }: ExportPanelProps
       {phase === 'idle' && (
         <div className="space-y-3">
           {/*
-            **기간에 관한 것끼리 붙여 둔다.** 전체 기간 스위치 → 빠른 선택 → 날짜 칸이
+            **기간에 관한 것끼리 붙여 둔다.** 빠른 선택 → 날짜 칸 → 전체 기간 스위치가
             한 덩어리고, 첨부 선택은 그 다음이다.
 
-            한때 첨부 상자가 전체 기간 스위치와 날짜 칸 사이에 끼어 있었다. 스위치를 끄면
-            그 아래가 아니라 **한 칸 건너뛴 자리에** 날짜가 나타나서, 무엇이 무엇에 딸린
-            설정인지 눈으로 이어지지 않았다.
+            전체 기간 스위치를 **아래에 둔다.** 위에 있으면 날짜를 보기도 전에 눈에 먼저
+            들어와서, 얼마나 큰 작업인지 모르는 채로 켜게 된다. 오래된 대화방은 몇 시간이
+            걸리고 중간에 끊기면 처음부터다. 날짜를 먼저 보고 나서 "그래도 전부" 라고
+            판단하는 순서가 맞다.
           */}
-          <Checkbox
-            checked={wholeHistory}
-            onChange={(e) => setWholeHistory(e.target.checked)}
-            label={t('export.wholeHistory')}
-            hint={t('export.wholeHistoryHint')}
-          />
-
-          {/* 전체를 고르면 날짜 칸은 의미가 없다. 비활성이 아니라 아예 감춘다. */}
           {!wholeHistory && (
             <div className="space-y-2">
-              {/*
-                자주 쓰는 기간은 눌러서 넣는다.
 
-                날짜 칸은 두 개를 각각 맞춰야 해서, "오늘 것만" 같은 흔한 요구에도 손이
-                네 번 간다. 특히 **오늘**은 증거를 남기려는 사람이 방금 오간 대화를 바로
-                떠 가는 경우라 가장 자주 쓰인다.
-              */}
-              <div className="flex flex-wrap items-center gap-1.5">
-                <span className="text-xs text-slate-500">{t('export.presets')}</span>
-                {(
-                  [
-                    ['export.presetToday', 0],
-                    ['export.presetWeek', 6],
-                    ['export.presetMonth', 29],
-                  ] as const
-                ).map(([label, back]) => (
-                  <button
-                    key={label}
-                    type="button"
-                    className="rounded-full border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-600 transition-colors hover:border-primary hover:text-primary"
-                    onClick={() => applyPreset(back)}
-                  >
-                    {t(label)}
-                  </button>
-                ))}
-              </div>
-
-              <div className="grid gap-3 mobile:grid-cols-2">
               {/*
+                라벨 하나에 두 칸을 붙여 둔다.
+
+                "시작 날짜" / "끝 날짜" 로 나눠 적으면 라벨 두 줄이 칸보다 눈에 먼저 들어와
+                한 덩어리로 안 읽힌다. 사이의 `~` 가 그 관계를 이미 말해 주므로 라벨은
+                "기간" 하나면 된다.
+
                 대화가 존재하는 구간 밖은 아예 못 고르게 막는다. 첫 메시지 이전이나 마지막
                 메시지 이후를 골라 봐야 빈 파일만 나오고, 사용자는 "왜 아무것도 안 나오지"로
                 읽는다. 달력 화면과 같은 근거(useChatStatsQuery)를 쓴다.
               */}
-              <Field label={t('export.from')} htmlFor="export-from">
-                <Input
-                  id="export-from"
-                  type="date"
-                  value={from}
-                  min={firstKey}
-                  max={to || lastKey}
-                  onChange={(e) => setFrom(e.target.value)}
-                />
+              <Field label={t('export.range')} htmlFor="export-from" hint={t('export.rangeHint')}>
+                {/*
+                  자주 쓰는 기간은 눌러서 넣는다.
+
+                  날짜 칸은 두 개를 각각 맞춰야 해서, "오늘 것만" 같은 흔한 요구에도 손이
+                  네 번 간다. 특히 **오늘**은 증거를 남기려는 사람이 방금 오간 대화를 바로
+                  떠 가는 경우라 가장 자주 쓰인다.
+                */}
+                <div className="mb-2 flex flex-wrap items-center gap-1.5">
+                  <span className="text-xs text-slate-500">{t('export.presets')}</span>
+                  {(
+                    [
+                      ['export.presetToday', 0],
+                      ['export.presetWeek', 6],
+                      ['export.presetMonth', 29],
+                    ] as const
+                  ).map(([label, back]) => (
+                    <button
+                      key={label}
+                      type="button"
+                      className="rounded-full border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-600 transition-colors hover:border-primary hover:text-primary"
+                      onClick={() => applyPreset(back)}
+                    >
+                      {t(label)}
+                    </button>
+                  ))}
+                </div>
+
+                {/*
+                  라벨 하나에 두 칸을 붙여 둔다. 사이의 `~` 가 관계를 말해 주므로 "시작 날짜"
+                  "끝 날짜" 로 나눠 적을 필요가 없다 - 라벨 두 줄이 칸보다 눈에 먼저 들어와
+                  한 덩어리로 안 읽힌다. 화면 낭독기에는 aria-label 로 남긴다.
+
+                  대화가 존재하는 구간 밖은 아예 못 고르게 막는다. 첫 메시지 이전이나 마지막
+                  메시지 이후를 골라 봐야 빈 파일만 나오고, 사용자는 "왜 아무것도 안 나오지"로
+                  읽는다. 달력 화면과 같은 근거(useChatStatsQuery)를 쓴다.
+                */}
+                <div className="flex items-center gap-2">
+                  <Input
+                    id="export-from"
+                    type="date"
+                    aria-label={t('export.from')}
+                    className="min-w-0 flex-1"
+                    value={from}
+                    min={firstKey}
+                    max={to || lastKey}
+                    onChange={(e) => setFrom(e.target.value)}
+                  />
+                  <span aria-hidden className="shrink-0 text-sm text-slate-400">
+                    ~
+                  </span>
+                  <Input
+                    id="export-to"
+                    type="date"
+                    aria-label={t('export.to')}
+                    className="min-w-0 flex-1"
+                    value={to}
+                    min={from || firstKey}
+                    max={lastKey}
+                    onChange={(e) => setTo(e.target.value)}
+                  />
+                </div>
               </Field>
-              <Field label={t('export.to')} htmlFor="export-to" hint={t('export.rangeHint')}>
-                <Input
-                  id="export-to"
-                  type="date"
-                  value={to}
-                  min={from || firstKey}
-                  max={lastKey}
-                  onChange={(e) => setTo(e.target.value)}
-                />
-                </Field>
-              </div>
             </div>
           )}
+
+          {/* 켤 때만 묻는다. 끄는 것은 되돌릴 수 있는 동작이라 물을 이유가 없다. */}
+          <Checkbox
+            checked={wholeHistory}
+            onChange={(e) => (e.target.checked ? setConfirm('whole') : setWholeHistory(false))}
+            label={t('export.wholeHistory')}
+            hint={t('export.wholeHistoryHint')}
+          />
 
           {/*
             첨부를 담을지 고르는 자리.
@@ -478,7 +584,30 @@ export function ExportPanel({ dialog, defaultFrom, defaultTo }: ExportPanelProps
               </>
             );
           })()}
-          {stalled && <p className="text-xs text-amber-700">{t('export.waiting')}</p>}
+          {/*
+            얼마나 기다려야 하는지 적는다. 제한이 걸렸다는 사실만 알려 주면 사용자는 이게
+            10초짜리인지 10분짜리인지 몰라 창을 닫을지 말지 판단할 수 없다.
+
+            남은 시간을 못 알아낸 경우(제한이 아니라 그냥 느린 경우)에는 예전 문구로 떨어진다.
+          */}
+          {(remainSeconds !== null || stalled) && (
+            /*
+              **눈에 띄어야 한다.** 이 안내가 흐린 잔글씨면 사용자는 못 읽고, 숫자가 멈춘
+              화면만 보고 고장으로 판단해 창을 닫는다. 그러면 여태 받은 것이 다 날아간다.
+              한 줄짜리 글이 아니라 상자로 세우고 아이콘을 붙여 시선을 잡는다.
+            */
+            <div className="flex items-start gap-2 rounded-xl border border-amber-300 bg-amber-50 p-3">
+              <Hourglass className="mt-0.5 h-4 w-4 shrink-0 animate-pulse text-amber-600" />
+              <p className="text-xs font-medium leading-relaxed text-amber-800">
+                {remainSeconds !== null
+                  ? t('export.waitingFor', { remain: formatDuration(remainSeconds) })
+                  : t('export.waiting')}
+              </p>
+            </div>
+          )}
+
+          {/* 완료 화면과 같은 표. 받는 동안 숫자가 자라고, 끝나면 그 자리에 최종값이 남는다. */}
+          <ExportSummary />
         </div>
       )}
 
@@ -487,7 +616,12 @@ export function ExportPanel({ dialog, defaultFrom, defaultTo }: ExportPanelProps
           <Alert tone="trust" title={t('export.doneTitle')}>
             {saved && (
               <p>
-                <span className="font-mono font-semibold">{saved.name}</span>
+                {/*
+                  `break-all` 이어야 한다. 파일명에는 띄어쓰기가 없어서 `break-words`
+                  (overflow-wrap)로는 끊을 자리를 못 찾는다 - 사파리에서 특히 그대로
+                  삐져나간다.
+                */}
+                <span className="block break-all font-mono font-semibold">{saved.name}</span>
                 {/*
                   전체 경로는 알려줄 수 없다. File System Access API 가 보안상 파일 이름만
                   주기 때문이다. 그래서 "어디로 갔는지"는 저장 방식으로 대신 설명한다.
@@ -499,37 +633,7 @@ export function ExportPanel({ dialog, defaultFrom, defaultTo }: ExportPanelProps
             )}
           </Alert>
 
-          {/*
-            무엇이 담겼는지 숫자로 못 박는다. 근거로 쓸 자료라면 **나중에 파일을 열었을 때
-            개수가 맞는지** 대조할 값이 있어야 한다.
-          */}
-          <dl className="grid grid-cols-2 gap-x-3 gap-y-2 rounded-xl bg-slate-50 p-3 text-xs">
-            <div className="col-span-2">
-              <dt className="text-slate-500">{t('export.doneRange')}</dt>
-              <dd className="font-semibold text-slate-900">
-                {done?.wholeHistory ? t('export.doneWhole') : `${done?.from} ~ ${done?.to}`}
-              </dd>
-            </div>
-            <div>
-              <dt className="text-slate-500">{t('export.doneMessages')}</dt>
-              <dd className="font-semibold text-slate-900">
-                {t('export.doneCount', { count: progress.count })}
-              </dd>
-            </div>
-            {/* 사진을 담지 않기로 했으면 0 이 아니라 아예 안 보여준다. 0 은 실패로 읽힌다. */}
-            {(done?.photos || done?.stickers) && (
-              <div>
-                <dt className="text-slate-500">{t('export.doneFiles')}</dt>
-                <dd className="font-semibold text-slate-900">
-                  {t('export.doneCount', { count: progress.files ?? 0 })}
-                </dd>
-              </div>
-            )}
-            <div>
-              <dt className="text-slate-500">{t('export.doneSize')}</dt>
-              <dd className="font-semibold text-slate-900">{formatBytes(progress.bytes)}</dd>
-            </div>
-          </dl>
+          <ExportSummary />
 
           {/*
             다음 내보내기로 돌아가는 건 **누른 사람만** 간다. 저절로 돌아가면 방금 받은
@@ -552,14 +656,97 @@ export function ExportPanel({ dialog, defaultFrom, defaultTo }: ExportPanelProps
         {t('export.deviceBody')}
       </Alert>
 
-      {!window.showSaveFilePicker && (
-        <p className="flex items-start gap-1.5 text-xs text-slate-500">
-          <HardDrive className="mt-0.5 h-3 w-3 shrink-0" />
-          {t('export.memoryFallback')}
-        </p>
-      )}
 
       <ErrorNotice error={error ?? stats.error} />
+
+      <Modal
+        open={confirm === 'whole'}
+        onClose={() => setConfirm(null)}
+        title={t('export.confirmWholeTitle')}
+        footer={
+          <>
+            <Button variant="ghost" size="sm" onClick={() => setConfirm(null)}>
+              {t('common.cancel')}
+            </Button>
+            <Button
+              size="sm"
+              onClick={() => {
+                setWholeHistory(true);
+                setConfirm(null);
+              }}
+            >
+              {t('export.confirmWholeOk')}
+            </Button>
+          </>
+        }
+      >
+        {t('export.confirmWholeBody')}
+      </Modal>
+
+      <Modal
+        open={confirm === 'data'}
+        onClose={() => setConfirm(null)}
+        title={t('export.confirmDataTitle')}
+        footer={
+          <>
+            <Button variant="ghost" size="sm" onClick={() => setConfirm(null)}>
+              {t('common.cancel')}
+            </Button>
+            <Button
+              size="sm"
+              onClick={() => {
+                setConfirm(null);
+                void start();
+              }}
+            >
+              {t('export.confirmDataOk')}
+            </Button>
+          </>
+        }
+      >
+        {t('export.confirmDataBody')}
+      </Modal>
+
+      <Modal
+        open={confirm === 'abort'}
+        onClose={() => setConfirm(null)}
+        title={t('export.confirmAbortTitle')}
+        footer={
+          <>
+            <Button variant="ghost" size="sm" onClick={() => setConfirm(null)}>
+              {t('export.confirmKeep')}
+            </Button>
+            <Button
+              size="sm"
+              onClick={() => {
+                setConfirm(null);
+                abortRef.current?.abort();
+              }}
+            >
+              {t('export.confirmAbortOk')}
+            </Button>
+          </>
+        }
+      >
+        {t('export.confirmAbortBody')}
+      </Modal>
+
+      {/*
+        **설정을 다 본 뒤에 누른다.**
+
+        머리에 있을 때는 기간·첨부 설정을 지나치기 전에 눈에 먼저 들어와서, 기본값 그대로
+        시작해 놓고 뒤늦게 "전체 기간이 아니었네" 를 알게 된다. 읽는 순서와 누르는 순서가
+        같아야 한다.
+
+        폭을 꽉 채우는 이유는 이 화면에서 유일하게 되돌릴 수 없는 동작이기 때문이다 -
+        다른 것들과 같은 크기로 서 있으면 어느 것이 그 동작인지 한 번 더 짚어야 한다.
+      */}
+      {phase === 'idle' && (
+        <Button size="lg" className="w-full" onClick={() => requestStart()}>
+          <Download className="h-4 w-4" />
+          {t('export.start')}
+        </Button>
+      )}
     </section>
   );
 }

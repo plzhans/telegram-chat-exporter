@@ -184,7 +184,9 @@
       "hint": "Digite a senha de verificação em duas etapas definida na sua conta.",
       "hintLabel": "Dica: {{hint}}",
       "submit": "Confirmar"
-    }
+    },
+    "confirmSignOutTitle": "Sair?",
+    "confirmSignOutBody": "Isso também encerra a sessão na sua conta do Telegram. Para usar de novo, será preciso um novo código de acesso."
   },
   "dialogs": {
     "title": "Conversas",
@@ -317,15 +319,15 @@
     "done": "Pronto. {{count, number}} mensagens salvas.",
     "savedPicked": "Está no local que você escolheu. Por segurança, os navegadores não revelam o caminho completo, então só o nome do arquivo é mostrado.",
     "savedDownload": "Está na pasta de downloads do seu navegador.",
-    "memoryFallback": "Este navegador não consegue escrever direto em arquivo, então o zip é montado inteiro e baixado no fim. Para conversas muito grandes, Chrome ou Edge é mais seguro.",
+    "memoryFallback": "Para um backup grande, Chrome ou Edge é mais adequado: você escolhe onde salvar e os dados são gravados no arquivo conforme chegam. Este navegador monta o arquivo inteiro antes e baixa de uma vez.",
     "presets": "Escolha rápida",
+    "range": "Período",
     "presetToday": "Hoje",
     "presetWeek": "Últimos 7 dias",
     "presetMonth": "Últimos 30 dias",
     "stats": {
       "total": "Total de mensagens",
-      "messages": "{{count, number}}",
-      "period": "Período"
+      "messages": "{{count, number}}"
     },
     "includeTitle": "Incluir anexos",
     "includePhotos": "Fotos",
@@ -350,7 +352,18 @@
     "layoutHint": "Deixar todo mundo à esquerda esconde qual lado é o seu. Em compensação, seu nome passa a aparecer também nas suas mensagens.",
     "includeStickers": "Figurinhas",
     "includeStickersHint": "Cada figurinha é guardada uma vez só, não importa quantas vezes tenha sido enviada. Uma conversa costuma ter algumas dezenas de tipos, então isso fica em poucos MB.",
-    "progressCounting": "{{count, number}} mensagens exportadas até agora…"
+    "progressCounting": "{{count, number}} mensagens exportadas até agora…",
+    "waitingFor": "Aguardando {{remain}} devido ao limite do Telegram. Não travou — mantenha a aba aberta.",
+    "confirmWholeTitle": "Exportar todo o histórico?",
+    "confirmWholeBody": "Uma conversa movimentada pode levar horas. Esta aba precisa ficar aberta e, se for interrompida, tudo recomeça. Dividir em períodos menores é mais seguro.",
+    "confirmWholeOk": "Exportar tudo mesmo assim",
+    "confirmDataTitle": "Verifique o uso de dados",
+    "confirmDataBody": "A partir daqui as mensagens e os anexos são realmente baixados. Em rede móvel isso pode consumir muitos dados. Wi-Fi é mais seguro.",
+    "confirmDataOk": "Continuar exportação",
+    "confirmAbortTitle": "Interromper a exportação?",
+    "confirmAbortBody": "O que já foi baixado não será salvo. Recomeçar significa começar do zero.",
+    "confirmAbortOk": "Interromper",
+    "confirmKeep": "Continuar"
   },
   "errors": {
     "title": "Erro",

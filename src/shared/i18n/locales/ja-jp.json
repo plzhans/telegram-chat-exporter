@@ -184,7 +184,9 @@
       "hint": "アカウントに設定した2段階認証のパスワードを入力してください。",
       "hintLabel": "ヒント: {{hint}}",
       "submit": "確認"
-    }
+    },
+    "confirmSignOutTitle": "ログアウトしますか？",
+    "confirmSignOutBody": "Telegram アカウントのこのセッションも終了します。再び使うには認証コードを取り直してログインが必要です。"
   },
   "dialogs": {
     "title": "トーク",
@@ -317,15 +319,15 @@
     "done": "完了。{{count, number}}件を保存しました。",
     "savedPicked": "保存時に選んだ場所にあります。ブラウザはセキュリティ上フルパスを教えないため、ファイル名だけを表示しています。",
     "savedDownload": "ブラウザのダウンロードフォルダにあります。",
-    "memoryFallback": "このブラウザはファイルへ直接書き込む機能に対応していないため、すべて作ってから一度にダウンロードします。非常に大きなトークは Chrome や Edge で取得するほうが安全です。",
+    "memoryFallback": "大きなバックアップを取るなら Chrome・Edge をおすすめします。保存先を選べて、受け取ったそばからファイルに書き込むため大容量でも安定します。このブラウザは全部作ってから一度にダウンロードします。",
     "presets": "クイック選択",
+    "range": "期間",
     "presetToday": "今日",
     "presetWeek": "直近7日",
     "presetMonth": "直近30日",
     "stats": {
       "total": "全メッセージ",
-      "messages": "{{count, number}}",
-      "period": "期間"
+      "messages": "{{count, number}}"
     },
     "includeTitle": "添付ファイルも一緒にエクスポート",
     "includePhotos": "写真",
@@ -350,7 +352,18 @@
     "layoutHint": "左に置くと、どちらが自分かが分かりにくくなります。代わりに自分のメッセージにも名前が表示されます。",
     "includeStickers": "スタンプ",
     "includeStickersHint": "同じスタンプは何度送っていても1つだけ収められます。ふつうは1つのトークに数十種類なので、数 MB で収まります。",
-    "progressCounting": "メッセージ {{count, number}}件をエクスポート中…"
+    "progressCounting": "メッセージ {{count, number}}件をエクスポート中…",
+    "waitingFor": "Telegram のリクエスト制限のため {{remain}} 待機中です。止まっていません。タブを閉じないでください。",
+    "confirmWholeTitle": "全期間を書き出しますか？",
+    "confirmWholeBody": "メッセージが多いチャットでは数時間かかることがあります。その間このタブを開いたままにする必要があり、途中で中断すると最初からやり直しになります。期間を分けるほうが安全です。",
+    "confirmWholeOk": "それでも全期間",
+    "confirmDataTitle": "データ通信量にご注意ください",
+    "confirmDataBody": "ここからメッセージと添付ファイルを実際にダウンロードします。モバイル回線では通信量が多くなることがあります。Wi-Fi をおすすめします。",
+    "confirmDataOk": "書き出しを続ける",
+    "confirmAbortTitle": "書き出しを中断しますか？",
+    "confirmAbortBody": "ここまでの内容は保存されません。もう一度始めると最初からになります。",
+    "confirmAbortOk": "中断する",
+    "confirmKeep": "続ける"
   },
   "errors": {
     "title": "エラー",

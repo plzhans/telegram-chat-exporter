@@ -206,7 +206,7 @@ const STYLE = `
 :root{--col:48rem}
 body{margin:0;background:#fff;color:#0F172A;
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
-  font-size:16px;line-height:1.6;-webkit-text-size-adjust:100%}
+  font-size:13.5px;line-height:1.6;-webkit-text-size-adjust:100%}
 .wrap{max-width:var(--col);margin:0 auto;padding:16px}
 /* provenance line, always visible but never loud */
 .brand{margin:0 0 8px;font-size:11px;color:#94A3B8;text-align:right}
@@ -231,9 +231,9 @@ body{margin:0;background:#fff;color:#0F172A;
 /* conversation */
 .chat{border:1px solid #E2E8F0;border-radius:16px;padding:4px 12px 12px}
 .day{display:flex;justify-content:center;margin:20px 0 12px}
-.day span{background:#CBD5E1;color:#1E293B;font-size:13px;font-weight:700;
+.day span{background:#CBD5E1;color:#1E293B;font-size:12px;font-weight:700;
   padding:3px 12px;border-radius:999px}
-.sys{text-align:center;color:#64748B;font-size:13px;margin:8px 0}
+.sys{text-align:center;color:#64748B;font-size:12px;margin:8px 0}
 .row{display:flex;gap:8px;margin-top:8px;align-items:flex-end}
 .row.own{flex-direction:row-reverse}
 .row.tight{margin-top:2px}
@@ -244,20 +244,25 @@ body{margin:0;background:#fff;color:#0F172A;
   font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;
   background-size:contain;background-repeat:no-repeat;background-position:center;overflow:hidden}
 .av.hole{background:none}
-.who{font-size:13px;color:#475569;margin-bottom:2px}
+.who{font-size:12px;color:#475569;margin-bottom:2px}
 /* sender name: first line inside the bubble */
 /* max-content keeps a name longer than the message from wrapping inside a narrow bubble. */
-.nmline{display:block;width:max-content;max-width:100%;font-size:13px;margin-bottom:1px}
+.nmline{display:block;width:max-content;max-width:100%;font-size:12px;margin-bottom:1px}
 .nm{font-weight:700}
 .bot{background:#E2E8F0;color:#475569;border-radius:4px;padding:0 4px;
   font-size:11px;font-weight:700;margin-left:4px;vertical-align:1px}
 /* bubbles */
+/*
+  The bubble stops well short of the column, like the app does. A bubble that runs the
+  full width reads as a paragraph, not as one person's turn - the ragged right edge is
+  what makes a conversation scannable.
+*/
 .bub{background:#EFF6FF;border:1px solid #DBEAFE;border-radius:16px;padding:6px 10px;
-  max-width:100%;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere}
+  max-width:74%;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere}
 .row.own .bub{background:#2563EB;border-color:#2563EB;color:#fff}
-.at{font-size:12px;color:#64748B;margin-left:8px;float:right;position:relative;top:6px}
+.at{font-size:11px;color:#64748B;margin-left:8px;float:right;position:relative;top:6px}
 .row.own .at{color:#BFDBFE}
-.edit{font-style:normal;font-size:12px;color:#B45309;margin-right:4px}
+.edit{font-style:normal;font-size:11px;color:#B45309;margin-right:4px}
 .row.own .edit{color:#FDE68A}
 /* media sits outside the bubble */
 .med{margin-top:4px;max-width:min(320px,100%)}
@@ -315,6 +320,7 @@ body{margin:0;background:#fff;color:#0F172A;
   .head{border-radius:0;border-inline:0;padding:12px 10px}
   .chat{border-radius:0;border-inline:0;padding:2px 6px 8px}
   .col{max-width:calc(100% - 34px)}
+  .bub{max-width:82%}
   .foot{padding:0 8px}
 }
 @media print{.wrap{max-width:none}.row{break-inside:avoid}.jump{display:none}

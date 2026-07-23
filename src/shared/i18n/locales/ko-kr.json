@@ -184,7 +184,9 @@
       "hint": "계정에 설정한 2단계 인증 비밀번호를 입력하세요.",
       "hintLabel": "힌트: {{hint}}",
       "submit": "확인"
-    }
+    },
+    "confirmSignOutTitle": "로그아웃할까요?",
+    "confirmSignOutBody": "텔레그램 계정에서 이 세션도 함께 종료됩니다. 다시 쓰려면 인증코드를 새로 받아 로그인해야 합니다."
   },
   "dialogs": {
     "title": "대화방",
@@ -318,15 +320,15 @@
     "done": "완료. {{count, number}}개를 저장했습니다.",
     "savedPicked": "저장할 때 고르신 위치에 있습니다. 브라우저는 보안상 전체 경로를 알려주지 않아 파일 이름만 표시합니다.",
     "savedDownload": "브라우저의 다운로드 폴더에 있습니다.",
-    "memoryFallback": "이 브라우저는 파일에 바로 쓰는 기능을 지원하지 않아, 다 만든 뒤 한 번에 내려받습니다. 아주 큰 대화방은 크롬·엣지에서 받는 편이 안전합니다.",
+    "memoryFallback": "대용량을 받으실 계획이라면 크롬·엣지를 권합니다. 저장 위치를 직접 고를 수 있고, 받는 대로 파일에 바로 써서 큰 백업에 더 안정적입니다. 이 브라우저는 다 만든 뒤 한 번에 내려받습니다.",
     "presets": "빠른 선택",
+    "range": "기간",
     "presetToday": "오늘",
     "presetWeek": "최근 7일",
     "presetMonth": "최근 30일",
     "stats": {
       "total": "전체 메시지",
-      "messages": "{{count, number}}",
-      "period": "기간"
+      "messages": "{{count, number}}"
     },
     "includeTitle": "첨부 파일 함께 내보내기",
     "includePhotos": "사진",
@@ -351,7 +353,18 @@
     "layoutHint": "왼쪽에 두면 어느 쪽이 나인지 드러나지 않습니다. 대신 내 메시지에도 이름이 함께 표시됩니다.",
     "includeStickers": "스티커",
     "includeStickersHint": "같은 스티커는 몇 번을 보냈든 한 벌만 담깁니다. 보통 대화방 하나에 수십 종류라 몇 MB 안에서 끝납니다.",
-    "progressCounting": "메시지 {{count, number}}개 내보내는 중…"
+    "progressCounting": "메시지 {{count, number}}개 내보내는 중…",
+    "waitingFor": "텔레그램 요청 제한으로 {{remain}} 대기 중입니다. 멈춘 것이 아니니 창을 닫지 마세요.",
+    "confirmWholeTitle": "전체 기간을 내보낼까요?",
+    "confirmWholeBody": "메시지가 많은 대화방은 몇 시간이 걸릴 수 있습니다. 그동안 이 탭을 열어 두어야 하고, 중간에 끊기면 처음부터 다시 받아야 합니다. 기간을 나눠 받는 편이 안전합니다.",
+    "confirmWholeOk": "그래도 전체 기간",
+    "confirmDataTitle": "데이터 사용량을 확인하세요",
+    "confirmDataBody": "지금부터 대화와 첨부 파일을 실제로 내려받습니다. 이동통신망에 연결되어 있다면 데이터 요금이 많이 나올 수 있습니다. 와이파이에서 받는 편이 안전합니다.",
+    "confirmDataOk": "계속 내보내기",
+    "confirmAbortTitle": "내보내기를 중단할까요?",
+    "confirmAbortBody": "지금까지 받은 내용은 저장되지 않습니다. 다시 시작하면 처음부터 받습니다.",
+    "confirmAbortOk": "중단하기",
+    "confirmKeep": "계속하기"
   },
   "errors": {
     "title": "오류",

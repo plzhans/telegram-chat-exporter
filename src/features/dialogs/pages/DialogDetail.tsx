@@ -1,7 +1,7 @@
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, CalendarDays, ChevronDown, Download } from 'lucide-react';
+import { CalendarDays, ChevronDown, Download } from 'lucide-react';
 import { Alert } from '@/shared/ui/Alert';
 import { Button } from '@/shared/ui/Button';
 import { ErrorNotice } from '@/shared/ui/ErrorNotice';
@@ -243,12 +243,6 @@ function DialogView({ id, dialog }: { id: string; dialog?: DialogSummary }) {
     // 남은 높이를 다 쓰는 세로 배치. 아래 메시지 상자만 스크롤된다.
     <div className="flex h-full flex-col gap-3">
       <div className="flex shrink-0 flex-wrap items-center gap-2">
-        <Link
-          to="/dialogs"
-          className="rounded-lg p-2 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
-        >
-          <ArrowLeft className="h-4 w-4 rtl:rotate-180" />
-        </Link>
         {dialog && (
           <Avatar
             id={dialog.id}

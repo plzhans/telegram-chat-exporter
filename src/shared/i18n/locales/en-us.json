@@ -184,7 +184,9 @@
       "hint": "Enter the two-step verification password set on your account.",
       "hintLabel": "Hint: {{hint}}",
       "submit": "Confirm"
-    }
+    },
+    "confirmSignOutTitle": "Sign out?",
+    "confirmSignOutBody": "This also ends the session on your Telegram account. Using the tool again means requesting a new login code."
   },
   "dialogs": {
     "title": "Chats",
@@ -317,15 +319,15 @@
     "done": "Done. Saved {{count, number}} messages.",
     "savedPicked": "It's in the location you picked. Browsers don't reveal the full path for security, so only the file name is shown.",
     "savedDownload": "It's in your browser's downloads folder.",
-    "memoryFallback": "This browser can't write straight to a file, so the zip is built first and downloaded at the end. For very large chats, Chrome or Edge is safer.",
+    "memoryFallback": "For a large backup, Chrome or Edge is a better fit: you can choose where to save, and data is written to the file as it arrives. This browser builds the whole file first, then downloads it at once.",
     "presets": "Quick pick",
+    "range": "Period",
     "presetToday": "Today",
     "presetWeek": "Last 7 days",
     "presetMonth": "Last 30 days",
     "stats": {
       "total": "Total messages",
-      "messages": "{{count, number}}",
-      "period": "Period"
+      "messages": "{{count, number}}"
     },
     "includeTitle": "Include attachments",
     "includePhotos": "Photos",
@@ -350,7 +352,18 @@
     "layoutHint": "Keeping everyone on the left hides which side is you. Your own name is then shown on your messages too.",
     "includeStickers": "Stickers",
     "includeStickersHint": "Each sticker is stored once no matter how often it was sent. A chat usually has a few dozen kinds, so this stays within a few MB.",
-    "progressCounting": "Exported {{count, number}} messages so far…"
+    "progressCounting": "Exported {{count, number}} messages so far…",
+    "waitingFor": "Waiting {{remain}} for Telegram’s rate limit. It has not stalled — keep this tab open.",
+    "confirmWholeTitle": "Export the entire history?",
+    "confirmWholeBody": "A busy chat can take hours. This tab must stay open the whole time, and if it is interrupted the download starts over. Splitting it into shorter ranges is safer.",
+    "confirmWholeOk": "Export everything anyway",
+    "confirmDataTitle": "Check your data usage",
+    "confirmDataBody": "From here the messages and attachments are actually downloaded. On a mobile network this can use a lot of data. Wi-Fi is safer.",
+    "confirmDataOk": "Continue export",
+    "confirmAbortTitle": "Stop the export?",
+    "confirmAbortBody": "What has been downloaded so far will not be saved. Starting again begins from the beginning.",
+    "confirmAbortOk": "Stop",
+    "confirmKeep": "Keep going"
   },
   "errors": {
     "title": "Error",

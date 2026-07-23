@@ -184,7 +184,9 @@
       "hint": "Masukkan kata sandi verifikasi dua langkah yang disetel pada akun Anda.",
       "hintLabel": "Petunjuk: {{hint}}",
       "submit": "Konfirmasi"
-    }
+    },
+    "confirmSignOutTitle": "Keluar?",
+    "confirmSignOutBody": "Sesi ini di akun Telegram Anda juga akan diakhiri. Untuk memakainya lagi perlu kode masuk baru."
   },
   "dialogs": {
     "title": "Obrolan",
@@ -317,15 +319,15 @@
     "done": "Selesai. {{count, number}} pesan tersimpan.",
     "savedPicked": "Berkas ada di lokasi yang Anda pilih. Demi keamanan, peramban tidak mengungkap jalur lengkapnya, jadi hanya nama berkas yang ditampilkan.",
     "savedDownload": "Berkas ada di folder unduhan peramban Anda.",
-    "memoryFallback": "Peramban ini tidak bisa menulis langsung ke berkas, jadi zip dibangun lebih dulu dan diunduh di akhir. Untuk obrolan yang sangat besar, Chrome atau Edge lebih aman.",
+    "memoryFallback": "Untuk cadangan besar, Chrome atau Edge lebih cocok: Anda bisa memilih lokasi simpan dan data langsung ditulis ke berkas. Peramban ini menyusun seluruh berkas dulu, lalu mengunduhnya sekaligus.",
     "presets": "Pilihan cepat",
+    "range": "Periode",
     "presetToday": "Hari ini",
     "presetWeek": "7 hari terakhir",
     "presetMonth": "30 hari terakhir",
     "stats": {
       "total": "Total pesan",
-      "messages": "{{count, number}}",
-      "period": "Periode"
+      "messages": "{{count, number}}"
     },
     "includeTitle": "Sertakan lampiran",
     "includePhotos": "Foto",
@@ -350,7 +352,18 @@
     "layoutHint": "Menaruh semua orang di kiri menyembunyikan sisi mana yang Anda. Sebagai gantinya, nama Anda ikut ditampilkan pada pesan Anda sendiri.",
     "includeStickers": "Stiker",
     "includeStickersHint": "Setiap stiker disimpan sekali saja, sesering apa pun ia dikirim. Satu obrolan biasanya punya beberapa lusin jenis, jadi ini tetap dalam beberapa MB.",
-    "progressCounting": "Sudah mengekspor {{count, number}} pesan…"
+    "progressCounting": "Sudah mengekspor {{count, number}} pesan…",
+    "waitingFor": "Menunggu {{remain}} karena batas permintaan Telegram. Tidak macet — biarkan tab terbuka.",
+    "confirmWholeTitle": "Ekspor seluruh riwayat?",
+    "confirmWholeBody": "Obrolan yang ramai bisa memakan waktu berjam-jam. Tab ini harus tetap terbuka, dan jika terputus proses diulang dari awal. Membaginya lebih aman.",
+    "confirmWholeOk": "Tetap ekspor semua",
+    "confirmDataTitle": "Periksa pemakaian data",
+    "confirmDataBody": "Mulai sekarang pesan dan lampiran benar-benar diunduh. Di jaringan seluler ini bisa menghabiskan banyak data. Wi-Fi lebih aman.",
+    "confirmDataOk": "Lanjutkan ekspor",
+    "confirmAbortTitle": "Hentikan ekspor?",
+    "confirmAbortBody": "Yang sudah terunduh tidak akan disimpan. Memulai lagi berarti dari awal.",
+    "confirmAbortOk": "Hentikan",
+    "confirmKeep": "Lanjutkan"
   },
   "errors": {
     "title": "Kesalahan",

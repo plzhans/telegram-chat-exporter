@@ -184,7 +184,9 @@
       "hint": "Nhập mật khẩu xác minh hai bước đã đặt cho tài khoản của bạn.",
       "hintLabel": "Gợi ý: {{hint}}",
       "submit": "Xác nhận"
-    }
+    },
+    "confirmSignOutTitle": "Đăng xuất?",
+    "confirmSignOutBody": "Phiên này trên tài khoản Telegram cũng sẽ kết thúc. Muốn dùng lại bạn cần mã đăng nhập mới."
   },
   "dialogs": {
     "title": "Cuộc trò chuyện",
@@ -317,15 +319,15 @@
     "done": "Xong. Đã lưu {{count, number}} tin nhắn.",
     "savedPicked": "Tệp nằm ở nơi bạn đã chọn. Vì lý do bảo mật, trình duyệt không cho biết đường dẫn đầy đủ nên chỉ hiện tên tệp.",
     "savedDownload": "Tệp nằm trong thư mục tải về của trình duyệt.",
-    "memoryFallback": "Trình duyệt này không ghi thẳng vào tệp được, nên zip sẽ được dựng xong rồi mới tải về ở cuối. Với cuộc trò chuyện rất lớn, Chrome hoặc Edge an toàn hơn.",
+    "memoryFallback": "Với bản sao lưu lớn, Chrome hoặc Edge phù hợp hơn: bạn chọn được nơi lưu và dữ liệu được ghi vào tệp ngay khi nhận. Trình duyệt này tạo xong toàn bộ tệp rồi mới tải một lần.",
     "presets": "Chọn nhanh",
+    "range": "Khoảng thời gian",
     "presetToday": "Hôm nay",
     "presetWeek": "7 ngày qua",
     "presetMonth": "30 ngày qua",
     "stats": {
       "total": "Tổng tin nhắn",
-      "messages": "{{count, number}}",
-      "period": "Khoảng thời gian"
+      "messages": "{{count, number}}"
     },
     "includeTitle": "Kèm theo tệp đính kèm",
     "includePhotos": "Ảnh",
@@ -350,7 +352,18 @@
     "layoutHint": "Đặt tất cả về một bên sẽ giấu được đâu là bạn. Bù lại, tên bạn cũng hiện trên chính tin nhắn của bạn.",
     "includeStickers": "Nhãn dán",
     "includeStickersHint": "Mỗi nhãn dán chỉ lưu một lần dù được gửi bao nhiêu lần. Một cuộc trò chuyện thường có vài chục loại, nên chỉ tốn vài MB.",
-    "progressCounting": "Đã xuất {{count, number}} tin nhắn…"
+    "progressCounting": "Đã xuất {{count, number}} tin nhắn…",
+    "waitingFor": "Đang chờ {{remain}} do giới hạn của Telegram. Không bị treo — hãy giữ tab mở.",
+    "confirmWholeTitle": "Xuất toàn bộ lịch sử?",
+    "confirmWholeBody": "Cuộc trò chuyện lớn có thể mất nhiều giờ. Tab này phải mở suốt thời gian đó, và nếu bị gián đoạn sẽ phải tải lại từ đầu. Chia nhỏ khoảng thời gian an toàn hơn.",
+    "confirmWholeOk": "Vẫn xuất toàn bộ",
+    "confirmDataTitle": "Kiểm tra lượng dữ liệu",
+    "confirmDataBody": "Từ đây tin nhắn và tệp đính kèm sẽ thực sự được tải về. Trên mạng di động việc này có thể tốn nhiều dữ liệu. Wi-Fi an toàn hơn.",
+    "confirmDataOk": "Tiếp tục xuất",
+    "confirmAbortTitle": "Dừng xuất?",
+    "confirmAbortBody": "Phần đã tải sẽ không được lưu. Bắt đầu lại sẽ từ đầu.",
+    "confirmAbortOk": "Dừng",
+    "confirmKeep": "Tiếp tục"
   },
   "errors": {
     "title": "Lỗi",

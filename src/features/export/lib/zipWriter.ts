@@ -77,20 +77,61 @@ export async function createFileSink(filename: string): Promise<FileSinkResult> 
 }
 
 /** Blob 으로 모았다가 마지막에 내려받는다. File System Access API 가 없을 때의 대안. */
+/**
+ * 조각을 Blob 으로 접어 넘기는 단위.
+ *
+ * 조각마다 접으면 Blob 객체가 수만 개 생기고, 안 접으면 자바스크립트 힙에 다 쌓인다.
+ * 8MB 면 힙에 머무는 양이 늘 그 아래이면서 접는 횟수도 감당할 만하다.
+ */
+const FOLD_THRESHOLD = 8 * 1024 * 1024;
+
 export function createMemorySink(filename: string): ZipSink {
-  const chunks: Uint8Array[] = [];
+  /*
+    **자바스크립트 힙에 zip 전체를 쥐고 있지 않는다.**
+
+    예전에는 `Uint8Array[]` 에 끝까지 모았다가 마지막에 Blob 을 만들었다. 그러면 압축된
+    바이트가 통째로 힙에 앉아 있어서, 큰 대화방에서는 탭이 죽는다 - 특히 메모리가 넉넉하지
+    않은 휴대전화에서.
+
+    대신 일정량이 모일 때마다 **Blob 안으로 접어 넘긴다.** `new Blob([blob, ...])` 은 앞선
+    Blob 의 내용을 힙으로 다시 끌어오지 않고 참조만 이어 붙이며, 브라우저는 그 저장소를
+    필요하면 디스크로 내린다. 그래서 힙에 머무는 양이 FOLD_THRESHOLD 아래로 유지된다.
+
+    크롬처럼 파일에 바로 쓰는 것과 같지는 않다 - 그건 애초에 우리 손을 거치지 않는다.
+    여기서는 "힙에 다 쌓지는 않는다" 까지가 할 수 있는 전부다.
+  */
+  let pending: Uint8Array[] = [];
+  let pendingBytes = 0;
+  let blob = new Blob([], { type: 'application/zip' });
+
+  const fold = () => {
+    if (pendingBytes === 0) return;
+    blob = new Blob([blob, ...(pending as BlobPart[])], { type: 'application/zip' });
+    pending = [];
+    pendingBytes = 0;
+  };
+
+  const discard = () => {
+    pending = [];
+    pendingBytes = 0;
+    blob = new Blob([]);
+  };
+
   return {
     name: filename,
     kind: 'download',
     write: async (chunk) => {
-      chunks.push(chunk);
+      pending.push(chunk);
+      pendingBytes += chunk.byteLength;
+      if (pendingBytes >= FOLD_THRESHOLD) fold();
     },
     finish: async () => {
-      downloadBlob(new Blob(chunks as BlobPart[], { type: 'application/zip' }), filename);
-      chunks.length = 0;
+      fold();
+      downloadBlob(blob, filename);
+      discard();
     },
     abort: async () => {
-      chunks.length = 0;
+      discard();
     },
   };
 }

@@ -50,6 +50,14 @@ export interface ExportProgress {
   files?: number;
   /** 담아야 할 첨부 파일 수. 이게 있어야 "몇 개 중 몇 개"가 된다. */
   totalFiles?: number;
+  /**
+   * 텔레그램 요청 제한이 풀리는 시각(Unix 밀리초). 대기 중이 아니면 없다.
+   *
+   * 남은 초가 아니라 **끝나는 시각**을 싣는다. 남은 초를 실어 보내면 화면이 1초마다
+   * 다시 그려져야 하고, 진행 정보가 바뀌지 않는 동안에는 숫자가 멈춘 채로 남는다.
+   * 시각 하나만 주면 화면이 알아서 남은 시간을 계산해 세어 내려갈 수 있다.
+   */
+  floodWaitUntil?: number;
 }
 
 export interface ExportRange {
@@ -112,6 +120,40 @@ const EXPORT_FLOOD_SLEEP_THRESHOLD = 15 * 60;
 
 function yieldToUi(): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, 0));
+}
+
+/** 중단 버튼이 대기 중에도 먹어야 한다. 안 그러면 몇 분을 그대로 기다려야 끊긴다. */
+function sleep(ms: number, signal: AbortSignal): Promise<void> {
+  return new Promise((resolve, reject) => {
+    if (signal.aborted) return reject(signal.reason);
+    const timer = setTimeout(finish, ms);
+    function finish() {
+      clearTimeout(timer);
+      signal.removeEventListener('abort', onAbort);
+      resolve();
+    }
+    function onAbort() {
+      clearTimeout(timer);
+      reject(signal.reason);
+    }
+    signal.addEventListener('abort', onAbort, { once: true });
+  });
+}
+
+/**
+ * 요청 제한 오류에서 남은 초를 읽는다. 그 오류가 아니면 undefined.
+ *
+ * `describeError` 와 같은 규칙을 쓴다 — `FLOOD_WAIT_86400` 처럼 초가 코드에 붙어서 오고,
+ * `FLOOD_PREMIUM_WAIT_` 같은 변종도 모양이 같다.
+ */
+function floodWaitSeconds(err: unknown): number | undefined {
+  const seconds = (err as { seconds?: unknown })?.seconds;
+  if (typeof seconds === 'number' && Number.isFinite(seconds)) return seconds;
+  const raw = (err as { errorMessage?: string; message?: string })?.errorMessage ?? String(
+    (err as { message?: string })?.message ?? '',
+  );
+  const matched = /FLOOD(?:_\w+?)?_WAIT_(\d+)/.exec(raw);
+  return matched ? Number(matched[1]) : undefined;
 }
 
 /**
@@ -508,6 +550,13 @@ export async function exportChat({
    * 여기 쌓이는 건 파일 내용이 아니라 그 위치 정보뿐이라 부담이 작다.
    */
   const photoTasks: PhotoTask[] = [];
+  /*
+    담은 첨부 수를 **바깥에 둔다.**
+
+    안쪽 블록에만 두면 마지막 보고(zip 을 닫은 뒤)에서 값이 사라져, 완료 화면이 늘 0 을
+    보여준다. 진행 보고는 매번 전체를 새로 실어 보내는 구조라 빠진 항목은 그대로 비게 된다.
+  */
+  let savedFiles = 0;
   /** 이미 줄 세운 경로. 같은 스티커가 수백 번 와도 파일은 한 벌만 담는다. */
   const queuedPaths = new Set<string>();
   /**
@@ -536,8 +585,59 @@ export async function exportChat({
   // 끝 날짜는 그 날 전체를 포함해야 하므로 23:59:59 까지 잡는다.
   const toSeconds = range.to ? endOfDayUnix(range.to) : undefined;
   const fromSeconds = range.from ? startOfDayUnix(range.from) : undefined;
+  /*
+    **요청 제한 대기를 우리가 맡는다.**
+
+    GramJS 에 맡기면 알아서 자 주기는 하는데 얼마나 자는지 알려 주지 않는다 - 로그 한 줄이
+    전부다(`client/users.js`). 그러면 화면은 "대기 중" 이라고만 말할 수 있고, 사용자는 이게
+    10초짜리인지 10분짜리인지 모른 채 기다린다. 창을 닫을지 말지 판단할 근거가 없다.
+
+    임계값을 0 으로 내려 GramJS 가 자지 않고 던지게 만든 뒤, 여기서 받아 초를 읽고 화면에
+    실어 보낸 다음 직접 잔다. 그래야 남은 시간을 셀 수 있다.
+
+    `invoke` 를 감싸는 이유는 그것이 모든 요청이 지나는 단 하나의 통로이기 때문이다.
+    getMessages 든 downloadMedia 든 결국 여기로 온다.
+  */
+  /*
+    마지막으로 보고한 진행 상태를 들고 있는다.
+
+    대기가 시작·종료될 때 화면에 알려야 하는데, 그 순간에는 세던 숫자가 하나도 안 바뀐다.
+    `onProgress` 는 매번 전체를 받으므로, 직전 값을 그대로 다시 실어 보내면서 대기 정보만
+    갈아 끼운다.
+  */
+  let lastProgress: ExportProgress = { count: 0, bytes: 0 };
+  let floodWaitUntil: number | undefined;
+  const emitProgress = (progress: ExportProgress) => {
+    lastProgress = progress;
+    onProgress({ ...progress, floodWaitUntil });
+  };
+  const setFloodWait = (until?: number) => {
+    floodWaitUntil = until;
+    onProgress({ ...lastProgress, floodWaitUntil });
+  };
+
   const previousThreshold = client.floodSleepThreshold;
-  client.floodSleepThreshold = EXPORT_FLOOD_SLEEP_THRESHOLD;
+  const originalInvoke = client.invoke.bind(client);
+  client.floodSleepThreshold = 0;
+
+  client.invoke = (async (request: Parameters<typeof originalInvoke>[0]) => {
+    for (;;) {
+      try {
+        return await originalInvoke(request);
+      } catch (err) {
+        const seconds = floodWaitSeconds(err);
+        // 너무 긴 제한은 기다릴 일이 아니다. 그대로 올려 보내 오류로 다룬다.
+        if (seconds === undefined || seconds > EXPORT_FLOOD_SLEEP_THRESHOLD) throw err;
+
+        setFloodWait(Date.now() + seconds * 1000);
+        try {
+          await sleep(seconds * 1000, signal);
+        } finally {
+          setFloodWait(undefined);
+        }
+      }
+    }
+  }) as typeof client.invoke;
 
   try {
     /*
@@ -550,7 +650,7 @@ export async function exportChat({
     } catch {
       /* 개수를 못 세도 내보내기 자체는 할 수 있다. */
     }
-    onProgress({ count: 0, bytes: 0, totalCount, phase: 'messages' });
+    emitProgress({ count: 0, bytes: 0, totalCount, phase: 'messages' });
 
     /**
      * `limit: undefined` 면 GramJS 가 끝까지 훑는다. `offsetDate` 는 reverse 와 함께 쓰면
@@ -645,7 +745,7 @@ export async function exportChat({
       if (count % BATCH_SIZE === 0) {
         flush();
         await zip.drain();
-        onProgress({ count, bytes: zip.bytesWritten, lastDate, totalCount, phase: 'messages' });
+        emitProgress({ count, bytes: zip.bytesWritten, lastDate, totalCount, phase: 'messages' });
         await yieldToUi();
       }
     }
@@ -693,7 +793,7 @@ export async function exportChat({
     }[] = [];
 
     if (photoTasks.length > 0) {
-      onProgress({
+      emitProgress({
         count,
         bytes: zip.bytesWritten,
         lastDate,
@@ -756,13 +856,14 @@ export async function exportChat({
         }
 
         await zip.drain();
-        onProgress({
+        savedFiles = saved.length;
+        emitProgress({
           count,
           bytes: zip.bytesWritten,
           lastDate,
           totalCount,
           phase: 'files',
-          files: saved.length,
+          files: savedFiles,
           totalFiles: photoTasks.length,
         });
         await yieldToUi();
@@ -823,12 +924,21 @@ export async function exportChat({
     );
 
     await zip.finish();
-    onProgress({ count, bytes: zip.bytesWritten, lastDate, totalCount });
+    emitProgress({
+      count,
+      bytes: zip.bytesWritten,
+      lastDate,
+      totalCount,
+      // 완료 화면이 "담긴 파일" 을 여기서 읽는다. 빼면 늘 0 으로 보인다.
+      files: savedFiles,
+      totalFiles: photoTasks.length,
+    });
   } catch (err) {
     await zip.abort();
     if (signal.aborted) throw new Error('EXPORT_CANCELLED');
     throw describeError(err);
   } finally {
     client.floodSleepThreshold = previousThreshold;
+    client.invoke = originalInvoke as typeof client.invoke;
   }
 }

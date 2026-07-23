@@ -1,9 +1,10 @@
-import { Suspense } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Suspense, useState } from 'react';
+import { Link, Outlet, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import * as Select from '@radix-ui/react-select';
-import { Check, ChevronDown, Github, Languages, LogOut } from 'lucide-react';
+import { ArrowLeft, Check, ChevronDown, Github, Languages, LogOut } from 'lucide-react';
 import { Button } from '@/shared/ui/Button';
+import { Modal } from '@/shared/ui/Modal';
 import { DialogListSkeleton, MessageListSkeleton, PageSkeleton } from '@/shared/ui/Skeleton';
 import { useAuth } from '@/shared/auth/useAuth';
 import { COPYRIGHT, SOURCE_URL, VERSION_LABEL } from '@/shared/config/app';
@@ -118,11 +119,51 @@ function RouteSkeleton() {
   return <PageSkeleton />;
 }
 
+/**
+ * 이 화면이 본문 높이를 스스로 꽉 채우는가.
+ *
+ * 대화 보기는 `h-full` 로 남은 높이를 다 쓰고 **안쪽에 자기 스크롤 영역**을 둔다. 그 아래
+ * footer 를 붙이면 본문이 그만큼 넘쳐 스크롤이 생기는데, 대화 화면이 뜨면서 안쪽 스크롤을
+ * 맨 아래로 보낼 때 브라우저가 조상 스크롤까지 같이 밀어 버린다. 그러면 대화방 제목 줄이
+ * 위로 밀려 계정 줄 뒤로 숨는다.
+ *
+ * 어차피 그 화면에서는 footer 가 화면 밖에 있어 닿지도 않는다. 안 그리는 편이 맞다.
+ */
+/**
+ * 한 단계 위 화면. 맨 위면 null.
+ *
+ *     /dialogs/123/export → /dialogs/123
+ *     /dialogs/123        → /dialogs
+ *     /dialogs            → null
+ *
+ * `navigate(-1)` 을 쓰지 않는 이유는 **주소로 바로 들어온 경우** 돌아갈 기록이 없어서다.
+ * 링크를 받아서 연 사람이 뒤로가기를 누르면 이 앱 밖으로 나가 버린다. 경로에서 계산하면
+ * 어디로 왔든 같은 곳으로 간다.
+ */
+function parentPath(pathname: string): string | null {
+  const parts = pathname.split('/').filter(Boolean);
+  if (parts.length <= 1) return null;
+  return `/${parts.slice(0, -1).join('/')}`;
+}
+
+function fillsViewport(pathname: string): boolean {
+  return /\/dialogs\/[^/]+$/.test(pathname);
+}
+
 export function MainLayout() {
   const { t } = useTranslation();
+  const { pathname } = useLocation();
   const me = useAuth((s) => s.me);
   const busy = useAuth((s) => s.busy);
   const signOut = useAuth((s) => s.signOut);
+  const parent = parentPath(pathname);
+
+  /*
+    로그아웃은 되돌릴 수 없다. 화면에서 나가는 것에 그치지 않고 **텔레그램 계정의 세션까지
+    끊어서**, 다시 쓰려면 인증코드를 새로 받아야 한다. 좁은 줄에 다른 것들과 나란히 서 있는
+    버튼이라 스치듯 눌리기 쉽다.
+  */
+  const [confirmSignOut, setConfirmSignOut] = useState(false);
 
   return (
     /*
@@ -159,7 +200,21 @@ export function MainLayout() {
               이 줄의 높이는 안쪽 여백이 아니라 **버튼 높이**가 정한다. py 만 줄이면 그대로라
               버튼도 같이 낮춘다.
             */}
-            <div className="mx-auto flex max-w-3xl items-center gap-3 px-4 py-1">
+            <div className="mx-auto flex max-w-3xl items-center gap-2 px-4 py-1">
+              {/*
+                뒤로가기를 **헤더에 둔다.** 페이지 안에 있으면 본문이 스크롤될 때 같이
+                밀려 올라가 닿지 못하는 순간이 생긴다. 헤더는 늘 제자리에 있다.
+              */}
+              {parent && (
+                <Link
+                  to={parent}
+                  aria-label={t('common.back')}
+                  title={t('common.back')}
+                  className="-ms-1 shrink-0 rounded-lg p-1 text-slate-500 transition-colors hover:bg-slate-200 hover:text-slate-900"
+                >
+                  <ArrowLeft className="h-4 w-4 rtl:rotate-180" />
+                </Link>
+              )}
               {/*
                 이름과 사용자명까지만 적는다.
 
@@ -179,7 +234,7 @@ export function MainLayout() {
                 variant="ghost"
                 size="sm"
                 loading={busy}
-                onClick={() => void signOut()}
+                onClick={() => setConfirmSignOut(true)}
                 className="h-7 px-2 text-xs"
               >
                 <LogOut className="h-3.5 w-3.5" />
@@ -209,13 +264,41 @@ export function MainLayout() {
 
           내보낸 HTML 하단에도 같은 문자열이 찍힌다. 두 줄을 대조해 그때의 코드를 짚는다.
         */}
+        {!fillsViewport(pathname) && (
         <footer className="mt-4 border-t border-slate-200 pt-2">
           <div className="flex items-center justify-between gap-3">
             <p className="truncate text-[0.65rem] text-slate-400">{COPYRIGHT}</p>
             <p className="shrink-0 font-mono text-[0.65rem] text-slate-400">{VERSION_LABEL}</p>
           </div>
         </footer>
+        )}
       </main>
+
+      <Modal
+        open={confirmSignOut}
+        onClose={() => setConfirmSignOut(false)}
+        title={t('auth.confirmSignOutTitle')}
+        footer={
+          <>
+            <Button variant="ghost" size="sm" onClick={() => setConfirmSignOut(false)}>
+              {t('common.cancel')}
+            </Button>
+            <Button
+              size="sm"
+              loading={busy}
+              onClick={() => {
+                setConfirmSignOut(false);
+                void signOut();
+              }}
+            >
+              <LogOut className="h-3.5 w-3.5" />
+              {t('common.signOut')}
+            </Button>
+          </>
+        }
+      >
+        {t('auth.confirmSignOutBody')}
+      </Modal>
     </div>
   );
 }

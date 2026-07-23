@@ -1,10 +1,14 @@
-import { Link, Navigate, useParams, useSearchParams } from 'react-router-dom';
+import { Navigate, useParams, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft } from 'lucide-react';
-import { Spinner } from '@/shared/ui/Spinner';
-import { getCachedPeer, useDialogsQuery } from '@/features/dialogs/api';
+import { PageSkeleton } from '@/shared/ui/Skeleton';
+import {
+  getCachedPeer,
+  useChatStatsQuery,
+  useDialogsQuery,
+  type DialogSummary,
+} from '@/features/dialogs/api';
 import { Avatar } from '@/features/dialogs/components/Avatar';
-import { shiftDateKey, todayKey } from '@/shared/lib/date';
+import { formatDisplayDate, shiftDateKey, todayKey } from '@/shared/lib/date';
 import { ExportPanel } from '../components/ExportPanel';
 
 /**
@@ -33,55 +37,84 @@ function defaultRange(dateParam: string | null): { from: string; to: string } {
   return { from: shiftDateKey(today, -DEFAULT_SPAN_DAYS), to: today };
 }
 
+/**
+ * 문지기.
+ *
+ * peer 캐시가 채워질 때까지 기다린다. `peerCache` 는 메모리에만 있어서 **새로고침하면
+ * 비어 있다.** 비었다고 바로 목록으로 보내면 이 화면에서 새로고침한 사람이 쫓겨난다.
+ * 대화방 목록 쿼리가 끝나면 캐시가 다시 채워지므로 그때 판단한다.
+ *
+ * **본문을 따로 뺀 이유는 훅 순서 때문이다.** 여기서 조건부 return 을 하면서 아래 훅들을
+ * 같이 두면, 기다리는 렌더와 통과한 렌더의 훅 개수가 달라져 React 가 죽는다. 목록이 이미
+ * 캐시에 있으면 첫 렌더부터 통과해서 안 터지고, **새로고침했을 때만** 터진다 - 그래서
+ * 눈에 잘 안 띈다. 대화 보기 화면도 같은 이유로 같은 모양이다.
+ */
 export default function ExportPage() {
-  const { t } = useTranslation();
   const { id = '' } = useParams();
-  const [searchParams] = useSearchParams();
-
   const { data: dialogs, isPending } = useDialogsQuery();
 
-  /**
-   * peer 캐시가 채워질 때까지 기다린다.
-   *
-   * `peerCache` 는 메모리에만 있어서 **새로고침하면 비어 있다.** 비었다고 바로 목록으로
-   * 보내면 이 화면에서 새로고침한 사람이 쫓겨난다. 대화방 목록 쿼리가 끝나면 캐시가 다시
-   * 채워지므로 그때 판단한다(대화 보기 화면도 같은 이유로 같은 처리를 한다).
-   */
-  if (isPending) {
-    return (
-      <div className="flex flex-col items-center gap-3 edge-card bg-white p-8">
-        <Spinner />
-      </div>
-    );
-  }
-
+  if (isPending) return <PageSkeleton />;
   if (!getCachedPeer(id)) return <Navigate to="/dialogs" replace />;
 
-  const dialog = dialogs?.find((d) => d.id === id);
+  return <ExportBody id={id} dialog={dialogs?.find((d) => d.id === id)} />;
+}
+
+function ExportBody({ id, dialog }: { id: string; dialog?: DialogSummary }) {
+  const { t } = useTranslation();
+  const [searchParams] = useSearchParams();
   const range = defaultRange(searchParams.get('date'));
+
+  /*
+    대화가 존재하는 기간. 대화 화면과 같은 캐시를 쓰므로 거기서 넘어왔으면 추가 요청이 없다.
+
+    내보내기 화면에서 특히 값어치가 있다 - 아래에서 기간을 고르는데, 이 방이 언제부터
+    있는지 모르면 있지도 않은 날짜를 잡게 된다.
+  */
+  const stats = useChatStatsQuery(id, dialog?.date);
+  const period =
+    stats.data?.firstDate && stats.data.lastDate
+      ? `${formatDisplayDate(stats.data.firstDate)} ~ ${formatDisplayDate(stats.data.lastDate)}`
+      : undefined;
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2">
-        <Link
-          to={`/dialogs/${id}`}
-          className="rounded-lg p-2 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
-        >
-          <ArrowLeft className="h-4 w-4 rtl:rotate-180" />
-        </Link>
+      {/*
+        대화 화면(DialogDetail)의 머리와 같은 모양이다. 내보내기는 그 화면에서 이어지는
+        자리라, 넘어왔을 때 머리가 달라 보이면 다른 대화방으로 온 것처럼 읽힌다.
+      */}
+      <div className="flex shrink-0 flex-wrap items-center gap-2">
         {dialog && (
           <Avatar
             id={dialog.id}
             title={dialog.title}
             kind={dialog.kind}
             photo={dialog.photo}
+            /* 저해상도 썸네일은 뭉개진다. 대화 화면을 거쳐 왔으면 이미 캐시에 있다. */
+            sharp
             className="h-8 w-8 text-sm"
           />
         )}
         <div className="min-w-0 flex-1">
-          <h1 className="truncate text-lg font-bold text-slate-900">{dialog?.title ?? id}</h1>
-          <p className="text-xs text-slate-500">{t('export.title')}</p>
+          <h1 className="truncate text-sm font-bold leading-tight text-slate-900">
+            {dialog?.title ?? id}
+          </h1>
+          {period && <p className="truncate text-[0.7rem] text-slate-500">{period}</p>}
         </div>
+
+        {/*
+          전체 메시지 수. 대화 화면에서 버튼이 서던 자리다.
+
+          시작 전에 규모를 알아야 한다 - 몇 건짜리인지 모르면 몇 분이 걸릴 일인지, 아니면
+          몇 시간이 걸릴 일인지 가늠하지 못한 채 시작하게 된다.
+        */}
+        {stats.data && (
+          <div className="shrink-0 text-end">
+            <p className="text-[0.7rem] leading-tight text-slate-500">{t('export.stats.total')}</p>
+            <p className="text-sm font-bold leading-tight tabular-nums text-slate-900">
+              {t('export.stats.messages', { count: stats.data.total })}
+            </p>
+          </div>
+        )}
       </div>
 
       {dialog && <ExportPanel dialog={dialog} defaultFrom={range.from} defaultTo={range.to} />}
