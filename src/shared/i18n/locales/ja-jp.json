@@ -13,7 +13,7 @@
   },
   "app": {
     "title": "Telegram Exporter",
-    "tagline": "ブラウザの中だけで動く Telegram トークのバックアップ"
+    "tagline": "サーバーを介さない Telegram トークのバックアップ"
   },
   "common": {
     "next": "次へ",

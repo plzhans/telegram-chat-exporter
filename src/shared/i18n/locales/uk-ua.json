@@ -13,7 +13,7 @@
   },
   "app": {
     "title": "Telegram Exporter",
-    "tagline": "Резервна копія чатів Telegram цілком у вашому браузері"
+    "tagline": "Резервна копія чатів Telegram без проміжного сервера"
   },
   "common": {
     "next": "Далі",

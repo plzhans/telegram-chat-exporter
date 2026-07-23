@@ -14,7 +14,7 @@
   },
   "app": {
     "title": "Telegram Exporter",
-    "tagline": "Backup ng mga chat sa Telegram na buong-buo sa browser mo"
+    "tagline": "Backup ng Telegram chat na walang server sa gitna"
   },
   "common": {
     "next": "Susunod",

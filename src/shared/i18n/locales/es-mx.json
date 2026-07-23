@@ -13,7 +13,7 @@
   },
   "app": {
     "title": "Telegram Exporter",
-    "tagline": "Respaldo de chats de Telegram enteramente en tu navegador"
+    "tagline": "Respaldo de chats de Telegram sin servidor de por medio"
   },
   "common": {
     "next": "Siguiente",

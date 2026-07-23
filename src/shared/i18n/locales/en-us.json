@@ -13,7 +13,7 @@
   },
   "app": {
     "title": "Telegram Exporter",
-    "tagline": "Back up Telegram chats entirely in your browser"
+    "tagline": "Telegram chat backup with no server in between"
   },
   "common": {
     "next": "Next",

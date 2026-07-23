@@ -13,7 +13,7 @@
   },
   "app": {
     "title": "Telegram Exporter",
-    "tagline": "브라우저에서만 동작하는 텔레그램 대화 백업"
+    "tagline": "서버를 거치지 않는 텔레그램 대화 백업"
   },
   "common": {
     "next": "다음",

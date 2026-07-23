@@ -13,7 +13,7 @@
   },
   "app": {
     "title": "Telegram Exporter",
-    "tagline": "Backup das conversas do Telegram inteiramente no seu navegador"
+    "tagline": "Backup de conversas do Telegram sem servidor intermediário"
   },
   "common": {
     "next": "Avançar",

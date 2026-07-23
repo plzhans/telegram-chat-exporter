@@ -13,7 +13,7 @@
   },
   "app": {
     "title": "Telegram Exporter",
-    "tagline": "Sao lưu cuộc trò chuyện Telegram hoàn toàn trong trình duyệt"
+    "tagline": "Sao lưu trò chuyện Telegram không qua máy chủ trung gian"
   },
   "common": {
     "next": "Tiếp",

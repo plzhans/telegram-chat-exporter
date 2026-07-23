@@ -13,7 +13,7 @@
   },
   "app": {
     "title": "Telegram Exporter",
-    "tagline": "Tamamen tarayıcınızda çalışan Telegram sohbet yedeği"
+    "tagline": "Aracı sunucu olmadan Telegram sohbet yedeği"
   },
   "common": {
     "next": "İleri",
