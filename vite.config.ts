@@ -55,15 +55,20 @@ function contentSecurityPolicy(isBuild: boolean): Plugin {
 
 export default defineConfig(({ command }) => ({
   /**
-   * 배포 위치의 하위 경로. 기본은 루트(`/`)고, GitHub Pages 처럼 저장소 이름이 경로에
-   * 끼는 곳에서만 `BASE_PATH=/telegram-chat-exporter/` 로 넘긴다
-   * (`.github/workflows/deploy.yml` 참고).
+   * 배포 위치. GitHub Pages 가 `https://plzhans.github.io/telegram-chat-exporter/` 로
+   * 서비스하므로 저장소 이름이 경로에 낀다.
    *
-   * 이 값이 틀리면 빌드는 성공하는데 브라우저에서 JS·CSS 가 404 로 죽는다 — 자산 경로가
-   * 절대경로로 박히기 때문이다. 라우터도 같은 값을 `basename` 으로 받아야 하므로
-   * `src/app/App.tsx` 는 `import.meta.env.BASE_URL` 을 읽는다.
+   * 환경변수로 빼지 않고 여기 박아 둔다 — 빌드할 때마다 `BASE_PATH=...` 를 앞에 붙이는 걸
+   * 잊으면 빌드는 성공하는데 브라우저에서 JS·CSS 가 404 로 죽는다. 자산 경로가 절대경로로
+   * 박히기 때문이고, 눈치채기 어려운 실패다. `pnpm build` 한 줄로 끝나는 쪽을 택했다.
+   *
+   * dev·preview 서버도 이 경로 아래에 뜬다. preview 는 그래야 빌드 결과물의 자산 경로와
+   * 맞고, dev 는 라우팅 조건을 배포본과 같게 두려고 그대로 둔다.
+   *
+   * 루트(`/`)에 배포할 일이 생기면 이 값을 `'/'` 로 바꾼다. 라우터는
+   * `import.meta.env.BASE_URL` 로 같은 값을 읽으므로 여기만 고치면 된다(`src/app/App.tsx`).
    */
-  base: process.env.BASE_PATH ?? '/',
+  base: '/telegram-chat-exporter/',
   plugins: [
     react(),
     /**

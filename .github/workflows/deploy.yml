@@ -37,11 +37,10 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      # 하위 경로(/telegram-chat-exporter/)는 vite.config.ts 의 base 에 박혀 있어서
+      # 여기서 따로 넘길 게 없다.
       - run: pnpm build
         env:
-          # Pages 는 https://<user>.github.io/<repo>/ 로 서비스되므로 하위 경로를 넘긴다.
-          # 커스텀 도메인을 붙여 루트로 서비스한다면 이 줄을 '/' 로 바꿔야 한다.
-          BASE_PATH: /${{ github.event.repository.name }}/
           # 앱 화면의 "소스 보기" 링크. 배포본과 같은 커밋이 올라간 저장소를 가리켜야 한다.
           VITE_SOURCE_URL: ${{ github.server_url }}/${{ github.repository }}
           # 공용 api_id 를 쓸 경우에만 채운다. Settings → Secrets and variables → Actions →
