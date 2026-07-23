@@ -1,0 +1,298 @@
+{
+  "app": {
+    "title": "Telegram Exporter",
+    "tagline": "브라우저에서만 동작하는 텔레그램 대화 백업"
+  },
+  "common": {
+    "next": "다음",
+    "back": "뒤로",
+    "cancel": "취소",
+    "retry": "다시 시도",
+    "source": "소스 코드",
+    "signOut": "로그아웃 및 세션 종료"
+  },
+  "trust": {
+    "purpose": "이 페이지는 텔레그램 대화 내용을 간편하게 백업받기 위해 만들어졌습니다.",
+    "lede": "대화를 압축 파일(zip)로 내려받습니다. 크롬·사파리처럼 인터넷을 보는 프로그램을 브라우저라고 하는데, 모든 처리가 그 브라우저 안에서 끝납니다.",
+    "how": {
+      "title": "어떻게 동작하나요",
+      "noServer": {
+        "title": "거쳐 가는 서버가 없습니다",
+        "body": "보통의 웹사이트는 여러분이 입력한 값을 그 회사 서버로 보냅니다. 이 페이지에는 그런 서버 자체가 없습니다. 브라우저가 텔레그램과 직접 이야기합니다."
+      },
+      "credentials": {
+        "title": "전화번호와 로그인 코드는 텔레그램으로만 갑니다",
+        "body": "로그인에 필요한 값은 텔레그램에 보내는 것 말고는 쓰이지 않습니다. 저희가 볼 수 있는 경로가 없습니다."
+      },
+      "download": {
+        "title": "대화 내용은 곧바로 파일이 됩니다",
+        "body": "받아 온 대화는 화면에 보여 주고, 내보내기를 누르면 압축해서 여러분 컴퓨터에 저장합니다. 어디에도 올리지 않습니다."
+      }
+    },
+    "verify": {
+      "title": "직접 확인하는 방법",
+      "csp": "이 페이지는 텔레그램(<code>wss://*.web.telegram.org</code>) 말고 <strong>다른 어떤 주소로도 연결하지 못하도록</strong> 잠겨 있습니다. 브라우저가 강제하는 규칙이라 이 페이지를 만든 사람도 어길 수 없습니다.",
+      "devtools": "F12(맥은 ⌥⌘I)를 눌러 <strong>네트워크</strong> 탭을 보시면, 이 페이지가 실제로 어디에 연결하는지 전부 보입니다.",
+      "source": "만든 코드 전체가 공개되어 있습니다.",
+      "peek": "이 페이지가 다른 곳으로 연결하지 못한다는 것을 직접 확인해 보세요."
+    },
+    "stored": {
+      "title": "이 브라우저에 남는 것",
+      "lede": "개인 정보나 대화 내용은 남기지 않습니다. 누구에게나 똑같이 보이는 공개된 자료와, 로그인을 이어 가기 위한 값만 남습니다. 남는 것은 아래가 전부입니다.",
+      "colKind": "종류",
+      "colWhere": "보관 위치",
+      "colUntil": "삭제 시점",
+      "sessionKind": "로그인 상태",
+      "sessionWhere": "지금 보고 있는 탭 안",
+      "sessionUntil": "탭을 닫을 때 · {{minutes}}분 동안 쓰지 않을 때 · 로그아웃할 때",
+      "sessionNote": "‘로그인 상태 유지’를 선택했을 때만 남습니다. 새로고침할 때마다 다시 로그인하지 않으려는 용도입니다. 다른 탭이나 다른 창에서는 보이지 않습니다.",
+      "stickerKind": "이모티콘 그림",
+      "stickerWhere": "이 브라우저",
+      "stickerUntil": "로그아웃할 때 · 20MB 를 넘으면 오래된 것부터",
+      "stickerNote": "텔레그램을 쓰는 누구에게나 똑같이 보이는 그림이라 개인 정보가 아닙니다. 누가 언제 보냈는지는 남지 않고 그림만 남습니다. 매번 다시 받으면 느려서 담아 둡니다.",
+      "peek": "로그인 상태와 이모티콘 그림 두 가지뿐입니다. 대화 내용은 남지 않습니다."
+    },
+    "never": {
+      "title": "남기지 않는 것",
+      "body": "대화 내용 · 사진과 첨부 파일 · 전화번호 · 연락처 · 로그인 코드. 어느 것도 저장하지 않고, 어디로도 보내지 않습니다."
+    },
+    "device": {
+      "title": "속도는 쓰시는 기기에 달려 있습니다",
+      "body": "거쳐 가는 서버가 없다는 말은, 대화를 받아 오고 압축하는 일을 전부 지금 쓰시는 PC나 휴대폰이 한다는 뜻이기도 합니다. 그래서 같은 대화방이라도 기기 성능에 따라 걸리는 시간이 다릅니다.",
+      "bigChat": "메시지가 아주 많은 대화방은 PC 에서 받으시길 권합니다. 휴대폰은 메모리가 넉넉하지 않아 오래 걸리거나 도중에 멈출 수 있습니다.",
+      "keepOpen": "내보내는 동안에는 이 탭을 닫지 마세요. 화면이 꺼지거나 다른 앱으로 넘어가면 브라우저가 작업을 늦추거나 멈춥니다.",
+      "rate": "텔레그램이 요청 속도를 제한하기 때문에, 기기가 빨라도 대화가 많으면 기다리는 시간이 생깁니다. 멈춘 것이 아닙니다.",
+      "peek": "서버를 거치지 않는 만큼, 걸리는 시간은 쓰시는 PC·휴대폰 성능에 달려 있습니다."
+    },
+    "warning": {
+      "title": "로그인 코드를 요구하는 사이트는 항상 의심하세요",
+      "body": "텔레그램은 로그인 코드를 누구에게도 알려주지 말라고 안내합니다. 이 도구도 예외가 아닙니다. 위에 적은 확인 방법을 직접 해 보시고, 백업이 끝나면 텔레그램 앱에서 이 세션을 종료하세요."
+    }
+  },
+  "credentials": {
+    "title": "시작하기",
+    "modeShared": "바로 시작 (권장)",
+    "modeSharedHint": "이 사이트에 내장된 앱 키를 사용합니다. 전화번호만 입력하면 됩니다.",
+    "modeCustom": "내 api_id 직접 입력",
+    "modeCustomHint": "my.telegram.org 에서 직접 발급한 키를 사용합니다.",
+    "apiId": "api_id",
+    "apiHash": "api_hash",
+    "open": "발급 페이지 열기",
+    "guide": {
+      "title": "api_id 발급 방법",
+      "step1": "my.telegram.org 에 전화번호를 넣으면 텔레그램 앱으로 확인 코드가 옵니다. SMS 가 아니라 앱으로 오니 다른 기기에서 텔레그램을 열어 두세요.",
+      "step2": "로그인 후 <b>API development tools</b> 를 열고 아래처럼 채웁니다. <b>영문과 숫자만</b> 쓰는 게 중요합니다 — 한글이나 특수문자가 들어가면 이유를 안 알려주고 실패합니다.",
+      "step3": "제출하면 api_id 와 api_hash 가 나옵니다. 두 값을 위 칸에 붙여넣으세요.",
+      "fields": {
+        "appTitle": "App title",
+        "shortName": "Short name",
+        "url": "URL",
+        "platform": "Platform",
+        "description": "Description"
+      },
+      "empty": "비워두기",
+      "shortNameNote": "5~32자, 영문·숫자만. 전역에서 유일해야 해서 이미 쓰이는 이름이면 ERROR 만 뜹니다 — 뒤에 숫자를 붙여 보세요.",
+      "trouble": {
+        "title": "ERROR 만 뜨고 만들어지지 않는다면",
+        "intro": "이 페이지는 실패 이유를 알려주지 않습니다. 발생 빈도 순으로 확인해 보세요.",
+        "reload": "<b>먼저 새로고침해 보세요.</b> ERROR 가 떠도 앱은 실제로 만들어져 있는 경우가 꽤 있습니다.",
+        "vpn": "<b>VPN·프록시를 끄세요.</b> 접속 IP 의 국가가 전화번호의 국가와 다르면 보안 시스템이 막습니다. 가장 흔한 원인입니다.",
+        "extensions": "<b>시크릿 창에서 확장 프로그램을 모두 끄고</b> 다시 시도하세요. 광고 차단기가 폼 전송 자체를 막습니다.",
+        "shortName": "<b>Short name 을 바꿔 보세요.</b> 중복이어도 ERROR 로만 표시됩니다.",
+        "spambot": "<b>계정 제한을 확인하세요.</b> 가입한 지 얼마 안 되었거나 스팸 플래그가 걸린 계정은 앱을 만들 수 없습니다. 텔레그램에서 @SpamBot 에게 말을 걸면 알려줍니다.",
+        "wait": "<b>15~60분 기다렸다가 한 번만</b> 다시 시도하세요. 반복 시도 자체가 제한에 걸립니다."
+      }
+    },
+    "remember": "이 브라우저에 api_id 를 기억합니다. 계정 접근 권한이 아니라 앱 식별자라 저장해도 안전합니다.",
+    "keepSignedIn": "이 탭에서 로그인 유지",
+    "keepSignedInHint": "새로고침해도 다시 로그인하지 않아도 됩니다. 탭을 닫거나 {{minutes}}분 동안 쓰지 않으면 지워집니다. 공용 PC 라면 꺼 두세요.",
+    "forget": "저장된 api_id 지우기",
+    "submit": "텔레그램에 연결",
+    "errors": {
+      "required": "필수 입력입니다.",
+      "apiIdFormat": "api_id 는 숫자입니다.",
+      "apiHashFormat": "api_hash 는 32자리 16진수입니다."
+    }
+  },
+  "sessionNotice": {
+    "confirm": "확인",
+    "expired": {
+      "title": "세션이 만료되었습니다",
+      "body": "{{minutes}}분 이상 사용하지 않아 이 브라우저에 저장돼 있던 로그인 정보를 지웠습니다. 계정은 그대로이니 다시 로그인해 주세요."
+    },
+    "invalid": {
+      "title": "다시 로그인해 주세요",
+      "body": "저장돼 있던 로그인 정보를 이어갈 수 없었습니다. 다른 기기에서 이 세션을 종료했거나, 텔레그램이 세션을 만료시켰을 수 있습니다."
+    }
+  },
+  "auth": {
+    "connecting": "텔레그램에 연결하는 중…",
+    "phone": {
+      "title": "전화번호",
+      "willSend": "이 번호로 인증코드를 보냅니다:",
+      "placeholder": "010-1234-5678",
+      "submit": "인증코드 받기"
+    },
+    "code": {
+      "titleApp": "텔레그램 앱으로 받은 코드",
+      "titleSms": "SMS 로 받은 코드",
+      "hint": "다른 기기의 텔레그램 앱에 도착한 5자리 코드를 입력하세요.",
+      "submit": "로그인",
+      "changeNumber": "다른 번호로 로그인"
+    },
+    "password": {
+      "title": "2단계 인증 비밀번호",
+      "hint": "계정에 설정한 2단계 인증 비밀번호를 입력하세요.",
+      "hintLabel": "힌트: {{hint}}",
+      "submit": "확인"
+    },
+    "signedInAs": "{{name}} 님으로 로그인됨"
+  },
+  "dialogs": {
+    "title": "대화방",
+    "subtitle": "백업할 대화방을 고르세요.",
+    "loading": "대화방을 불러오는 중…",
+    "empty": "대화방이 없습니다.",
+    "count": "{{count, number}}개",
+    "filtered": "{{total, number}}개 중 {{shown, number}}개",
+    "noMatch": "이름이 일치하는 대화방이 없습니다.",
+    "searchPlaceholder": "대화방 이름으로 검색",
+    "searchClear": "검색어 지우기",
+    "unread": "안 읽음 {{count}}",
+    "type": {
+      "user": "개인",
+      "group": "그룹",
+      "channel": "채널"
+    },
+    "mediaNote": "사진·파일 같은 첨부는 아직 내려받지 않습니다. 메시지 본문과 첨부 종류만 저장됩니다."
+  },
+  "messages": {
+    "loading": "메시지를 불러오는 중…",
+    "empty": "메시지가 없습니다.",
+    "loadOlder": "이전 메시지 더 보기",
+    "loadNewer": "이후 메시지 더 보기",
+    "albumCount": "사진 {{count, number}}장",
+    "edited": "수정됨",
+    "photoViewer": "사진 크게 보기",
+    "previousPhoto": "이전 사진",
+    "nextPhoto": "다음 사진",
+    "dayEmpty": "{{date}} 에는 대화가 없습니다. 그 이후 첫 대화인 {{landed}} 부터 보여 드립니다.",
+    "jumpToDate": "날짜로 이동",
+    "backToLatest": "최신으로",
+    "export": "내보내기",
+    "media": "첨부: {{type}}",
+    "action": "시스템 메시지: {{type}}",
+    "sender": {
+      "bot": "봇",
+      "channel": "채널"
+    },
+    "mediaKind": {
+      "photo": "사진",
+      "sticker": "스티커",
+      "video": "영상",
+      "gif": "GIF",
+      "audio": "음성",
+      "file": "파일",
+      "contact": "연락처",
+      "geo": "위치",
+      "poll": "투표",
+      "webpage": "링크",
+      "venue": "장소",
+      "dice": "주사위",
+      "game": "게임",
+      "invoice": "청구서",
+      "story": "스토리",
+      "voice": "음성 메모",
+      "videoNote": "원형 영상",
+      "unsupported": "지원되지 않는 형식",
+      "geolive": "실시간 위치",
+      "giveaway": "경품 추첨",
+      "giveawayresults": "경품 결과",
+      "paidmedia": "유료 미디어"
+    }
+  },
+  "calendar": {
+    "prevMonth": "이전 달",
+    "nextMonth": "다음 달",
+    "check": "이 달에 대화 있는 날 확인",
+    "checking": "{{date}} 확인 중… ({{done}}/{{total}})",
+    "checkingDay": "{{date}} 확인 중…",
+    "dayEmpty": "{{date}} 에는 대화가 없습니다. 다른 날짜를 골라 주세요.",
+    "legendHas": "대화 있음",
+    "legendEmpty": "대화 없음",
+    "dayCount": "{{count, number}}개"
+  },
+  "export": {
+    "title": "이 대화방 내보내기",
+    "description": "메시지를 zip 으로 내려받습니다. 압축까지 브라우저 안에서 끝나고 어떤 서버도 거치지 않습니다.",
+    "start": "zip 으로 내보내기",
+    "cancel": "중단",
+    "from": "시작 날짜",
+    "to": "끝 날짜",
+    "rangeHint": "오래된 대화방은 기간을 나눠 받는 편이 안전합니다.",
+    "wholeHistory": "전체 기간 내보내기",
+    "wholeHistoryHint": "날짜를 무시하고 처음부터 끝까지 받습니다. 메시지가 많으면 텔레그램 제한 때문에 아주 오래 걸릴 수 있습니다.",
+    "progress": "{{count, number}}개 내보내는 중…",
+    "waiting": "텔레그램 요청 제한으로 대기 중입니다. 멈춘 것이 아니니 창을 닫지 마세요.",
+    "done": "완료. {{count, number}}개를 저장했습니다.",
+    "savedPicked": "저장할 때 고르신 위치에 있습니다. 브라우저는 보안상 전체 경로를 알려주지 않아 파일 이름만 표시합니다.",
+    "savedDownload": "브라우저의 다운로드 폴더에 있습니다.",
+    "memoryFallback": "이 브라우저는 파일에 바로 쓰는 기능을 지원하지 않아, 다 만든 뒤 한 번에 내려받습니다. 아주 큰 대화방은 크롬·엣지에서 받는 편이 안전합니다.",
+    "presets": "빠른 선택",
+    "presetToday": "오늘",
+    "presetWeek": "최근 7일",
+    "presetMonth": "최근 30일",
+    "stats": {
+      "total": "전체 메시지",
+      "messages": "{{count, number}}",
+      "period": "기간"
+    },
+    "includeTitle": "첨부 파일 함께 내보내기",
+    "includePhotos": "사진",
+    "includePhotosHint": "대화에 오간 사진을 원본으로 함께 담습니다. 스티커는 담지 않습니다. 사진이 많으면 시간과 용량이 크게 늘어납니다.",
+    "includeNote": "담지 않아도 어떤 파일이 오갔는지는 목록으로 남습니다.",
+    "progressFiles": "사진 담는 중… {{files, number}}/{{totalFiles, number}}",
+    "deviceTitle": "이 작업은 지금 쓰시는 기기가 합니다",
+    "deviceBody": "거쳐 가는 서버가 없어서, 대화를 받아 오고 압축하는 일을 전부 이 PC 또는 휴대폰이 처리합니다. 그래서 기기 성능에 따라 걸리는 시간이 크게 다릅니다. 메시지가 많거나 사진을 함께 담는 경우에는 PC 에서 받으시고, 끝날 때까지 이 탭을 닫지 마세요."
+  },
+  "errors": {
+    "title": "오류",
+    "API_ID_INVALID": "api_id 또는 api_hash 가 올바르지 않습니다.",
+    "API_ID_PUBLISHED_FLOOD": "이 앱 키가 텔레그램에 의해 제한되었습니다. my.telegram.org 에서 직접 발급한 api_id 로 다시 시도해 주세요.",
+    "AUTH_RESTART": "인증을 처음부터 다시 진행해야 합니다.",
+    "AUTH_USER_CANCEL": "인증이 취소되었습니다.",
+    "FLOOD_WAIT": "요청이 너무 잦습니다. {{duration}} 후에 다시 시도해 주세요.",
+    "PASSWORD_HASH_INVALID": "2단계 인증 비밀번호가 올바르지 않습니다.",
+    "PHONE_CODE_EXPIRED": "인증코드가 만료되었습니다. 코드를 다시 받아 주세요.",
+    "PHONE_CODE_INVALID": "인증코드가 올바르지 않습니다.",
+    "PHONE_NUMBER_BANNED": "차단된 번호입니다.",
+    "PHONE_NUMBER_INVALID": "전화번호 형식이 올바르지 않습니다. 국가번호를 포함했는지 확인하세요.",
+    "PHONE_NUMBER_UNOCCUPIED": "이 번호로 만들어진 텔레그램 계정이 없습니다.",
+    "PHONE_PASSWORD_FLOOD": "비밀번호 시도가 너무 잦습니다. 잠시 후 다시 시도해 주세요.",
+    "SESSION_PASSWORD_NEEDED": "2단계 인증 비밀번호가 필요합니다.",
+    "PEER_NOT_CACHED": "대화방 정보가 만료되었습니다. 목록으로 돌아가 다시 선택해 주세요.",
+    "SESSION_REVOKED": "세션이 종료되었습니다. 다시 로그인해 주세요.",
+    "UPDATE_APP_TO_LOGIN": "텔레그램이 이 방식의 로그인을 더 이상 허용하지 않습니다.",
+    "UNKNOWN": "알 수 없는 오류가 발생했습니다: {{raw}}",
+    "duration": {
+      "seconds": "{{count}}초",
+      "minutes": "{{count}}분",
+      "hours": "{{count}}시간"
+    }
+  },
+  "mediaInfo": {
+    "title": "첨부 파일 정보",
+    "id": "파일 id",
+    "messageId": "메시지 id",
+    "kind": "종류",
+    "fileName": "파일명",
+    "mimeType": "형식",
+    "size": "해상도",
+    "bytes": "크기",
+    "uploaded": "올라온 시각",
+    "dc": "데이터센터",
+    "accessHash": "access hash",
+    "copy": "전체 복사",
+    "duration": "길이"
+  }
+}

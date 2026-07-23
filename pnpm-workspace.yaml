@@ -1,0 +1,8 @@
+# 독립 pnpm 프로젝트다. pnpm 11 에서 빌드 스크립트(postinstall) 실행 허용 여부를 여기서 지정한다.
+allowBuilds:
+  esbuild: true
+  # 아래 셋은 GramJS 가 끌고 오는 Node 전용 의존성이다. 우리는 브라우저로만 번들하므로
+  # (ws 대신 브라우저 내장 WebSocket 을 쓴다) 네이티브 빌드가 필요 없다.
+  bufferutil: false
+  utf-8-validate: false
+  es5-ext: false

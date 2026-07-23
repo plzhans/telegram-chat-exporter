@@ -1,0 +1,2 @@
+# SPA 폴백. createBrowserRouter 를 쓰므로 /dialogs 같은 경로로 새로고침해도 index.html 을 줘야 한다.
+/*  /index.html  200

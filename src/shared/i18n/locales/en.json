@@ -1,0 +1,298 @@
+{
+  "app": {
+    "title": "Telegram Exporter",
+    "tagline": "Back up Telegram chats entirely in your browser"
+  },
+  "common": {
+    "next": "Next",
+    "back": "Back",
+    "cancel": "Cancel",
+    "retry": "Try again",
+    "source": "Source code",
+    "signOut": "Sign out and terminate session"
+  },
+  "trust": {
+    "purpose": "This page exists to let you back up your Telegram conversations, simply.",
+    "lede": "It saves your chats as a zip file. Everything happens inside your browser — the program you use to view the web, such as Chrome or Safari.",
+    "how": {
+      "title": "How it works",
+      "noServer": {
+        "title": "Nothing passes through a server of ours",
+        "body": "Most websites send what you type to their own servers. This page has no such server at all. Your browser talks to Telegram directly."
+      },
+      "credentials": {
+        "title": "Your phone number and login code go only to Telegram",
+        "body": "The values needed to sign in are used for nothing but the request to Telegram. There is no path by which we could see them."
+      },
+      "download": {
+        "title": "Your messages become a file straight away",
+        "body": "Messages are shown on screen, and when you export, they are zipped and saved to your own computer. Nothing is uploaded anywhere."
+      }
+    },
+    "verify": {
+      "title": "How to check for yourself",
+      "csp": "This page is locked so that it <strong>cannot connect to any address</strong> other than Telegram (<code>wss://*.web.telegram.org</code>). Your browser enforces that rule, so not even the author of this page can break it.",
+      "devtools": "Press F12 (⌥⌘I on a Mac) and open the <strong>Network</strong> tab to see every address this page actually connects to.",
+      "source": "The full source code is public.",
+      "peek": "See for yourself that this page cannot connect anywhere else."
+    },
+    "stored": {
+      "title": "What stays in this browser",
+      "lede": "No personal information and no message content is kept. Only material that looks the same to everyone, plus the value that keeps you signed in. This table is the complete list.",
+      "colKind": "What",
+      "colWhere": "Where it is kept",
+      "colUntil": "When it is deleted",
+      "sessionKind": "Signed-in state",
+      "sessionWhere": "Inside this tab only",
+      "sessionUntil": "When you close the tab · after {{minutes}} minutes idle · when you sign out",
+      "sessionNote": "Kept only if you tick “stay signed in”, so that a refresh doesn't make you log in again. Other tabs and windows cannot see it.",
+      "stickerKind": "Sticker images",
+      "stickerWhere": "This browser",
+      "stickerUntil": "When you sign out · oldest first once past 20MB",
+      "stickerNote": "Stickers look the same to everyone on Telegram, so they aren't personal information. Only the picture is kept — never who sent it or when. They are cached because fetching them again each time is slow.",
+      "peek": "Just two things: your signed-in state and sticker images. No message content."
+    },
+    "never": {
+      "title": "What is never kept",
+      "body": "Message content · photos and attachments · your phone number · your contacts · your login code. None of it is stored, and none of it is sent anywhere."
+    },
+    "device": {
+      "title": "Speed depends on the device you're using",
+      "body": "Having no server in the middle also means the PC or phone you're on right now does all the fetching and compressing itself. So the same chat can take a different amount of time on a different device.",
+      "bigChat": "For chats with a great many messages, use a PC. Phones have less memory to spare, so an export can be slow or stop partway.",
+      "keepOpen": "Keep this tab open while exporting. If the screen turns off or you switch to another app, the browser will slow the work down or pause it.",
+      "rate": "Telegram limits how fast requests can be made, so a large chat means waiting even on a fast device. It hasn't stalled.",
+      "peek": "With no server in the middle, how long it takes depends on your own PC or phone."
+    },
+    "warning": {
+      "title": "Always be suspicious of a site asking for your login code",
+      "body": "Telegram tells you never to share your login code with anyone. This tool is no exception. Please run the checks above yourself, and end this session from the Telegram app once your backup is done."
+    }
+  },
+  "credentials": {
+    "title": "Get started",
+    "modeShared": "Start now (recommended)",
+    "modeSharedHint": "Uses the app key bundled with this site. You only need your phone number.",
+    "modeCustom": "Use my own api_id",
+    "modeCustomHint": "Use a key you registered yourself at my.telegram.org.",
+    "apiId": "api_id",
+    "apiHash": "api_hash",
+    "open": "Open the registration page",
+    "guide": {
+      "title": "How to get an api_id",
+      "step1": "Enter your phone number at my.telegram.org. The confirmation code arrives in the Telegram app, not by SMS — keep Telegram open on another device.",
+      "step2": "Once signed in, open <b>API development tools</b> and fill it in like this. Use <b>Latin letters and digits only</b> — anything else fails without telling you why.",
+      "step3": "Submitting gives you an api_id and an api_hash. Paste both into the fields above.",
+      "fields": {
+        "appTitle": "App title",
+        "shortName": "Short name",
+        "url": "URL",
+        "platform": "Platform",
+        "description": "Description"
+      },
+      "empty": "leave empty",
+      "shortNameNote": "5–32 characters, letters and digits only. It has to be globally unique, and a name already taken shows up as a bare ERROR — try adding a number.",
+      "trouble": {
+        "title": "If all you get is ERROR",
+        "intro": "That page never tells you why it failed. Check these, most likely first.",
+        "reload": "<b>Reload the page first.</b> The app is often created even though ERROR appeared.",
+        "vpn": "<b>Turn off your VPN or proxy.</b> If your IP's country differs from your phone number's country, Telegram blocks it. This is the most common cause.",
+        "extensions": "<b>Retry in a private window with every extension disabled.</b> Ad blockers stop the form submission itself.",
+        "shortName": "<b>Try a different short name.</b> A name collision also shows up as a bare ERROR.",
+        "spambot": "<b>Check for account restrictions.</b> New or flagged accounts cannot create apps. Message @SpamBot in Telegram to find out.",
+        "wait": "<b>Wait 15–60 minutes and try once.</b> Repeated attempts are rate limited on their own."
+      }
+    },
+    "remember": "Remembers your api_id in this browser. It is an app identifier, not account access, so storing it is safe.",
+    "keepSignedIn": "Stay signed in on this tab",
+    "keepSignedInHint": "Reloading won't ask you to sign in again. Closing the tab or leaving it unused for {{minutes}} minutes clears it. Turn this off on a shared computer.",
+    "forget": "Forget stored api_id",
+    "submit": "Connect to Telegram",
+    "errors": {
+      "required": "This field is required.",
+      "apiIdFormat": "api_id must be a number.",
+      "apiHashFormat": "api_hash must be 32 hex characters."
+    }
+  },
+  "sessionNotice": {
+    "confirm": "OK",
+    "expired": {
+      "title": "Your session expired",
+      "body": "You hadn't used this tab for over {{minutes}} minutes, so the sign-in details stored in this browser were cleared. Your account is untouched — just sign in again."
+    },
+    "invalid": {
+      "title": "Please sign in again",
+      "body": "The stored sign-in details could not be resumed. The session may have been terminated from another device, or Telegram expired it."
+    }
+  },
+  "auth": {
+    "connecting": "Connecting to Telegram…",
+    "phone": {
+      "title": "Phone number",
+      "willSend": "The code will be sent to:",
+      "placeholder": "010-1234-5678",
+      "submit": "Send me a code"
+    },
+    "code": {
+      "titleApp": "Code sent to your Telegram app",
+      "titleSms": "Code sent by SMS",
+      "hint": "Enter the 5-digit code that arrived in Telegram on another device.",
+      "submit": "Sign in",
+      "changeNumber": "Use a different number"
+    },
+    "password": {
+      "title": "Two-step verification password",
+      "hint": "Enter the two-step verification password set on your account.",
+      "hintLabel": "Hint: {{hint}}",
+      "submit": "Confirm"
+    },
+    "signedInAs": "Signed in as {{name}}"
+  },
+  "dialogs": {
+    "title": "Chats",
+    "subtitle": "Pick the chats you want to back up.",
+    "loading": "Loading chats…",
+    "empty": "No chats found.",
+    "count": "{{count, number}} chats",
+    "filtered": "{{shown, number}} of {{total, number}}",
+    "noMatch": "No chat name matches that.",
+    "searchPlaceholder": "Search chats by name",
+    "searchClear": "Clear search",
+    "unread": "{{count}} unread",
+    "type": {
+      "user": "Direct",
+      "group": "Group",
+      "channel": "Channel"
+    },
+    "mediaNote": "Attachments such as photos and files are not downloaded yet. Only message text and the attachment type are saved."
+  },
+  "messages": {
+    "loading": "Loading messages…",
+    "empty": "No messages here.",
+    "loadOlder": "Load older messages",
+    "loadNewer": "Load newer messages",
+    "albumCount": "{{count, number}} photos",
+    "edited": "edited",
+    "photoViewer": "Photo viewer",
+    "previousPhoto": "Previous photo",
+    "nextPhoto": "Next photo",
+    "dayEmpty": "No messages on {{date}}. Showing from {{landed}}, the next day with messages.",
+    "jumpToDate": "Jump to date",
+    "backToLatest": "Back to latest",
+    "export": "Export",
+    "media": "Attachment: {{type}}",
+    "action": "System message: {{type}}",
+    "sender": {
+      "bot": "bot",
+      "channel": "channel"
+    },
+    "mediaKind": {
+      "photo": "photo",
+      "sticker": "sticker",
+      "video": "video",
+      "gif": "GIF",
+      "audio": "audio",
+      "file": "file",
+      "contact": "contact",
+      "geo": "location",
+      "poll": "poll",
+      "webpage": "link",
+      "venue": "venue",
+      "dice": "dice",
+      "game": "game",
+      "invoice": "invoice",
+      "story": "story",
+      "voice": "voice message",
+      "videoNote": "video note",
+      "unsupported": "unsupported",
+      "geolive": "live location",
+      "giveaway": "giveaway",
+      "giveawayresults": "giveaway results",
+      "paidmedia": "paid media"
+    }
+  },
+  "calendar": {
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month",
+    "check": "Check which days have messages",
+    "checking": "Checking {{date}}… ({{done}}/{{total}})",
+    "checkingDay": "Checking {{date}}…",
+    "dayEmpty": "No messages on {{date}}. Pick another day.",
+    "legendHas": "has messages",
+    "legendEmpty": "no messages",
+    "dayCount": "{{count, number}} messages"
+  },
+  "export": {
+    "title": "Export this chat",
+    "description": "Downloads messages as a zip. Compression happens in your browser and no server is involved.",
+    "start": "Export as zip",
+    "cancel": "Stop",
+    "from": "From",
+    "to": "To",
+    "rangeHint": "For very old chats, exporting in slices is safer.",
+    "wholeHistory": "Export the whole history",
+    "wholeHistoryHint": "Ignores the dates and takes everything from the start. Large chats can take a very long time because of Telegram's rate limits.",
+    "progress": "Exported {{count, number}} so far…",
+    "waiting": "Waiting out a Telegram rate limit. It hasn't stalled — please keep this tab open.",
+    "done": "Done. Saved {{count, number}} messages.",
+    "savedPicked": "It's in the location you picked. Browsers don't reveal the full path for security, so only the file name is shown.",
+    "savedDownload": "It's in your browser's downloads folder.",
+    "memoryFallback": "This browser can't write straight to a file, so the zip is built first and downloaded at the end. For very large chats, Chrome or Edge is safer.",
+    "presets": "Quick pick",
+    "presetToday": "Today",
+    "presetWeek": "Last 7 days",
+    "presetMonth": "Last 30 days",
+    "stats": {
+      "total": "Total messages",
+      "messages": "{{count, number}}",
+      "period": "Period"
+    },
+    "includeTitle": "Include attachments",
+    "includePhotos": "Photos",
+    "includePhotosHint": "Saves the full-size photos from this chat alongside the messages. Stickers are not included. Many photos means much more time and space.",
+    "includeNote": "Even without this, a list of what was sent is always included.",
+    "progressFiles": "Saving photos… {{files, number}}/{{totalFiles, number}}",
+    "deviceTitle": "This work is done by the device you're on",
+    "deviceBody": "There is no server in the middle, so this PC or phone does all the fetching and compressing itself — which means the time it takes depends heavily on the device. For large chats, or when including photos, use a PC and keep this tab open until it finishes."
+  },
+  "errors": {
+    "title": "Error",
+    "API_ID_INVALID": "The api_id or api_hash is not valid.",
+    "API_ID_PUBLISHED_FLOOD": "Telegram has restricted this app key. Please register your own api_id at my.telegram.org and try again.",
+    "AUTH_RESTART": "Authentication has to start over.",
+    "AUTH_USER_CANCEL": "Authentication was cancelled.",
+    "FLOOD_WAIT": "Too many requests. Please try again in {{duration}}.",
+    "PASSWORD_HASH_INVALID": "That two-step verification password is not correct.",
+    "PHONE_CODE_EXPIRED": "The login code expired. Please request a new one.",
+    "PHONE_CODE_INVALID": "That login code is not correct.",
+    "PHONE_NUMBER_BANNED": "This phone number is banned.",
+    "PHONE_NUMBER_INVALID": "That phone number looks wrong. Check that you included the country code.",
+    "PHONE_NUMBER_UNOCCUPIED": "No Telegram account exists for this number.",
+    "PHONE_PASSWORD_FLOOD": "Too many password attempts. Please wait and try again.",
+    "SESSION_PASSWORD_NEEDED": "A two-step verification password is required.",
+    "PEER_NOT_CACHED": "This chat's details expired. Go back to the list and pick it again.",
+    "SESSION_REVOKED": "The session was terminated. Please sign in again.",
+    "UPDATE_APP_TO_LOGIN": "Telegram no longer allows signing in this way.",
+    "UNKNOWN": "Something went wrong: {{raw}}",
+    "duration": {
+      "seconds": "{{count}} seconds",
+      "minutes": "{{count}} minutes",
+      "hours": "{{count}} hours"
+    }
+  },
+  "mediaInfo": {
+    "title": "Attachment details",
+    "id": "File id",
+    "messageId": "Message id",
+    "kind": "Kind",
+    "fileName": "File name",
+    "mimeType": "MIME type",
+    "size": "Dimensions",
+    "bytes": "Size",
+    "uploaded": "Uploaded",
+    "dc": "Data center",
+    "accessHash": "Access hash",
+    "copy": "Copy all",
+    "duration": "Duration"
+  }
+}

@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+
+  /*
+    기준 글자 크기. Tailwind 의 text-* 는 전부 rem 이라 여기만 올리면 비율대로 커진다.
+    medifinder-web 과 같은 값으로 맞춰 둔다.
+  */
+  font-size: 17px;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  @apply bg-slate-50 text-slate-900 antialiased;
+}
+
+/*
+  모달 뒷배경. Tailwind 의 backdrop: 변형 대신 여기서 직접 쓴다 —
+  `::backdrop` 은 상속받는 값이 거의 없어서 유틸리티로 조립할 이점이 없다.
+*/
+dialog::backdrop {
+  background-color: rgb(15 23 42 / 0.4);
+}
+
+/*
+  상자 안에서 스크롤되는 영역.
+
+  기본 스크롤바는 상자 테두리에 딱 붙어서 "창 가장자리에 달린 것"처럼 보인다. 여기서는
+  막대를 얇게 만들고 `border` + `background-clip: content-box` 로 좌우를 비워, 막대가
+  **상자 안쪽에 떠 있는** 모양이 되게 한다. 대화 내용과 같은 면 위에 있다는 인상을 준다.
+*/
+.scroll-area {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(203 213 225) transparent;
+  /* 스크롤이 끝에 닿았을 때 바깥(페이지)으로 전파되지 않게 막는다. */
+  overscroll-behavior: contain;
+}
+
+.scroll-area::-webkit-scrollbar {
+  width: 10px;
+}
+
+.scroll-area::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scroll-area::-webkit-scrollbar-thumb {
+  background-color: rgb(203 213 225);
+  border-radius: 9999px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+
+.scroll-area::-webkit-scrollbar-thumb:hover {
+  background-color: rgb(148 163 184);
+}

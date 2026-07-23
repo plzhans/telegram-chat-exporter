@@ -1,0 +1,11 @@
+# Cloudflare Pages / Netlify 용 응답 헤더.
+#
+# CSP 는 index.html 의 <meta> 로도 들어가지만(vite.config.ts 참고), **진짜 헤더가 우선이다.**
+# meta 태그는 파싱이 시작된 뒤에야 적용되고 frame-ancestors 를 지원하지 않는다. 정적 호스팅이
+# 헤더를 지원하면 여기가 실제 방어선이고, meta 는 file:// 로 열어본 경우의 보험이다.
+/*
+  Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src wss://*.web.telegram.org wss://*.web.telegram.org:443; form-action 'none'; base-uri 'none'; frame-ancestors 'none'
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: no-referrer
+  Cross-Origin-Opener-Policy: same-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), interest-cohort=()
