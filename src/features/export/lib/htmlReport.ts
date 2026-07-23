@@ -202,10 +202,12 @@ export interface HtmlReportMeta {
  */
 const STYLE = `
 *,*::before,*::after{box-sizing:border-box}
+/* The column width is shared: the jump button anchors to this column, not the window. */
+:root{--col:48rem}
 body{margin:0;background:#fff;color:#0F172A;
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
   font-size:16px;line-height:1.6;-webkit-text-size-adjust:100%}
-.wrap{max-width:48rem;margin:0 auto;padding:16px}
+.wrap{max-width:var(--col);margin:0 auto;padding:16px}
 /* provenance line, always visible but never loud */
 .brand{margin:0 0 8px;font-size:11px;color:#94A3B8;text-align:right}
 .brand a{color:#64748B;text-decoration:none}
@@ -290,11 +292,17 @@ body{margin:0;background:#fff;color:#0F172A;
 .ico{display:inline-flex;vertical-align:-3px;margin-right:2px}
 .ico svg{width:14px;height:14px;fill:currentColor}
 /* Jump to the newest message. A plain anchor link - this document stays script-free. */
-.jump{position:fixed;right:16px;bottom:16px;z-index:50;width:40px;height:40px;
-  border-radius:999px;background:#fff;border:1px solid #E2E8F0;
-  box-shadow:0 1px 3px rgba(15,23,42,.12);display:flex;align-items:center;
-  justify-content:center;color:#475569;text-decoration:none;font-size:16px;line-height:1}
-.jump:hover{background:#F8FAFC;color:#0F172A}
+.jump{position:fixed;bottom:16px;z-index:50;width:40px;height:40px;
+  /*
+    Anchor to the text column, not the window. On a wide screen a button pinned to the
+    window corner sits far from the conversation and reads as part of the browser, not
+    the document. max() keeps it on screen when the window is narrower than the column.
+  */
+  right:max(16px, calc(50% - var(--col) / 2 + 16px));
+  border-radius:999px;background:#fff;border:1px solid #CBD5E1;
+  box-shadow:0 2px 8px rgba(15,23,42,.18);display:flex;align-items:center;
+  justify-content:center;color:#334155;text-decoration:none;font-size:18px;line-height:1}
+.jump:hover{background:#F1F5F9;color:#0F172A;border-color:#94A3B8}
 @media print{.wrap{max-width:none}.row{break-inside:avoid}.jump{display:none}
   .zoom:target{position:static;transform:none}.zoom:target ~ .cl{display:none}
   .head details{display:block}.head dl{display:grid}.head summary{display:none}}
