@@ -37,6 +37,18 @@ interface AuthState {
   /** 저장된 세션 복원을 시도해 봤는지. 이게 false 인 동안은 화면을 그리면 안 된다. */
   booted: boolean;
   error: TelegramErrorInfo | null;
+  /**
+   * 요청 제한이 풀리는 시각(epoch ms). 걸린 적이 없으면 undefined.
+   *
+   * **`error` 와 따로 둔다.** 오류 문구는 화면을 옮길 때마다 지워진다 — `submitPhone`,
+   * `restart`, `cancel` 이 전부 `error: null` 로 되돌린다. 제한을 거기서 끌어내면 취소 한
+   * 번으로 잠금이 풀려서, 텔레그램은 여전히 막고 있는데 버튼만 다시 눌리는 상태가 된다.
+   *
+   * 제한은 텔레그램이 **전화번호에** 건 것이라 우리 화면 사정과 무관하다. 그래서 지우지
+   * 않고 시각이 지나기를 기다린다. 새로고침하면 사라지는데, 그건 감수한다 — 이 앱은
+   * 남기지 않는 것이 신뢰 근거라 이것 하나 때문에 저장소를 열지 않는다.
+   */
+  floodUntil?: number;
   me: MeInfo | null;
   /** 코드가 텔레그램 앱으로 갔는지(true) SMS 로 갔는지(false). 안내 문구가 달라진다. */
   codeViaApp: boolean;
@@ -81,6 +93,17 @@ const pending: {
 const CANCEL = Object.assign(new Error('AUTH_USER_CANCEL'), {
   errorMessage: 'AUTH_USER_CANCEL',
 });
+
+/**
+ * 오류를 화면용으로 풀면서, 요청 제한이면 풀리는 시각도 함께 남긴다.
+ *
+ * 제한은 `error` 와 수명이 다르다(위 `floodUntil` 주석 참고). 한 자리에서 같이 만들어야
+ * 오류를 세우는 경로가 늘어도 잠금이 빠지지 않는다.
+ */
+function describeWithFlood(err: unknown): Pick<AuthState, 'error' | 'floodUntil'> {
+  const error = describeError(err);
+  return error.waitUntil ? { error, floodUntil: error.waitUntil } : { error };
+}
 
 function rejectAllPending(reason: unknown) {
   for (const key of ['phone', 'code', 'password'] as const) {
@@ -174,7 +197,7 @@ export const useAuth = create<AuthState>((set) => ({
          */
         onError: async (err) => {
           if (isUserCancel(err)) return true;
-          set({ error: describeError(err), busy: false });
+          set({ ...describeWithFlood(err), busy: false });
           return false;
         },
       });
