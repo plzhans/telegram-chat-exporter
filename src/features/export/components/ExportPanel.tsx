@@ -7,7 +7,7 @@ import { Checkbox } from '@/shared/ui/Checkbox';
 import { ErrorNotice } from '@/shared/ui/ErrorNotice';
 import { Modal } from '@/shared/ui/Modal';
 import { isMobileDevice, prefersReducedData } from '@/shared/lib/device';
-import { useDuration } from '@/shared/lib/duration';
+import { useCountdown, useDuration } from '@/shared/lib/duration';
 import { Field } from '@/shared/ui/Field';
 import { Input } from '@/shared/ui/Input';
 import type { TelegramErrorInfo } from '@/shared/telegram/errors';
@@ -127,14 +127,6 @@ export function ExportPanel({ dialog, defaultFrom, defaultTo }: ExportPanelProps
   useEffect(() => () => abortRef.current?.abort(), []);
 
   /**
-   * 남은 대기 시간(초). 대기 중이 아니면 null.
-   *
-   * 진행 정보는 **끝나는 시각**만 실어 온다(ExportProgress.floodWaitUntil). 그동안 다른
-   * 숫자는 하나도 안 바뀌므로, 여기서 1초마다 다시 계산해야 세어 내려가는 것으로 보인다.
-   */
-  const [remainSeconds, setRemainSeconds] = useState<number | null>(null);
-
-  /**
    * 되돌릴 수 없는 동작 앞에 한 번 더 묻는 자리.
    *
    * 세 가지가 여기 걸린다 - 전체 기간, 실제 내려받기 시작, 중단. 셋 다 누른 뒤에 "아차"
@@ -144,21 +136,25 @@ export function ExportPanel({ dialog, defaultFrom, defaultTo }: ExportPanelProps
   const [confirm, setConfirm] = useState<'whole' | 'data' | 'abort' | null>(null);
   const formatDuration = useDuration();
 
+  /**
+   * 남은 대기 시간(초). 대기 중이 아니면 null.
+   *
+   * 진행 정보는 **끝나는 시각**만 실어 온다(ExportProgress.floodWaitUntil). 그동안 다른
+   * 숫자는 하나도 안 바뀌므로, 세어 내려가는 일은 화면 쪽 몫이다. 로그인 화면의 요청 제한
+   * 안내도 같은 훅을 쓴다 — 같은 제한을 두고 화면마다 다르게 세면 안 된다.
+   */
+  const remainSeconds = useCountdown(phase === 'running' ? progress.floodWaitUntil : undefined);
+
   useEffect(() => {
     if (phase !== 'running') {
       setStalled(false);
-      setRemainSeconds(null);
       return;
     }
-    const tick = () => {
-      setStalled(Date.now() - lastTickRef.current > STALL_THRESHOLD_MS);
-      const until = progress.floodWaitUntil;
-      setRemainSeconds(until ? Math.max(0, Math.ceil((until - Date.now()) / 1000)) : null);
-    };
+    const tick = () => setStalled(Date.now() - lastTickRef.current > STALL_THRESHOLD_MS);
     tick();
     const timer = setInterval(tick, 1000);
     return () => clearInterval(timer);
-  }, [phase, progress.floodWaitUntil]);
+  }, [phase]);
 
   /**
    * 오늘을 끝으로 두고 `back` 일 만큼 거슬러 올라간 기간을 넣는다.

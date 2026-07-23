@@ -1,6 +1,6 @@
 import { Api } from 'telegram';
 import { requireClient } from '@/shared/auth/useAuth';
-import { describeError } from '@/shared/telegram/errors';
+import { describeError, floodWaitSeconds } from '@/shared/telegram/errors';
 import {
   dateKeyOf,
   endOfDayUnix,
@@ -138,22 +138,6 @@ function sleep(ms: number, signal: AbortSignal): Promise<void> {
     }
     signal.addEventListener('abort', onAbort, { once: true });
   });
-}
-
-/**
- * 요청 제한 오류에서 남은 초를 읽는다. 그 오류가 아니면 undefined.
- *
- * `describeError` 와 같은 규칙을 쓴다 — `FLOOD_WAIT_86400` 처럼 초가 코드에 붙어서 오고,
- * `FLOOD_PREMIUM_WAIT_` 같은 변종도 모양이 같다.
- */
-function floodWaitSeconds(err: unknown): number | undefined {
-  const seconds = (err as { seconds?: unknown })?.seconds;
-  if (typeof seconds === 'number' && Number.isFinite(seconds)) return seconds;
-  const raw = (err as { errorMessage?: string; message?: string })?.errorMessage ?? String(
-    (err as { message?: string })?.message ?? '',
-  );
-  const matched = /FLOOD(?:_\w+?)?_WAIT_(\d+)/.exec(raw);
-  return matched ? Number(matched[1]) : undefined;
 }
 
 /**

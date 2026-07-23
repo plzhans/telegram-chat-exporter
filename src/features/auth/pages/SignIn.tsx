@@ -52,7 +52,19 @@ export default function SignIn() {
       */}
       {step === 'idle' && <TrustPanel />}
 
-      <ErrorNotice error={error} />
+      {/*
+        **오류는 그 오류를 낸 버튼 옆에 붙인다.**
+
+        전에는 여기 맨 위에 한 번만 띄웠다. 그런데 이 화면은 로그인 코드 경고와 입력칸이
+        차례로 쌓여서, 휴대전화에서는 버튼을 누른 자리와 알림이 한 화면에 같이 안 잡힌다.
+        "인증코드 받기" 를 눌렀는데 아무 일도 안 일어난 것처럼 보이고, 이유는 스크롤을
+        올려야 나온다. 실제로 FLOOD_WAIT 을 맞은 사람이 그걸 못 보고 계속 다시 눌렀다 —
+        누를수록 제한이 늘어나는 오류라 가장 나쁜 방향이다.
+
+        아래 세 단계는 폼이 버튼 바로 위에 자리를 내준다(notice). 폼이 없는 단계만 여기서
+        띄운다 - 어느 쪽이든 오류가 조용히 사라지는 일은 없어야 한다.
+      */}
+      {(step === 'idle' || step === 'connecting') && <ErrorNotice error={error} />}
 
       {step === 'idle' && (
         <CredentialsForm busy={busy} onSubmit={(c, remember) => void start(c, remember)} />
@@ -75,7 +87,12 @@ export default function SignIn() {
         <div className="space-y-3">
           <LoginCodeNotice />
           <div className="edge-card bg-white p-4">
-            <PhoneForm busy={busy} onSubmit={submitPhone} footer={cancelButton} />
+            <PhoneForm
+              busy={busy}
+              onSubmit={submitPhone}
+              notice={<ErrorNotice error={error} />}
+              footer={cancelButton}
+            />
           </div>
         </div>
       )}
@@ -91,6 +108,7 @@ export default function SignIn() {
             submitLabel={t('auth.code.submit')}
             busy={busy}
             onSubmit={submitCode}
+            notice={<ErrorNotice error={error} />}
             footer={
               <div className="space-y-1">
                 <Button
@@ -129,6 +147,7 @@ export default function SignIn() {
             submitLabel={t('auth.password.submit')}
             busy={busy}
             onSubmit={submitPassword}
+            notice={<ErrorNotice error={error} />}
             footer={cancelButton}
             inputProps={{
               type: 'password',

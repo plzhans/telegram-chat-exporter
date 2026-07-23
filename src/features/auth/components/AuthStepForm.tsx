@@ -10,6 +10,14 @@ interface AuthStepFormProps {
   submitLabel: string;
   busy: boolean;
   onSubmit: (value: string) => void;
+  /**
+   * 제출 버튼 **바로 위**에 놓을 것. 오류 알림이 여기로 온다.
+   *
+   * 화면 맨 위에 두면 안 읽힌다. 이 화면은 로그인 코드 경고까지 얹혀 있어서 휴대전화에서는
+   * 버튼과 알림이 한 화면에 같이 잡히지 않는다. 사용자는 방금 누른 버튼을 보고 있으므로,
+   * 그 버튼이 왜 아무 일도 안 했는지는 버튼 옆에 적혀 있어야 한다.
+   */
+  notice?: ReactNode;
   footer?: ReactNode;
   inputProps?: InputHTMLAttributes<HTMLInputElement>;
 }
@@ -27,6 +35,7 @@ export function AuthStepForm({
   submitLabel,
   busy,
   onSubmit,
+  notice,
   footer,
   inputProps,
 }: AuthStepFormProps) {
@@ -47,6 +56,8 @@ export function AuthStepForm({
           {...register('value', { required: true })}
         />
       </Field>
+
+      {notice}
 
       <Button type="submit" size="lg" className="w-full" loading={busy}>
         {submitLabel}

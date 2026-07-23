@@ -15,6 +15,8 @@ import { CountrySelect } from './CountrySelect';
 interface PhoneFormProps {
   busy: boolean;
   onSubmit: (phoneNumber: string) => void;
+  /** 제출 버튼 바로 위에 놓을 것. 오류 알림이 여기로 온다 — AuthStepForm 의 같은 이름 참고. */
+  notice?: ReactNode;
   footer?: ReactNode;
 }
 
@@ -34,7 +36,7 @@ interface PhoneFormProps {
  * **형식이 어긋나도 막지 않는다.** 번호 대역은 계속 새로 생기는데 메타데이터는 늦게
  * 따라온다. 막으면 방금 개통한 번호를 쓰는 사람이 도구를 아예 못 쓴다. 알려만 준다.
  */
-export function PhoneForm({ busy, onSubmit, footer }: PhoneFormProps) {
+export function PhoneForm({ busy, onSubmit, notice, footer }: PhoneFormProps) {
   const { t, i18n } = useTranslation();
   const [phone, setPhone] = useState('');
   const [country, setCountry] = useState<CountryCode | undefined>(() =>
@@ -88,6 +90,8 @@ export function PhoneForm({ busy, onSubmit, footer }: PhoneFormProps) {
       {value && !valid && (
         <p className="text-xs leading-relaxed text-amber-700">{t('auth.phone.unverified')}</p>
       )}
+
+      {notice}
 
       <Button type="submit" size="lg" className="w-full" loading={busy} disabled={!value}>
         {t('auth.phone.submit')}
