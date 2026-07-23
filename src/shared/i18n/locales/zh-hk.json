@@ -1,0 +1,417 @@
+{
+  "nativeName": "中文（香港）",
+  "seo": {
+    "tag": "zh-HK",
+    "ogLocale": "zh_HK",
+    "hreflang": [
+      "zh-HK",
+      "zh-Hant"
+    ],
+    "title": "匯出 Telegram 對話 — 在瀏覽器內完成，不經伺服器儲存 | Telegram Exporter",
+    "shareTitle": "匯出 Telegram 對話 — 在瀏覽器內完成，不經伺服器儲存",
+    "description": "把 Telegram 對話匯出成 zip 檔案的網頁工具。全部在瀏覽器內處理，不經任何伺服器儲存，電話號碼、登入驗證碼和對話內容都不會傳送到別處。無需安裝。",
+    "shareDescription": "在瀏覽器內把 Telegram 對話匯出成 zip 檔案，不經伺服器儲存。"
+  },
+  "app": {
+    "title": "Telegram Exporter",
+    "tagline": "不經中間伺服器的 Telegram 對話備份"
+  },
+  "common": {
+    "next": "下一步",
+    "back": "返回",
+    "cancel": "取消",
+    "retry": "再試一次",
+    "refresh": "重新整理",
+    "source": "原始碼",
+    "language": "語言",
+    "signOut": "登出"
+  },
+  "trust": {
+    "purpose": "這個頁面是為了讓你簡單地備份 Telegram 對話而做的。",
+    "lede": "它會把對話儲存成 zip 檔案。所有處理都在瀏覽器內完成 — 也就是你用來上網的程式，例如 Chrome 或 Safari。",
+    "how": {
+      "title": "運作方式",
+      "noServer": {
+        "title": "沒有經過我們的伺服器",
+        "body": "一般網站會把你輸入的內容送到自己的伺服器。這個頁面根本沒有那種伺服器，是你的瀏覽器直接跟 Telegram 溝通。"
+      },
+      "credentials": {
+        "title": "電話號碼和登入驗證碼只會送去 Telegram",
+        "body": "登入所需的資料只用於向 Telegram 發出的請求，我們沒有任何途徑可以看到它們。"
+      },
+      "download": {
+        "title": "對話會直接變成檔案",
+        "body": "取得的訊息會顯示在畫面上，按下匯出後就會壓縮並儲存到你自己的電腦，不會上傳到任何地方。"
+      }
+    },
+    "verify": {
+      "title": "如何自行查證",
+      "csp": "這個頁面被鎖定成<strong>除了 Telegram（<code>wss://*.web.telegram.org</code>）以外無法連線到任何位址</strong>。這是瀏覽器強制執行的規則，連這個頁面的作者也無法繞過。",
+      "devtools": "按 F12（Mac 上是 ⌥⌘I）打開<strong>網絡</strong>分頁，就能看到這個頁面實際連線的所有位址。",
+      "source": "完整原始碼已經公開。",
+      "peek": "親自確認這個頁面無法連去別的地方。",
+      "cspAnalytics": "這個頁面除了 Telegram（<code>wss://*.web.telegram.org</code>）和用來統計瀏覽次數的 Google Analytics 之外，<strong>無法連線到任何地方</strong>。這是瀏覽器強制執行的規則，網站本身改不了。"
+    },
+    "stored": {
+      "title": "留在這個瀏覽器裡的東西",
+      "lede": "不會保留個人資料，也不會保留對話內容。只有任何人看起來都一樣的公開素材，以及讓你維持登入狀態的一個值。下表就是全部。",
+      "colKind": "項目",
+      "colWhere": "存放位置",
+      "colUntil": "何時刪除",
+      "sessionKind": "登入狀態",
+      "sessionWhere": "只在目前這個分頁內",
+      "sessionUntil": "關閉分頁時 · 閒置 {{minutes}} 分鐘後 · 登出時",
+      "sessionNote": "只有在你勾選「保持登入」時才會保留，目的是重新整理後不用再登入一次。其他分頁或視窗看不到它。",
+      "stickerKind": "貼圖圖片",
+      "stickerWhere": "這個瀏覽器",
+      "stickerUntil": "登出時 · 超過 20MB 後由最舊的開始清除",
+      "stickerNote": "貼圖對所有 Telegram 使用者來說都一樣，不算個人資料。只會保留圖片本身，不會記錄是誰在何時傳送。之所以快取，是因為每次重新取得都很慢。",
+      "peek": "只有兩項：登入狀態和貼圖圖片。不含對話內容。"
+    },
+    "never": {
+      "title": "絕不保留的東西",
+      "body": "對話內容 · 相片和附件 · 電話號碼 · 聯絡人 · 登入驗證碼。這些都不會儲存，除了送去 Telegram 之外也不會送到任何地方。"
+    },
+    "analytics": {
+      "title": "瀏覽統計會連線到 Google",
+      "peek": "只看瀏覽次數，不含對話內容和電話號碼。",
+      "lede": "本網站使用 <strong>Google Analytics</strong> 統計訪客人數。",
+      "network": "也就是說，這個頁面<strong>除了 Telegram 之外也會連線到 Google</strong>。它會從 <code>googletagmanager.com</code> 載入分析程式，並把瀏覽記錄送到 <code>google-analytics.com</code>。這是除 Telegram 以外唯一的對外連線，你可以在開發者工具的網絡分頁看到。",
+      "sent": "會送出的：有人打開了首頁，以及使用哪一種語言。",
+      "notSent": "絕不會送出的：對話內容、電話號碼、登入驗證碼，以及你打開了哪些對話。對話網址含有對話編號，所以那些位址是刻意不送出的。",
+      "block": "用廣告攔截器或瀏覽器的追蹤保護功能擋掉它，也不會影響這個工具運作。",
+      "selfHost": "如果連這樣也不願意，<strong>可以下載程式碼在自己的電腦上執行</strong>。分析設定只有在部署本網站時才會加入，所以你自己建置的版本完全不含分析功能 — 連去 Google 的連線根本不在程式碼裡。"
+    },
+    "ads": {
+      "title": "本站顯示廣告",
+      "peek": "有 Google AdSense 廣告，與你的對話無關。",
+      "body": "本網站刊登 <strong>Google AdSense</strong> 廣告，因此也會連線到 Google 的廣告網絡（<code>googlesyndication.com</code>、<code>doubleclick.net</code>），廣告會在獨立的框架內執行。",
+      "isolation": "廣告程式無法讀取這個頁面上的任何內容。你的對話、電話號碼和登入驗證碼絕不會分享給廣告商。<strong>登入畫面和對話畫面不會放置廣告。</strong>",
+      "selfHost": "想在沒有廣告的情況下使用，<strong>可以下載程式碼在自己的電腦上執行</strong>。廣告設定只有在部署本網站時才會加入，你自己建置的版本完全不含廣告程式。"
+    },
+    "device": {
+      "title": "速度取決於你正在使用的裝置",
+      "body": "中間沒有伺服器，也就代表取得對話和壓縮的工作全部由你現在用的電腦或手機完成。所以同一個對話在不同裝置上所需的時間也會不同。",
+      "bigChat": "訊息非常多的對話建議用電腦處理。手機記憶體較少，匯出可能很慢或中途停下。",
+      "keepOpen": "匯出期間請不要關閉這個分頁。畫面熄滅或切換到其他應用程式時，瀏覽器會拖慢或暫停工作。",
+      "rate": "Telegram 會限制請求速度，所以就算裝置夠快，對話量大時仍需等待。這不是當機。",
+      "peek": "因為中間沒有伺服器，所需時間取決於你自己的電腦或手機。"
+    },
+    "warning": {
+      "title": "這個工具會要求你的登入驗證碼",
+      "principle": "Telegram 提醒你絕對不要把登入驗證碼告訴任何人。這個原則是對的。請不要為這個網站破例，同樣要保持懷疑。",
+      "why": "不過這個工具是以你的身分直接連線到 Telegram 來取得對話的，沒有電話號碼和登入驗證碼就什麼都做不了。那些值只用於送往 Telegram 的請求，不會儲存在任何地方。",
+      "storage": "登入之後留下的只有一個維持連線的值，而且只存在於你現在看著的這個分頁裡，關掉分頁就會消失。",
+      "selfHost": "如果還是不放心，不要只聽別人說。可以自己讀程式碼，或者下載下來在自己的電腦上執行。那樣你看到的就是同一個畫面，跑的是你親自檢查過的程式碼。"
+    }
+  },
+  "credentials": {
+    "title": "開始使用",
+    "modeShared": "立即開始（建議）",
+    "modeSharedHint": "使用本網站內建的應用程式金鑰，你只需要輸入電話號碼。",
+    "modeCustom": "使用我自己的 api_id",
+    "modeCustomHint": "使用你在 my.telegram.org 自行申請的金鑰。",
+    "apiId": "api_id",
+    "apiHash": "api_hash",
+    "open": "打開申請頁面",
+    "guide": {
+      "title": "如何取得 api_id",
+      "step1": "在 my.telegram.org 輸入電話號碼。驗證碼會送到 Telegram 應用程式而不是簡訊，請在另一台裝置上打開 Telegram。",
+      "step2": "登入後打開 <b>API development tools</b>，照下面的方式填寫。只能使用<b>英文字母和數字</b>，其他字元會失敗而且不會說明原因。",
+      "step3": "送出後會得到 api_id 和 api_hash，把兩個值貼到上面的欄位。",
+      "fields": {
+        "appTitle": "App title",
+        "shortName": "Short name",
+        "url": "URL",
+        "platform": "Platform",
+        "description": "Description"
+      },
+      "empty": "留空",
+      "shortNameNote": "5–32 個字元，只能用字母和數字。必須全球唯一，已被使用的名稱只會顯示一個 ERROR，可以試著加上數字。",
+      "trouble": {
+        "title": "如果只看到 ERROR",
+        "intro": "那個頁面不會告訴你失敗的原因。請依序檢查以下項目。",
+        "reload": "<b>先重新整理頁面。</b>即使出現 ERROR，應用程式往往其實已經建立了。",
+        "vpn": "<b>關閉 VPN 或代理。</b>如果 IP 所在國家與電話號碼所屬國家不同，Telegram 會擋下來。這是最常見的原因。",
+        "extensions": "<b>停用所有擴充功能，在無痕視窗重試。</b>廣告攔截器會直接擋住表單送出。",
+        "shortName": "<b>換一個 short name。</b>名稱重複同樣只會顯示一個 ERROR。",
+        "spambot": "<b>檢查帳號是否受限。</b>新註冊或被標記的帳號無法建立應用程式，可以在 Telegram 傳訊息給 @SpamBot 查詢。",
+        "wait": "<b>等 15 至 60 分鐘後再試一次。</b>反覆嘗試本身就會觸發速率限制。"
+      }
+    },
+    "remember": "在這個瀏覽器記住你的 api_id。它是應用程式識別碼而不是帳號存取權，所以保存是安全的。",
+    "keepSignedIn": "在這個分頁保持登入",
+    "keepSignedInHint": "重新整理後不需要再次登入。關閉分頁或閒置 {{minutes}} 分鐘就會清除。在共用電腦上請關掉這個選項。",
+    "forget": "忘記已儲存的 api_id",
+    "submit": "連線到 Telegram",
+    "errors": {
+      "required": "這個欄位是必填的。",
+      "apiIdFormat": "api_id 必須是數字。",
+      "apiHashFormat": "api_hash 必須是 32 個十六進位字元。"
+    }
+  },
+  "sessionNotice": {
+    "confirm": "知道了",
+    "expired": {
+      "title": "登入階段已過期",
+      "body": "這個分頁超過 {{minutes}} 分鐘沒有使用，所以儲存在瀏覽器裡的登入資料已被清除。你的帳號沒有受到影響，重新登入即可。"
+    },
+    "invalid": {
+      "title": "請重新登入",
+      "body": "無法沿用已儲存的登入資料。可能是從其他裝置終止了這個階段，或是 Telegram 讓它過期了。"
+    }
+  },
+  "auth": {
+    "connecting": "正在連線到 Telegram…",
+    "phone": {
+      "title": "電話號碼",
+      "willSend": "驗證碼會送到：",
+      "placeholder": "+852 5123 4567",
+      "submit": "傳送驗證碼",
+      "country": "國家或地區",
+      "countrySearch": "以名稱、代碼或號碼搜尋",
+      "countryEmpty": "沒有符合的項目",
+      "unverified": "這與該地區的號碼格式不符。如果不是打錯，也可以繼續。"
+    },
+    "code": {
+      "titleApp": "驗證碼已送到你的 Telegram 應用程式",
+      "titleSms": "驗證碼已用簡訊送出",
+      "hint": "請輸入在其他裝置的 Telegram 收到的 5 位數驗證碼。",
+      "submit": "登入",
+      "changeNumber": "改用其他號碼"
+    },
+    "password": {
+      "title": "兩步驟驗證密碼",
+      "hint": "請輸入你為帳號設定的兩步驟驗證密碼。",
+      "hintLabel": "提示：{{hint}}",
+      "submit": "確認"
+    },
+    "confirmSignOutTitle": "要登出嗎？",
+    "confirmSignOutBody": "這同時會終止你 Telegram 帳號上的這個階段。想再次使用就需要重新取得登入驗證碼。"
+  },
+  "dialogs": {
+    "title": "對話",
+    "subtitle": "選擇你想備份的對話。",
+    "loading": "正在載入對話…",
+    "empty": "找不到對話。",
+    "count": "{{count, number}} 個",
+    "filtered": "{{total, number}} 個中的 {{shown, number}} 個",
+    "noMatch": "沒有名稱符合的對話。",
+    "searchPlaceholder": "以名稱搜尋對話",
+    "searchClear": "清除搜尋",
+    "unread": "{{count}} 則未讀",
+    "type": {
+      "user": "個人",
+      "group": "群組",
+      "channel": "頻道"
+    },
+    "preview": {
+      "you": "我",
+      "photo": "相片",
+      "document": "檔案",
+      "video": "影片",
+      "audio": "語音",
+      "sticker": "貼圖",
+      "poll": "投票",
+      "contact": "聯絡人",
+      "geo": "位置",
+      "webPage": "連結",
+      "action": "系統訊息",
+      "other": "附件"
+    }
+  },
+  "messages": {
+    "loading": "正在載入訊息…",
+    "empty": "這裡沒有訊息。",
+    "loadOlder": "載入更早的訊息",
+    "loadNewer": "載入更新的訊息",
+    "albumCount": "{{count, number}} 張相片",
+    "edited": "已編輯",
+    "photoViewer": "相片檢視器",
+    "previousPhoto": "上一張相片",
+    "nextPhoto": "下一張相片",
+    "dayEmpty": "{{date}} 沒有訊息。顯示的是有訊息的下一天 {{landed}}。",
+    "jumpToDate": "跳到日期",
+    "backToLatest": "回到最新",
+    "export": "匯出",
+    "media": "附件：{{type}}",
+    "action": "系統訊息：{{type}}",
+    "sender": {
+      "bot": "機械人",
+      "channel": "頻道"
+    },
+    "mediaKind": {
+      "photo": "相片",
+      "sticker": "貼圖",
+      "video": "影片",
+      "gif": "GIF",
+      "audio": "音訊",
+      "file": "檔案",
+      "contact": "聯絡人",
+      "geo": "位置",
+      "poll": "投票",
+      "webpage": "連結",
+      "venue": "地點",
+      "dice": "骰子",
+      "game": "遊戲",
+      "invoice": "帳單",
+      "story": "限時動態",
+      "voice": "語音訊息",
+      "videoNote": "影片訊息",
+      "unsupported": "不支援的類型",
+      "geolive": "即時位置",
+      "giveaway": "抽獎",
+      "giveawayresults": "抽獎結果",
+      "paidmedia": "付費內容"
+    },
+    "actionKind": {
+      "chatadduser": " 加入了對話",
+      "chatdeleteuser": " 離開了對話",
+      "chatjoinedbylink": " 透過邀請連結加入",
+      "chatjoinedbyrequest": " 的加入申請已獲批准",
+      "chatcreate": " 建立了對話",
+      "channelcreate": " 建立了頻道",
+      "chatedittitle": " 更改了對話名稱",
+      "chateditphoto": " 更改了對話相片",
+      "chatdeletephoto": " 移除了對話相片",
+      "pinmessage": " 置頂了一則訊息",
+      "chatmigrateto": "對話已轉為超級群組",
+      "channelmigratefrom": "對話已轉為超級群組",
+      "historyclear": "記錄已被清除",
+      "phonecall": " 撥打了通話",
+      "groupcall": "曾進行語音聊天",
+      "invitetogroupcall": " 邀請了他人加入語音聊天",
+      "screenshottaken": " 擷取了畫面",
+      "contactsignup": " 加入了 Telegram",
+      "setmessagesttl": "自動刪除計時器已變更",
+      "setchattheme": " 更改了對話主題",
+      "giftpremium": " 贈送了 Premium",
+      "topiccreate": " 建立了主題",
+      "topicedit": " 編輯了主題",
+      "suggestprofilephoto": " 建議了個人相片",
+      "webviewdatasent": " 送出了表單",
+      "paymentsent": "付款已完成"
+    },
+    "actionBy": "{{name}}{{what}}"
+  },
+  "calendar": {
+    "prevMonth": "上個月",
+    "nextMonth": "下個月",
+    "check": "查看哪些日子有訊息",
+    "checking": "正在查看 {{date}}…（{{done}}/{{total}}）",
+    "checkingDay": "正在查看 {{date}}…",
+    "dayEmpty": "{{date}} 沒有訊息，請選其他日子。",
+    "legendHas": "有訊息",
+    "legendEmpty": "沒有訊息",
+    "dayCount": "{{count, number}} 則訊息"
+  },
+  "export": {
+    "title": "匯出這個對話",
+    "description": "把訊息下載成 zip 檔案。壓縮也在瀏覽器內完成，不經任何伺服器。",
+    "start": "匯出為 zip",
+    "cancel": "停止",
+    "from": "開始日期",
+    "to": "結束日期",
+    "rangeHint": "很舊的對話建議分段匯出比較安全。",
+    "wholeHistory": "匯出全部期間",
+    "wholeHistoryHint": "忽略日期，從最開始取得全部內容。由於 Telegram 的速率限制，大型對話可能需要很長時間。",
+    "progress": "訊息 {{count, number}} / {{total, number}}",
+    "waiting": "正在等待 Telegram 的速率限制解除。這不是當機，請不要關閉這個分頁。",
+    "done": "完成，已儲存 {{count, number}} 則訊息。",
+    "savedPicked": "檔案在你選擇的位置。基於安全考量瀏覽器不會透露完整路徑，所以只顯示檔案名稱。",
+    "savedDownload": "檔案在瀏覽器的下載資料夾。",
+    "memoryFallback": "如果要匯出大量內容，建議使用 Chrome 或 Edge：可以自行選擇儲存位置，而且資料會邊接收邊寫入檔案。這個瀏覽器會先建立整個檔案，最後才一次下載。",
+    "presets": "快速選擇",
+    "range": "期間",
+    "presetToday": "今天",
+    "presetWeek": "最近 7 天",
+    "presetMonth": "最近 30 天",
+    "stats": {
+      "total": "訊息總數",
+      "messages": "{{count, number}}"
+    },
+    "includeTitle": "一併匯出附件",
+    "includePhotos": "相片",
+    "includePhotosHint": "把這個對話裡的原尺寸相片和訊息一起儲存，不包含貼圖。相片很多時會需要更多時間和空間。",
+    "includeNote": "沒有一併匯出的附件仍會記錄在清單（attachments.jsonl）中，包含類型和檔案編號。缺少的只是檔案本身，傳送了什麼的記錄是完整的。",
+    "progressFiles": "附件 {{files, number}} / {{totalFiles, number}}",
+    "deviceTitle": "這項工作由你的裝置完成",
+    "deviceBody": "中間沒有伺服器，所以取得和壓縮的工作全部由這台電腦或手機處理，所需時間會因裝置而有很大差異。對話量大或要一併匯出相片時，建議用電腦並保持這個分頁開啟直到完成。",
+    "doneTitle": "匯出完成",
+    "doneRange": "期間",
+    "doneWhole": "全部期間",
+    "doneMessages": "訊息",
+    "doneFiles": "已儲存檔案",
+    "doneSize": "檔案大小",
+    "doneCount": "{{count, number}}",
+    "again": "重新匯出",
+    "includeExcludedTitle": "不包含的項目",
+    "includeExcluded": "影片 · 音訊 · 非圖片的文件",
+    "layoutTitle": "我的訊息放在哪一邊",
+    "layoutChat": "右邊（預設）— 和應用程式一樣放在右邊",
+    "layoutFlat": "左邊 — 全部靠左，看不出哪一邊是我",
+    "layoutHint": "全部靠左就看不出哪一邊是你，這時你自己的訊息也會顯示名字。",
+    "includeStickers": "貼圖",
+    "includeStickersHint": "無論傳送多少次，每個貼圖只會儲存一份。一個對話通常只有幾十種，所以大小維持在數 MB 之內。",
+    "progressCounting": "目前已匯出 {{count, number}} 則訊息…",
+    "waitingFor": "因 Telegram 速率限制，還需等待 {{remain}}。這不是當機，請保持這個分頁開啟。",
+    "confirmWholeTitle": "要匯出全部期間嗎？",
+    "confirmWholeBody": "訊息多的對話可能需要數小時。期間必須保持這個分頁開啟，一旦中斷就要從頭再來。分成較短的期間比較安全。",
+    "confirmWholeOk": "仍然匯出全部",
+    "confirmDataTitle": "請注意數據用量",
+    "confirmDataBody": "從這裡開始會實際下載訊息和附件。使用流動網絡時可能耗用大量數據，建議在 Wi-Fi 下進行。",
+    "confirmDataOk": "繼續匯出",
+    "confirmAbortTitle": "要停止匯出嗎？",
+    "confirmAbortBody": "目前已下載的內容不會儲存。重新開始就是從頭再來。",
+    "confirmAbortOk": "停止",
+    "confirmKeep": "繼續"
+  },
+  "errors": {
+    "title": "錯誤",
+    "API_ID_INVALID": "api_id 或 api_hash 無效。",
+    "API_ID_PUBLISHED_FLOOD": "Telegram 已限制這個應用程式金鑰。請在 my.telegram.org 申請自己的 api_id 後再試。",
+    "AUTH_RESTART": "驗證需要重新開始。",
+    "AUTH_USER_CANCEL": "驗證已取消。",
+    "FLOOD_WAIT": "請求過於頻繁，請在 {{duration}} 後再試。",
+    "PASSWORD_HASH_INVALID": "兩步驟驗證密碼不正確。",
+    "PHONE_CODE_EXPIRED": "登入驗證碼已過期，請重新取得。",
+    "PHONE_CODE_INVALID": "登入驗證碼不正確。",
+    "PHONE_NUMBER_BANNED": "這個電話號碼已被封鎖。",
+    "PHONE_NUMBER_INVALID": "電話號碼看來有誤，請確認是否包含國家或地區代碼。",
+    "PHONE_NUMBER_UNOCCUPIED": "這個號碼沒有對應的 Telegram 帳號。",
+    "PHONE_PASSWORD_FLOOD": "密碼嘗試次數過多，請稍候再試。",
+    "SESSION_PASSWORD_NEEDED": "需要兩步驟驗證密碼。",
+    "PEER_NOT_CACHED": "這個對話的資料已過期，請回到清單重新選擇。",
+    "SESSION_REVOKED": "這個登入階段已被終止，請重新登入。",
+    "UPDATE_APP_TO_LOGIN": "Telegram 已不再允許以這種方式登入。",
+    "UNKNOWN": "發生問題：{{raw}}",
+    "duration": {
+      "seconds": "{{count}} 秒",
+      "minutes": "{{count}} 分鐘",
+      "hours": "{{count}} 小時"
+    }
+  },
+  "mediaInfo": {
+    "title": "附件詳細資料",
+    "id": "檔案編號",
+    "messageId": "訊息編號",
+    "kind": "類型",
+    "fileName": "檔案名稱",
+    "mimeType": "MIME 類型",
+    "size": "尺寸",
+    "bytes": "大小",
+    "uploaded": "上載時間",
+    "dc": "資料中心",
+    "accessHash": "存取雜湊值",
+    "copy": "全部複製",
+    "duration": "長度"
+  },
+  "errorPage": {
+    "title": "開啟這個畫面時發生問題",
+    "body": "這可能是暫時性的。請再試一次，如果一直發生，請回到起始畫面。",
+    "notFound": "找不到頁面",
+    "notFoundBody": "網址可能已變更或輸入有誤。",
+    "home": "回到起始畫面",
+    "details": "錯誤內容"
+  }
+}

@@ -33,6 +33,17 @@ const resources = Object.fromEntries(
   ]),
 );
 
+/**
+ * 그 언어가 스스로 밝힌 자기 이름.
+ *
+ * `Intl.DisplayNames` 는 브라우저에 그 언어의 데이터가 없으면 **조용히 기본 로케일로
+ * 떨어져서** 엉뚱한 언어로 답한다(카자흐어를 물었는데 한국어로 "카자흐어" 라고 답하는 식).
+ * 그때 쓸 근거를 로케일 파일이 직접 들고 있게 한다.
+ */
+export function nativeNameOf(lang: SupportedLanguage): string {
+  return (resources[lang]?.translation as { nativeName?: string })?.nativeName ?? lang.toUpperCase();
+}
+
 export function seoOf(lang: SupportedLanguage): SeoMeta {
   return (resources[lang]?.translation as { seo: SeoMeta }).seo;
 }
