@@ -70,12 +70,14 @@ jobs:
           # 내보낸 문서 하단에 적히는 "이 도구가 돌아가는 곳" 주소. 파일만 건네받은 사람이
           # 따라올 수 있어야 한다. configure-pages 가 준 실제 배포 주소를 그대로 쓴다.
           VITE_SITE_URL: ${{ steps.pages.outputs.base_url }}
-          # 공용 api_id 를 쓸 경우에만 채운다. Settings → Secrets and variables → Actions →
-          # Variables 에 넣는다. 비어 있으면 앱이 "내 api_id 직접 입력"만 보여준다.
-          # 클라이언트 번들에 그대로 박히는 값이라 Secrets 로 감춰도 의미가 없다 —
+          # 공용 api_id. 없으면 앱이 "내 api_id 직접 입력"만 보여준다.
+          #
+          # Variables 든 Secrets 든 넣어 둔 쪽에서 읽는다. **둘 다 있어야 공용 키가 성립하므로**
+          # 한쪽만 채우면 나머지가 빈 값이 되어 조용히 직접 입력 화면으로 떨어진다.
+          # 어차피 클라이언트 번들에 박히는 값이라 Secrets 로 감춰도 실익은 없다 —
           # Readme 의 "공용 키 운영" 참고.
-          VITE_TELEGRAM_API_ID: ${{ vars.VITE_TELEGRAM_API_ID }}
-          VITE_TELEGRAM_API_HASH: ${{ vars.VITE_TELEGRAM_API_HASH }}
+          VITE_TELEGRAM_API_ID: ${{ vars.VITE_TELEGRAM_API_ID || secrets.VITE_TELEGRAM_API_ID }}
+          VITE_TELEGRAM_API_HASH: ${{ vars.VITE_TELEGRAM_API_HASH || secrets.VITE_TELEGRAM_API_HASH }}
           # 구글 애널리틱스 측정 ID. 이 값이 있어야 애널리틱스가 켜지고 CSP 에 구글 도메인이
           # 열리며, 첫 화면에 외부 연결 고지가 나온다. 비어 있으면 셋 다 꺼진 채로 빌드된다.
           # Settings → Secrets and variables → Actions → Variables 에 넣는다.
