@@ -1,30 +1,7 @@
+import { releaseDownloadUrl } from '../config';
 import { useLanding } from '../context';
 import { Download as DownloadIcon } from '../icons';
 import { Cta } from '../ui';
-
-/**
- * 릴리스에 올라가는, **버전이 안 붙는** 에셋 이름.
- *
- * 릴리스 워크플로는 같은 zip 을 `telegram-exporter-v1.2.3.zip` 과 이 이름으로 두 번
- * 올린다. 버전이 붙은 쪽은 받아 둔 사람이 파일만 보고 버전을 알기 위한 것이고, 이쪽은
- * 여기서 거는 고정 주소용이다 - 에셋 이름이 릴리스마다 바뀌면 사이트에 적어 둘 문자열이
- * 없다.
- *
- * **`.github/workflows/release.yml` 의 `ASSET_LATEST` 와 같아야 한다.** 한쪽만 고치면
- * 빌드도 릴리스도 통과하는데 아래 버튼만 404 가 되므로, 릴리스 전에 워크플로가 이 줄을
- * 직접 대조한다.
- */
-export const RELEASE_ASSET = 'telegram-exporter.zip';
-
-/**
- * 그 에셋의 영구 주소.
- *
- * `latest` 는 태그 이름이 아니라 GitHub 가 "Latest 배지가 붙은 릴리스" 로 풀어 주는
- * 예약어다. 그래서 버전을 박지 않아도 늘 최신 릴리스를 가리킨다. 저장소 주소는 빌드가
- * 아는 값(`VITE_SOURCE_URL`)에서 오므로 포크해도 따라간다.
- */
-export const releaseDownloadUrl = (sourceUrl: string): string =>
-  `${sourceUrl.replace(/\/$/, '')}/releases/latest/download/${RELEASE_ASSET}`;
 
 /**
  * 내려받기는 히어로가 아니라 **여기**에 둔다.
