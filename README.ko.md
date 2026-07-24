@@ -92,6 +92,12 @@ English: [README.md](README.md)
 
 [이슈](https://github.com/plzhans/telegram-chat-exporter/issues)로 알려 주세요.
 
+## 라이선스
+
+[AGPL-3.0](LICENSE). **쓰는 것은 무료입니다** — 회사 업무용도 마찬가지입니다. 고쳐서 다른
+사람에게 서비스로 제공할 때만 그 수정본의 공개를 요구합니다. 그 의무 없이 쓰고 싶다면
+[상업 라이선스](COMMERCIAL-LICENSE.md)가 있습니다.
+
 ## 개발자를 위한 문서
 
 빌드·배포·설계와 그 근거: **[DEVELOP.ko.md](DEVELOP.ko.md)** ([English](DEVELOP.md))

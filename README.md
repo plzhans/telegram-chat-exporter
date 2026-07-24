@@ -92,6 +92,13 @@ So instead of asking for trust, here is how to verify:
 
 Open an [issue](https://github.com/plzhans/telegram-chat-exporter/issues).
 
+## License
+
+[AGPL-3.0](LICENSE). Free to use, including at work — the licence only asks something of you if
+you modify it and offer it to others over a network. A
+[commercial licence](COMMERCIAL-LICENSE.md) is available if you need to do that without
+publishing your changes.
+
 ## For developers
 
 Build, deploy, architecture and the reasoning behind it: **[DEVELOP.md](DEVELOP.md)**
