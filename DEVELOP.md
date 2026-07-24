@@ -694,6 +694,42 @@ So `package.json` pins **exactly `"telegram": "2.26.21"`** with no caret. Adding
 Thanks to this pin, there's no need to shim Node modules manually on the Vite side, and the only
 remaining node polyfill is `buffer`.
 
+#### A patch release here is not a patch
+
+**The version number says which platform the build targets, not how much changed.** The two
+release lines alternate within one package. Download both and they have the same file count (226)
+and the same size (2.6M) — the only difference is one `require` line in `CryptoFile.js`. But the
+browser has no `crypto` module, so that one line decides whether the app runs at all.
+
+Semver's premise does not hold here, so "it's only a patch" is not a safety argument.
+`.github/dependabot.yml` therefore ignores major, minor **and** patch updates for this package —
+while keeping security updates flowing, via the `version-update:` prefix, for the reason below.
+
+#### What this pin costs
+
+The browser line is **always one release behind.** A fix that lands in `latest` only arrives for us
+with the next `browser` release, and if that fix is a security fix we stay exposed in the meantime.
+That is why Dependabot's security alerts are deliberately left enabled for this package — that
+signal is what would tell us to alias, fork, or act.
+
+#### What upstream should have done
+
+`package.json` already carries `"browser": { "fs": false }`, so one more line would have solved it:
+
+```json
+"browser": {
+  "fs": false,
+  "./CryptoFile.js": "./crypto/crypto.js"
+}
+```
+
+Conditional exports (`browser` / `node` conditions under `exports`) would do the same, and bundlers
+pick the right entry on their own. Either way the version stays single and there is no reason to
+split the release lines across dist-tags.
+
+We could work around it with Vite's `resolve.alias`, but that leans on GramJS's internal file
+layout and breaks silently if upstream moves a file. The pin has fewer places to break.
+
 ## Trust model
 
 From the user's point of view, this site is "a web page I've never seen before asking for my phone
