@@ -7,7 +7,6 @@ import { Spinner } from '@/shared/ui/Spinner';
 import { useAuth } from '@/shared/auth/useAuth';
 import { AuthStepForm } from '../components/AuthStepForm';
 import { CredentialsForm } from '../components/CredentialsForm';
-import { DownloadPanel } from '../components/DownloadPanel';
 import { LoginCodeNotice } from '../components/LoginCodeNotice';
 import { PhoneForm } from '../components/PhoneForm';
 import { SessionNotice } from '../components/SessionNotice';
@@ -75,11 +74,6 @@ export default function SignIn() {
       */}
       {step === 'idle' && <TrustPanel />}
 
-      {/*
-        단일 파일 배포에서는 뺀다 - 이미 받아서 연 사람에게 내려받기를 권하게 된다.
-        `__STANDALONE__` 은 빌드가 박아 주는 상수라 그쪽 번들에서는 통째로 사라진다.
-      */}
-      {step === 'idle' && !__STANDALONE__ && <DownloadPanel />}
 
       {step === 'connecting' && (
         <div className="flex flex-col items-center gap-3 edge-card bg-white p-8">

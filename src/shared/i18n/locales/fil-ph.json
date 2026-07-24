@@ -192,6 +192,7 @@
     "confirmSignOutBody": "Matatapos din ang session na ito sa iyong Telegram account. Kailangan ng bagong login code para gamitin ulit.",
     "download": {
       "title": "Patakbuhin mo mismo",
+      "hint": "Buksan sa sarili mong computer, hindi sa site na ito.",
       "body": "Paraan para gamitin ito nang hindi dumadaan sa site na ito. I-extract ang zip at buksan ang index.html. Walang analytics ang na-download na kopya at hindi ito makakakonekta kahit saan maliban sa Telegram.",
       "cta": "I-download (zip)"
     }

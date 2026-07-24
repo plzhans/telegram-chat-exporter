@@ -252,6 +252,7 @@
     "confirmSignOutBody": "This also ends the session on your Telegram account. Using the tool again means requesting a new login code.",
     "download": {
       "title": "Run it yourself",
+      "hint": "Open it on your own computer, not through this site.",
       "body": "Use it without going through this site. Unpack the zip and open index.html. The downloaded copy ships without analytics and cannot reach anything other than Telegram.",
       "cta": "Download (zip)"
     }

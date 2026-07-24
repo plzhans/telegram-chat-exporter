@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+import { Download } from 'lucide-react';
 import { Button } from '@/shared/ui/Button';
 import { Checkbox } from '@/shared/ui/Checkbox';
 import { Field } from '@/shared/ui/Field';
 import { Input } from '@/shared/ui/Input';
 import { cn } from '@/shared/lib/utils';
+import { DOWNLOAD_URL } from '@/shared/config/app';
 import { IDLE_TTL_MINUTES } from '@/shared/telegram/session';
 import {
   clearStoredCredentials,
@@ -20,7 +22,15 @@ import {
 } from '@/shared/telegram/credentials';
 import { ApiIdGuide } from './ApiIdGuide';
 
-type Mode = 'shared' | 'custom';
+/** 세 번째는 텔레그램에 연결하지 않는다 - 배포본을 받아 자기 컴퓨터에서 여는 길이다. */
+type Mode = 'shared' | 'custom' | 'download';
+
+/** 타일에 적히는 문구. 순서·조건은 아래 `modes` 가 정한다. */
+const LABELS: Record<Mode, { title: string; hint: string }> = {
+  shared: { title: 'credentials.modeShared', hint: 'credentials.modeSharedHint' },
+  custom: { title: 'credentials.modeCustom', hint: 'credentials.modeCustomHint' },
+  download: { title: 'auth.download.title', hint: 'auth.download.hint' },
+};
 
 /**
  * zod 스키마 하나로 필드 검증을 돌린다.
@@ -59,6 +69,21 @@ export function CredentialsForm({
   );
 
   /**
+   * 고를 수 있는 길. **화면에 놓이는 순서 그대로다.**
+   *
+   * - 공용 키가 없으면 "바로 시작" 자체가 성립하지 않는다.
+   * - 단일 파일 배포에는 "받아서 실행" 을 넣지 않는다 - 이미 받아서 연 사람이다.
+   *   `__STANDALONE__` 은 빌드가 박는 상수라 그쪽 번들에서는 이 가지가 통째로 사라진다.
+   *
+   * 하나만 남으면 고를 것이 없으므로 아래에서 토글을 통째로 숨긴다.
+   */
+  const modes: Mode[] = [
+    ...(hasSharedCredentials ? (['shared'] as const) : []),
+    'custom',
+    ...(__STANDALONE__ ? [] : (['download'] as const)),
+  ];
+
+  /**
    * 새로고침 때마다 다시 로그인하는 게 실제로 많이 번거로워서 기본값을 켬으로 둔다.
    * 저장 위치는 sessionStorage 라 탭을 닫으면 사라진다(shared/telegram/session.ts 참고).
    * 공용 PC 처럼 그것도 부담스러운 상황을 위해 끌 수 있게 남겨 둔다.
@@ -91,9 +116,9 @@ export function CredentialsForm({
     <div className="space-y-4 edge-card bg-white p-4">
       <h2 className="text-lg font-bold text-slate-900">{t('credentials.title')}</h2>
 
-      {hasSharedCredentials && (
-        <div className="grid gap-2 mobile:grid-cols-2">
-          {(['shared', 'custom'] as const).map((value) => (
+      {modes.length > 1 && (
+        <div className={cn('grid gap-2', modes.length === 3 ? 'mobile:grid-cols-3' : 'mobile:grid-cols-2')}>
+          {modes.map((value) => (
             <button
               key={value}
               type="button"
@@ -105,22 +130,37 @@ export function CredentialsForm({
                   : 'border-slate-200 hover:bg-slate-50',
               )}
             >
-              <p className="text-sm font-semibold text-slate-900">
-                {t(value === 'shared' ? 'credentials.modeShared' : 'credentials.modeCustom')}
-              </p>
+              <p className="text-sm font-semibold text-slate-900">{t(LABELS[value].title)}</p>
               <p className="mt-0.5 text-xs leading-relaxed text-slate-500">
-                {t(
-                  value === 'shared'
-                    ? 'credentials.modeSharedHint'
-                    : 'credentials.modeCustomHint',
-                )}
+                {t(LABELS[value].hint)}
               </p>
             </button>
           ))}
         </div>
       )}
 
-      {mode === 'shared' && shared ? (
+      {mode === 'download' ? (
+        /*
+          텔레그램에 연결하지 않는 유일한 선택지다.
+          여기서 망설이는 이유는 대개 "처음 보는 웹사이트에 전화번호를 넣으라"는 요구
+          자체인데(TrustPanel 주석), 그 사람에게 가장 강한 답은 설명이 아니라 이 사이트를
+          안 거치는 길이다. 받은 파일은 우리가 나중에 무엇을 바꾸든 영향을 받지 않는다.
+        */
+        <div className="space-y-3">
+          <p className="text-sm leading-relaxed text-slate-600">{t('auth.download.body')}</p>
+          {/*
+            새 탭으로 열지 않는다. 누르면 내려받기가 시작될 뿐 화면이 바뀌지 않아서 빈 탭만
+            하나 남는다.
+          */}
+          <a
+            href={DOWNLOAD_URL}
+            className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-800 transition-colors hover:bg-slate-50"
+          >
+            <Download className="h-4 w-4 shrink-0" />
+            {t('auth.download.cta')}
+          </a>
+        </div>
+      ) : mode === 'shared' && shared ? (
         <div className="space-y-4">
           {rememberField}
           <Button

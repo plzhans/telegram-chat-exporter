@@ -191,6 +191,7 @@
     "confirmSignOutBody": "Telegram hesabınızdaki bu oturum da sonlandırılır. Yeniden kullanmak için yeni bir giriş kodu gerekir.",
     "download": {
       "title": "Kendin çalıştır",
+      "hint": "Bu siteden geçmeden kendi bilgisayarınızda açın.",
       "body": "Bu siteden geçmeden kullanmanın yolu. Zip dosyasını açın ve index.html dosyasını çalıştırın. İndirilen kopyada analiz aracı yoktur ve Telegram dışında hiçbir yere bağlanamaz.",
       "cta": "İndir (zip)"
     }

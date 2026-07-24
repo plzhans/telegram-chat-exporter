@@ -190,7 +190,8 @@
     "confirmSignOutTitle": "¿Cerrar sesión?",
     "confirmSignOutBody": "También se cerrará esta sesión en tu cuenta de Telegram. Para volver a usarlo necesitarás un nuevo código.",
     "download": {
-      "title": "Ejecútalo por tu cuenta",
+      "title": "Ejecútalo tú mismo",
+      "hint": "Ábrelo en tu propia computadora, sin pasar por este sitio.",
       "body": "Úsalo sin pasar por este sitio. Descomprime el zip y abre index.html. La copia descargada no incluye analíticas y no puede conectarse a nada que no sea Telegram.",
       "cta": "Descargar (zip)"
     }
