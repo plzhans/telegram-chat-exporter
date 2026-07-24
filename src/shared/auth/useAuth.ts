@@ -49,6 +49,16 @@ interface AuthState {
    * 남기지 않는 것이 신뢰 근거라 이것 하나 때문에 저장소를 열지 않는다.
    */
   floodUntil?: number;
+  /**
+   * "이 탭에서 로그인 유지". 전화번호 화면에서 켜고 끈다.
+   *
+   * **폼이 아니라 스토어에 둔다.** `restart()`("다른 번호로")는 GramJS 를 전화번호 단계로
+   * 되감으면서 폼을 통째로 다시 그린다. 체크박스를 폼 안에 두면 그때 사용자가 껐던 선택이
+   * 조용히 켜진 상태로 되돌아온다 — 공용 PC 라서 껐던 사람에게는 최악의 방향이다.
+   *
+   * 실제로 읽히는 건 인증이 다 끝난 뒤 `start()` 의 마지막 한 줄이다.
+   */
+  remember: boolean;
   me: MeInfo | null;
   /** 코드가 텔레그램 앱으로 갔는지(true) SMS 로 갔는지(false). 안내 문구가 달라진다. */
   codeViaApp: boolean;
@@ -64,7 +74,8 @@ interface AuthState {
   /** 앱 시작 시 sessionStorage 에 남은 세션으로 로그인 상태를 되살린다. */
   bootstrap: () => Promise<void>;
   dismissNotice: () => void;
-  start: (credentials: ApiCredentials, remember: boolean) => Promise<void>;
+  setRemember: (value: boolean) => void;
+  start: (credentials: ApiCredentials) => Promise<void>;
   submitPhone: (phoneNumber: string) => void;
   submitCode: (code: string) => void;
   submitPassword: (password: string) => void;
@@ -105,6 +116,28 @@ function describeWithFlood(err: unknown): Pick<AuthState, 'error' | 'floodUntil'
   return error.waitUntil ? { error, floodUntil: error.waitUntil } : { error };
 }
 
+/**
+ * 제한이 아직 안 풀렸으면 **지금 시각 기준으로 다시 계산한** 오류를, 풀렸으면 null 을 준다.
+ *
+ * 제출을 여기서 삼키는 이유: FLOOD_WAIT 은 **누를수록 대기가 늘어나는** 오류다. 코드가 안
+ * 오면 사람은 버튼을 다시 누르고, 그 한 번이 그대로 제한을 키운다. 화면이 이미 버튼을
+ * 잠그지만(`SignIn` 의 `blockedLabel` 참고) 엔터 키 하나, 우리가 놓친 경로 하나가 곧바로
+ * 요청 한 번이 되므로 요청을 실제로 만드는 자리에서도 막는다.
+ *
+ * 삼킬 때 오류 문구를 **다시 세우는 것까지가 이 함수의 일이다.** 아무 일도 안 일어나면
+ * 사용자는 앱이 멈춘 줄 안다. 남은 초를 다시 계산하는 것도 같은 이유다 — 처음 받은 값을
+ * 그대로 쓰면 10분을 기다린 뒤에도 화면은 여전히 처음 그 시간을 말한다.
+ */
+function floodBlock(floodUntil: number | undefined): TelegramErrorInfo | null {
+  if (floodUntil === undefined || Date.now() >= floodUntil) return null;
+  return {
+    code: 'FLOOD_WAIT',
+    waitSeconds: Math.ceil((floodUntil - Date.now()) / 1000),
+    waitUntil: floodUntil,
+    raw: 'FLOOD_WAIT',
+  };
+}
+
 function rejectAllPending(reason: unknown) {
   for (const key of ['phone', 'code', 'password'] as const) {
     pending[key]?.reject(reason);
@@ -112,11 +145,12 @@ function rejectAllPending(reason: unknown) {
   }
 }
 
-export const useAuth = create<AuthState>((set) => ({
+export const useAuth = create<AuthState>((set, get) => ({
   step: 'idle',
   busy: false,
   booted: false,
   error: null,
+  remember: true,
   me: null,
   codeViaApp: true,
   passwordHint: undefined,
@@ -158,7 +192,9 @@ export const useAuth = create<AuthState>((set) => ({
 
   dismissNotice: () => set({ notice: null }),
 
-  start: async (credentials, remember) => {
+  setRemember: (value) => set({ remember: value }),
+
+  start: async (credentials) => {
     set({ step: 'connecting', busy: true, error: null, me: null });
 
     try {
@@ -202,7 +238,11 @@ export const useAuth = create<AuthState>((set) => ({
         },
       });
 
-      if (remember) {
+      /*
+        체크박스는 전화번호 화면에 있고, 그 값은 여기까지 와서야 읽힌다. 인증 도중 언제
+        바꿨든 마지막 값이 반영되도록 지금 시점의 상태를 본다.
+      */
+      if (get().remember) {
         const saved = exportSession();
         if (saved) storeSession({ ...credentials, session: saved });
       }
@@ -221,18 +261,27 @@ export const useAuth = create<AuthState>((set) => ({
   },
 
   submitPhone: (phoneNumber) => {
+    const blocked = floodBlock(get().floodUntil);
+    if (blocked) return set({ error: blocked, busy: false });
+
     set({ busy: true, error: null });
     pending.phone?.resolve(phoneNumber);
     pending.phone = undefined;
   },
 
   submitCode: (code) => {
+    const blocked = floodBlock(get().floodUntil);
+    if (blocked) return set({ error: blocked, busy: false });
+
     set({ busy: true, error: null });
     pending.code?.resolve(code);
     pending.code = undefined;
   },
 
   submitPassword: (password) => {
+    const blocked = floodBlock(get().floodUntil);
+    if (blocked) return set({ error: blocked, busy: false });
+
     set({ busy: true, error: null });
     pending.password?.resolve(password);
     pending.password = undefined;

@@ -141,8 +141,6 @@
       }
     },
     "remember": "Tinatandaan ang api_id mo sa browser na ito. Isa itong pagkakakilanlan ng app, hindi pag-access sa account, kaya ligtas itong itago.",
-    "keepSignedIn": "Manatiling naka-sign in sa tab na ito",
-    "keepSignedInHint": "Hindi ka hihingan ng login kapag nag-reload. Nabubura ito kapag isinara ang tab o hindi ginamit nang {{minutes}} minuto. Patayin ito sa computer na ginagamit ng marami.",
     "forget": "Kalimutan ang naka-save na api_id",
     "submit": "Kumonekta sa Telegram",
     "errors": {
@@ -165,6 +163,9 @@
   "auth": {
     "connecting": "Kumokonekta sa Telegram…",
     "rateLimit": "Kapag paulit-ulit kang humingi ng code sa maikling panahon, pansamantalang nililimitahan ng Telegram ang numerong ito, minsan umaabot ng isang araw. Kung matagal dumating ang code, maghintay muna bago humiling ulit.",
+    "retryIn": "Subukan ulit sa {{duration}}",
+    "keepSignedIn": "Manatiling naka-sign in sa tab na ito",
+    "keepSignedInHint": "Hindi ka hihingan ng login kapag nag-reload. Nabubura ito kapag isinara ang tab o hindi ginamit nang {{minutes}} minuto. Patayin ito sa computer na ginagamit ng marami.",
     "phone": {
       "title": "Numero ng telepono",
       "willSend": "Ipapadala ang code sa:",
@@ -194,6 +195,7 @@
       "title": "Patakbuhin mo mismo",
       "hint": "Buksan sa sarili mong computer, hindi sa site na ito.",
       "body": "Paraan para gamitin ito nang hindi dumadaan sa site na ito. I-extract ang zip at buksan ang index.html. Walang analytics ang na-download na kopya at hindi ito makakakonekta kahit saan maliban sa Telegram.",
+      "csp": "Dala ng na-download na kopya ang panuntunang ito at ipinapatupad ito ng browser. Walang maaabot na wala sa listahang ito.",
       "cta": "I-download (zip)"
     }
   },

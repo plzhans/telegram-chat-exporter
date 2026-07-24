@@ -43,3 +43,10 @@ declare const __BUILD_DATE__: string;
  * 저장값으로 고른다.
  */
 declare const __STANDALONE__: boolean;
+/**
+ * **배포본이** 여는 연결 주소(`connect-src ...`). 지금 이 문서의 것이 아니다.
+ *
+ * 첫 화면의 "받아서 직접 실행" 이 그대로 보여 준다. 웹 배포에는 애널리틱스가 켜져 있을
+ * 수 있어서 이 문서의 정책과 다르고, 받는 사람이 알아야 하는 것은 받을 파일 쪽이다.
+ */
+declare const __STANDALONE_CONNECT_SRC__: string;

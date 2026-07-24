@@ -140,8 +140,6 @@
       }
     },
     "remember": "在這個瀏覽器記住你的 api_id。它是應用程式識別碼而不是帳號存取權，所以保存是安全的。",
-    "keepSignedIn": "在這個分頁保持登入",
-    "keepSignedInHint": "重新整理後不需要再次登入。關閉分頁或閒置 {{minutes}} 分鐘就會清除。在共用電腦上請關掉這個選項。",
     "forget": "忘記已儲存的 api_id",
     "submit": "連線到 Telegram",
     "errors": {
@@ -164,6 +162,9 @@
   "auth": {
     "connecting": "正在連線到 Telegram…",
     "rateLimit": "短時間內多次要求驗證碼，Telegram 會暫時限制這個號碼，最長可達一天。就算驗證碼遲了，也請稍等一會再重新要求。",
+    "retryIn": "{{duration}}後再試",
+    "keepSignedIn": "在這個分頁保持登入",
+    "keepSignedInHint": "重新整理後不需要再次登入。關閉分頁或閒置 {{minutes}} 分鐘就會清除。在共用電腦上請關掉這個選項。",
     "phone": {
       "title": "電話號碼",
       "willSend": "驗證碼會送到：",
@@ -193,6 +194,7 @@
       "title": "下載後自行執行",
       "hint": "毋須經過本網站，在自己的電腦上開啟。",
       "body": "毋須經過本網站即可使用。解壓 zip 後開啟 index.html 即可。下載的版本不含任何分析工具，除 Telegram 外無法連接任何地方。",
+      "csp": "下載的檔案帶有以下設定，由瀏覽器強制執行。清單以外的位址一律無法連接。",
       "cta": "下載 (zip)"
     }
   },

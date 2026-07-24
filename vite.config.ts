@@ -180,6 +180,22 @@ function policyOf(on: { ga: string; ads: string }, scriptSelf: string): string {
 }
 
 /**
+ * 단일 파일 배포본의 `connect-src` 만 뽑아 온다.
+ *
+ * 애널리틱스·광고를 끈 채로 정책을 만든다 - 릴리스 워크플로가 그 값들을 넘기지 않고,
+ * standalone 빌드는 넘어와도 무시한다(`switches` 를 안 부른다). 즉 배포본에서는 늘
+ * 텔레그램만 열린다.
+ */
+function standaloneConnectSrc(): string {
+  return (
+    policyOf({ ga: '', ads: '' }, "'self' file:")
+      .split(';')
+      .map((part) => part.trim())
+      .find((part) => part.startsWith('connect-src')) ?? ''
+  );
+}
+
+/**
  * 배포본에만 CSP 를 심는다.
  *
  * 개발 모드에는 넣지 않는다. Vite HMR 이 `ws://localhost` 로 붙고 React Fast Refresh 가
@@ -722,6 +738,17 @@ export default defineConfig(({ command, mode }) => {
        * 언어 선택(주소 vs 저장값). 상수라 웹 빌드에서는 관련 코드가 통째로 지워진다.
        */
       __STANDALONE__: JSON.stringify(standalone),
+      /**
+       * **배포본이** 여는 연결 주소. 지금 이 문서의 것이 아니다.
+       *
+       * 첫 화면의 "받아서 직접 실행" 이 이걸 그대로 보여 준다. 웹 배포에는 애널리틱스가
+       * 켜져 있을 수 있어서 이 문서의 정책과는 다르고, 받는 사람이 알아야 하는 것은
+       * **받을 파일** 쪽이다.
+       *
+       * 손으로 적지 않고 실제 정책을 만드는 함수에서 뽑는다. 한 벌 더 적어 두면 정책을
+       * 고쳤을 때 화면만 옛말을 하게 되는데, 하필 그 문장이 이 앱의 신뢰 근거다.
+       */
+      __STANDALONE_CONNECT_SRC__: JSON.stringify(standaloneConnectSrc()),
     },
     build: {
       // 웹 배포본과 섞이면 어느 쪽을 올리는지 헷갈린다. 나가는 형태가 다르니 폴더도 나눈다.

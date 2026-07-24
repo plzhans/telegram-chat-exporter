@@ -140,8 +140,6 @@
       }
     },
     "remember": "api_id değerinizi bu tarayıcıda hatırlar. Hesap erişimi değil, uygulama kimliğidir; saklamak güvenlidir.",
-    "keepSignedIn": "Bu sekmede oturumu açık tut",
-    "keepSignedInHint": "Sayfayı yenilemek yeniden giriş istemez. Sekmeyi kapatmak ya da {{minutes}} dakika kullanmamak bunu siler. Ortak bilgisayarda kapalı tutun.",
     "forget": "Kayıtlı api_id değerini unut",
     "submit": "Telegram'a bağlan",
     "errors": {
@@ -164,6 +162,9 @@
   "auth": {
     "connecting": "Telegram'a bağlanılıyor…",
     "rateLimit": "Kısa sürede birkaç kez kod isterseniz Telegram bu numarayı geçici olarak kısıtlar, bazen bir güne kadar. Kod gecikse bile tekrar istemeden önce biraz bekleyin.",
+    "retryIn": "{{duration}} sonra tekrar deneyin",
+    "keepSignedIn": "Bu sekmede oturumu açık tut",
+    "keepSignedInHint": "Sayfayı yenilemek yeniden giriş istemez. Sekmeyi kapatmak ya da {{minutes}} dakika kullanmamak bunu siler. Ortak bilgisayarda kapalı tutun.",
     "phone": {
       "title": "Telefon numarası",
       "willSend": "Kod şu numaraya gönderilecek:",
@@ -193,6 +194,7 @@
       "title": "Kendin çalıştır",
       "hint": "Bu siteden geçmeden kendi bilgisayarınızda açın.",
       "body": "Bu siteden geçmeden kullanmanın yolu. Zip dosyasını açın ve index.html dosyasını çalıştırın. İndirilen kopyada analiz aracı yoktur ve Telegram dışında hiçbir yere bağlanamaz.",
+      "csp": "İndirilen kopya bu kuralı taşır ve tarayıcı bunu zorunlu kılar. Bu listenin dışına bağlanılamaz.",
       "cta": "İndir (zip)"
     }
   },

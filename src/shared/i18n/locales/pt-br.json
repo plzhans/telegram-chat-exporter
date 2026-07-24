@@ -140,8 +140,6 @@
       }
     },
     "remember": "Lembra seu api_id neste navegador. É um identificador de aplicativo, não acesso à conta, então guardá-lo é seguro.",
-    "keepSignedIn": "Continuar conectado nesta aba",
-    "keepSignedInHint": "Recarregar não vai pedir login de novo. Fechar a aba ou deixá-la {{minutes}} minutos sem uso apaga isso. Desligue em computador compartilhado.",
     "forget": "Esquecer api_id salvo",
     "submit": "Conectar ao Telegram",
     "errors": {
@@ -164,6 +162,9 @@
   "auth": {
     "connecting": "Conectando ao Telegram…",
     "rateLimit": "Pedir o código várias vezes em pouco tempo faz o Telegram limitar esse número temporariamente, às vezes por até um dia. Se o código demorar, espere um pouco antes de pedir de novo.",
+    "retryIn": "Tentar de novo em {{duration}}",
+    "keepSignedIn": "Continuar conectado nesta aba",
+    "keepSignedInHint": "Recarregar não vai pedir login de novo. Fechar a aba ou deixá-la {{minutes}} minutos sem uso apaga isso. Desligue em computador compartilhado.",
     "phone": {
       "title": "Número de telefone",
       "willSend": "O código será enviado para:",
@@ -193,6 +194,7 @@
       "title": "Execute você mesmo",
       "hint": "Abra no seu próprio computador, sem passar por este site.",
       "body": "Use sem passar por este site. Extraia o zip e abra o index.html. A cópia baixada não inclui análises e não consegue se conectar a nada além do Telegram.",
+      "csp": "A cópia baixada carrega esta regra e o navegador a aplica. Nada fora desta lista pode ser acessado.",
       "cta": "Baixar (zip)"
     }
   },

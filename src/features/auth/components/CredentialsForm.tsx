@@ -3,12 +3,10 @@ import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { Download } from 'lucide-react';
 import { Button } from '@/shared/ui/Button';
-import { Checkbox } from '@/shared/ui/Checkbox';
 import { Field } from '@/shared/ui/Field';
 import { Input } from '@/shared/ui/Input';
 import { cn } from '@/shared/lib/utils';
 import { DOWNLOAD_URL } from '@/shared/config/app';
-import { IDLE_TTL_MINUTES } from '@/shared/telegram/session';
 import {
   clearStoredCredentials,
   credentialsSchema,
@@ -51,7 +49,7 @@ export function CredentialsForm({
   onSubmit,
   busy,
 }: {
-  onSubmit: (credentials: ApiCredentials, remember: boolean) => void;
+  onSubmit: (credentials: ApiCredentials) => void;
   busy: boolean;
 }) {
   const { t } = useTranslation();
@@ -83,13 +81,6 @@ export function CredentialsForm({
     ...(__STANDALONE__ ? [] : (['download'] as const)),
   ];
 
-  /**
-   * 새로고침 때마다 다시 로그인하는 게 실제로 많이 번거로워서 기본값을 켬으로 둔다.
-   * 저장 위치는 sessionStorage 라 탭을 닫으면 사라진다(shared/telegram/session.ts 참고).
-   * 공용 PC 처럼 그것도 부담스러운 상황을 위해 끌 수 있게 남겨 둔다.
-   */
-  const [remember, setRemember] = useState(true);
-
   const {
     register,
     handleSubmit,
@@ -100,17 +91,11 @@ export function CredentialsForm({
 
   const submitCustom = handleSubmit((values) => {
     storeCredentials(values);
-    onSubmit(toApiCredentials(values), remember);
+    onSubmit(toApiCredentials(values));
   });
 
-  const rememberField = (
-    <Checkbox
-      checked={remember}
-      onChange={(e) => setRemember(e.target.checked)}
-      label={t('credentials.keepSignedIn')}
-      hint={t('credentials.keepSignedInHint', { minutes: IDLE_TTL_MINUTES })}
-    />
-  );
+  /** `connect-src wss://a wss://b` → 지시어 하나와 주소 목록. */
+  const [directive, ...sources] = __STANDALONE_CONNECT_SRC__.split(/\s+/).filter(Boolean);
 
   return (
     <div className="space-y-4 edge-card bg-white p-4">
@@ -148,30 +133,46 @@ export function CredentialsForm({
         */
         <div className="space-y-3">
           <p className="text-sm leading-relaxed text-slate-600">{t('auth.download.body')}</p>
+
+          {/*
+            **받을 파일이** 여는 연결 주소를 그대로 보여 준다. 지금 이 문서의 것이 아니다 -
+            웹 배포에는 애널리틱스가 켜져 있을 수 있고, 받는 사람이 알아야 하는 것은 받을
+            파일 쪽이다. 값은 빌드가 실제 정책에서 뽑아 넘긴다(`__STANDALONE_CONNECT_SRC__`).
+
+            한 줄로 늘어놓으면 어디서 끊기는지가 화면 폭에 달려 주소가 두 줄에 걸쳐 잘린다.
+            대조하라고 보여 주는 것이므로 한 줄에 하나씩 놓는다(랜딩의 같은 문단과 같다).
+          */}
+          <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+            <p className="text-xs leading-relaxed text-slate-500">{t('auth.download.csp')}</p>
+            <code dir="ltr" className="mt-2 block break-words font-mono text-xs leading-relaxed text-slate-600">
+              {directive}
+              {sources.map((source) => (
+                <span key={source} className="block ps-4">
+                  {source}
+                </span>
+              ))}
+            </code>
+          </div>
+
           {/*
             새 탭으로 열지 않는다. 누르면 내려받기가 시작될 뿐 화면이 바뀌지 않아서 빈 탭만
             하나 남는다.
+
+            치수·색은 옆 선택지의 "텔레그램에 연결"(`Button` primary/lg)과 같다. 고른 길에
+            따라 버튼 생김새가 달라지면 한쪽이 덜 중요한 선택처럼 보인다.
           */}
           <a
             href={DOWNLOAD_URL}
-            className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-800 transition-colors hover:bg-slate-50"
+            className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 text-base font-semibold text-white transition-colors hover:bg-primary-700"
           >
-            <Download className="h-4 w-4 shrink-0" />
+            <Download className="h-5 w-5 shrink-0" />
             {t('auth.download.cta')}
           </a>
         </div>
       ) : mode === 'shared' && shared ? (
-        <div className="space-y-4">
-          {rememberField}
-          <Button
-            size="lg"
-            className="w-full"
-            loading={busy}
-            onClick={() => onSubmit(shared, remember)}
-          >
-            {t('credentials.submit')}
-          </Button>
-        </div>
+        <Button size="lg" className="w-full" loading={busy} onClick={() => onSubmit(shared)}>
+          {t('credentials.submit')}
+        </Button>
       ) : (
         <form className="space-y-3" onSubmit={(e) => void submitCustom(e)}>
           {/*
@@ -217,8 +218,6 @@ export function CredentialsForm({
               {...register('apiHash', { validate: validateWith('apiHash') })}
             />
           </Field>
-
-          {rememberField}
 
           <div className="flex items-center gap-2">
             <Button type="submit" size="lg" className="flex-1" loading={busy}>

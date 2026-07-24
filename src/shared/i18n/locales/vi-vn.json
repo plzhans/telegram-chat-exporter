@@ -140,8 +140,6 @@
       }
     },
     "remember": "Ghi nhớ api_id trong trình duyệt này. Đó là mã định danh ứng dụng chứ không phải quyền truy cập tài khoản, nên lưu lại vẫn an toàn.",
-    "keepSignedIn": "Giữ đăng nhập trong thẻ này",
-    "keepSignedInHint": "Tải lại trang sẽ không phải đăng nhập lại. Đóng thẻ hoặc để yên {{minutes}} phút sẽ xóa nó. Hãy tắt khi dùng máy tính chung.",
     "forget": "Xóa api_id đã lưu",
     "submit": "Kết nối tới Telegram",
     "errors": {
@@ -164,6 +162,9 @@
   "auth": {
     "connecting": "Đang kết nối tới Telegram…",
     "rateLimit": "Yêu cầu mã nhiều lần trong thời gian ngắn sẽ khiến Telegram tạm thời hạn chế số này, có khi đến một ngày. Nếu mã đến chậm, hãy đợi một lát rồi mới yêu cầu lại.",
+    "retryIn": "Thử lại sau {{duration}}",
+    "keepSignedIn": "Giữ đăng nhập trong thẻ này",
+    "keepSignedInHint": "Tải lại trang sẽ không phải đăng nhập lại. Đóng thẻ hoặc để yên {{minutes}} phút sẽ xóa nó. Hãy tắt khi dùng máy tính chung.",
     "phone": {
       "title": "Số điện thoại",
       "willSend": "Mã sẽ được gửi tới:",
@@ -193,6 +194,7 @@
       "title": "Tự chạy trên máy",
       "hint": "Mở trên máy tính của bạn, không qua trang này.",
       "body": "Cách dùng mà không qua trang này. Giải nén zip rồi mở index.html. Bản tải về không có công cụ phân tích và không thể kết nối tới đâu ngoài Telegram.",
+      "csp": "Bản tải về mang quy tắc này và trình duyệt bắt buộc tuân thủ. Không thể kết nối tới bất kỳ đâu ngoài danh sách này.",
       "cta": "Tải xuống (zip)"
     }
   },

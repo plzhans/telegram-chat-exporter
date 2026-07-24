@@ -140,8 +140,6 @@
       }
     },
     "remember": "Recuerda tu api_id en este navegador. Es un identificador de aplicación, no acceso a la cuenta, así que guardarlo es seguro.",
-    "keepSignedIn": "Mantener la sesión en esta pestaña",
-    "keepSignedInHint": "Recargar no te pedirá entrar otra vez. Cerrar la pestaña o dejarla {{minutes}} minutos sin uso lo borra. Desactívalo en una computadora compartida.",
     "forget": "Olvidar el api_id guardado",
     "submit": "Conectar con Telegram",
     "errors": {
@@ -164,6 +162,9 @@
   "auth": {
     "connecting": "Conectando con Telegram…",
     "rateLimit": "Si pides el código varias veces en poco tiempo, Telegram limita este número de forma temporal, a veces hasta por un día. Si el código tarda, espera un poco antes de volver a pedirlo.",
+    "retryIn": "Reintentar en {{duration}}",
+    "keepSignedIn": "Mantener la sesión en esta pestaña",
+    "keepSignedInHint": "Recargar no te pedirá entrar otra vez. Cerrar la pestaña o dejarla {{minutes}} minutos sin uso lo borra. Desactívalo en una computadora compartida.",
     "phone": {
       "title": "Número de teléfono",
       "willSend": "El código se enviará a:",
@@ -193,6 +194,7 @@
       "title": "Ejecútalo tú mismo",
       "hint": "Ábrelo en tu propia computadora, sin pasar por este sitio.",
       "body": "Úsalo sin pasar por este sitio. Descomprime el zip y abre index.html. La copia descargada no incluye analíticas y no puede conectarse a nada que no sea Telegram.",
+      "csp": "La copia descargada lleva esta regla y el navegador la impone. No puede conectarse a nada fuera de esta lista.",
       "cta": "Descargar (zip)"
     }
   },

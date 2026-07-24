@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@/shared/ui/Button';
 import { ErrorNotice } from '@/shared/ui/ErrorNotice';
 import { Spinner } from '@/shared/ui/Spinner';
+import { useCountdown, useDuration } from '@/shared/lib/duration';
 import { useAuth } from '@/shared/auth/useAuth';
 import { AuthStepForm } from '../components/AuthStepForm';
 import { CredentialsForm } from '../components/CredentialsForm';
@@ -21,6 +22,9 @@ export default function SignIn() {
   const error = useAuth((s) => s.error);
   const codeViaApp = useAuth((s) => s.codeViaApp);
   const passwordHint = useAuth((s) => s.passwordHint);
+  const floodUntil = useAuth((s) => s.floodUntil);
+  const remember = useAuth((s) => s.remember);
+  const setRemember = useAuth((s) => s.setRemember);
   const start = useAuth((s) => s.start);
   const submitPhone = useAuth((s) => s.submitPhone);
   const submitCode = useAuth((s) => s.submitCode);
@@ -31,6 +35,21 @@ export default function SignIn() {
   useEffect(() => {
     if (step === 'authorized') void navigate('/dialogs', { replace: true });
   }, [step, navigate]);
+
+  /**
+   * 제한이 풀릴 때까지 제출 버튼을 잠그고, 남은 시간을 버튼에 적는다.
+   *
+   * **오류 알림만으로는 부족했다.** 알림은 화면을 옮길 때마다 지워진다 - 취소하거나 "다른
+   * 번호로" 를 누르면 문구는 사라지지만 텔레그램이 건 제한은 그대로다. 그래서 잠금은
+   * `error` 가 아니라 그와 수명이 다른 `floodUntil` 에 매단다(useAuth 의 같은 주석 참고).
+   *
+   * 문구를 여기 한 곳에서만 만드는 이유는 세 단계가 같은 제한 하나를 공유하기 때문이다.
+   * 카운트다운을 폼마다 돌리면 화면마다 다른 초를 말하게 된다.
+   */
+  const remain = useCountdown(floodUntil);
+  const formatDuration = useDuration();
+  const blockedLabel =
+    remain !== null && remain > 0 ? t('auth.retryIn', { duration: formatDuration(remain) }) : null;
 
   const cancelButton = (
     <Button type="button" variant="ghost" size="sm" className="w-full" onClick={() => void cancel()}>
@@ -57,7 +76,7 @@ export default function SignIn() {
       {(step === 'idle' || step === 'connecting') && <ErrorNotice error={error} />}
 
       {step === 'idle' && (
-        <CredentialsForm busy={busy} onSubmit={(c, remember) => void start(c, remember)} />
+        <CredentialsForm busy={busy} onSubmit={(c) => void start(c)} />
       )}
 
       {/*
@@ -95,6 +114,9 @@ export default function SignIn() {
             <PhoneForm
               busy={busy}
               onSubmit={submitPhone}
+              remember={remember}
+              onRememberChange={setRemember}
+              blockedLabel={blockedLabel}
               notice={<ErrorNotice error={error} />}
               footer={cancelButton}
             />
@@ -122,6 +144,7 @@ export default function SignIn() {
             submitLabel={t('auth.code.submit')}
             busy={busy}
             onSubmit={submitCode}
+            blockedLabel={blockedLabel}
             notice={<ErrorNotice error={error} />}
             footer={
               <div className="space-y-1">
@@ -161,6 +184,7 @@ export default function SignIn() {
             submitLabel={t('auth.password.submit')}
             busy={busy}
             onSubmit={submitPassword}
+            blockedLabel={blockedLabel}
             notice={<ErrorNotice error={error} />}
             footer={cancelButton}
             inputProps={{

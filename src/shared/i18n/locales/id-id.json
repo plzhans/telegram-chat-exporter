@@ -140,8 +140,6 @@
       }
     },
     "remember": "Mengingat api_id Anda di peramban ini. Itu adalah pengenal aplikasi, bukan akses ke akun, jadi aman untuk disimpan.",
-    "keepSignedIn": "Tetap masuk di tab ini",
-    "keepSignedInHint": "Memuat ulang tidak akan meminta Anda masuk lagi. Menutup tab atau membiarkannya menganggur {{minutes}} menit akan menghapusnya. Matikan bila memakai komputer bersama.",
     "forget": "Lupakan api_id tersimpan",
     "submit": "Sambungkan ke Telegram",
     "errors": {
@@ -164,6 +162,9 @@
   "auth": {
     "connecting": "Menyambung ke Telegram…",
     "rateLimit": "Meminta kode berkali-kali dalam waktu singkat membuat Telegram membatasi nomor ini untuk sementara, kadang sampai sehari. Kalau kodenya lama datang, tunggu sebentar sebelum meminta lagi.",
+    "retryIn": "Coba lagi dalam {{duration}}",
+    "keepSignedIn": "Tetap masuk di tab ini",
+    "keepSignedInHint": "Memuat ulang tidak akan meminta Anda masuk lagi. Menutup tab atau membiarkannya menganggur {{minutes}} menit akan menghapusnya. Matikan bila memakai komputer bersama.",
     "phone": {
       "title": "Nomor telepon",
       "willSend": "Kode akan dikirim ke:",
@@ -193,6 +194,7 @@
       "title": "Jalankan sendiri",
       "hint": "Buka di komputer Anda sendiri, tanpa melalui situs ini.",
       "body": "Cara memakainya tanpa melalui situs ini. Ekstrak zip lalu buka index.html. Salinan yang diunduh tidak memuat analitik dan tidak bisa terhubung ke mana pun selain Telegram.",
+      "csp": "Salinan yang diunduh membawa aturan ini dan peramban menegakkannya. Tidak ada tujuan di luar daftar ini yang bisa dihubungi.",
       "cta": "Unduh (zip)"
     }
   },

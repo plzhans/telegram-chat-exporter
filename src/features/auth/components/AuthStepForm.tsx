@@ -19,6 +19,11 @@ interface AuthStepFormProps {
    */
   notice?: ReactNode;
   footer?: ReactNode;
+  /**
+   * 요청 제한이 걸려 있는 동안 제출 버튼을 대신 채우는 문구("3분 후에 다시 시도").
+   * null 이면 평소대로다 — PhoneForm 의 같은 이름과 한 짝이다.
+   */
+  blockedLabel?: string | null;
   inputProps?: InputHTMLAttributes<HTMLInputElement>;
 }
 
@@ -37,6 +42,7 @@ export function AuthStepForm({
   onSubmit,
   notice,
   footer,
+  blockedLabel,
   inputProps,
 }: AuthStepFormProps) {
   const { register, handleSubmit } = useForm<{ value: string }>({
@@ -59,8 +65,9 @@ export function AuthStepForm({
 
       {notice}
 
-      <Button type="submit" size="lg" className="w-full" loading={busy}>
-        {submitLabel}
+      {/* 제한이 풀릴 때까지 잠근다. 이유는 PhoneForm 의 같은 자리 주석 참고. */}
+      <Button type="submit" size="lg" className="w-full" loading={busy} disabled={!!blockedLabel}>
+        {blockedLabel ?? submitLabel}
       </Button>
 
       {footer}

@@ -201,8 +201,6 @@
       }
     },
     "remember": "Remembers your api_id in this browser. It is an app identifier, not account access, so storing it is safe.",
-    "keepSignedIn": "Stay signed in on this tab",
-    "keepSignedInHint": "Reloading won't ask you to sign in again. Closing the tab or leaving it unused for {{minutes}} minutes clears it. Turn this off on a shared computer.",
     "forget": "Forget stored api_id",
     "submit": "Connect to Telegram",
     "errors": {
@@ -225,6 +223,9 @@
   "auth": {
     "connecting": "Connecting to Telegram…",
     "rateLimit": "Requesting the code several times in a short span makes Telegram temporarily limit this number, sometimes for up to a day. If the code is slow to arrive, wait a little before asking again.",
+    "retryIn": "Try again in {{duration}}",
+    "keepSignedIn": "Stay signed in on this tab",
+    "keepSignedInHint": "Reloading won't ask you to sign in again. Closing the tab or leaving it unused for {{minutes}} minutes clears it. Turn this off on a shared computer.",
     "phone": {
       "title": "Phone number",
       "willSend": "The code will be sent to:",
@@ -254,6 +255,7 @@
       "title": "Run it yourself",
       "hint": "Open it on your own computer, not through this site.",
       "body": "Use it without going through this site. Unpack the zip and open index.html. The downloaded copy ships without analytics and cannot reach anything other than Telegram.",
+      "csp": "The downloaded copy carries this rule and the browser enforces it. Nothing outside this list can be reached.",
       "cta": "Download (zip)"
     }
   },
