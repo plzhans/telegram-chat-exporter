@@ -142,7 +142,7 @@ function policyOf(on: { ga: string; ads: string }, scriptSelf: string): string {
    *
    * 그렇게 열면 script-src 는 사실상 없는 것과 같아진다. 아무 https 출처의 스크립트가
    * 실행되고 `eval` 도 열린다. 이 앱은 전화번호와 로그인 코드를 받는 화면이라 그 대가가
-   * 특히 크다 - README.ko.md 의 "애널리틱스와 광고" 참고.
+   * 특히 크다 - DEVELOP.ko.md 의 "애널리틱스와 광고" 참고.
    *
    * 그래도 켜겠다면 값을 넣는 순간 이 정책이 적용된다. 숨기지 않는다.
    */
@@ -657,7 +657,7 @@ export default defineConfig(({ command, mode }) => {
    * 웹서버 없이 `index.html` 을 더블클릭해서 쓰는 형태다. 릴리스에 zip 으로 올려서
    * 받아 가는 쪽이 이걸 쓴다. 애널리틱스·광고는 값이 있어도 넣지 않는다 — 내려받아
    * 자기 컴퓨터에서 여는 사람에게까지 추적을 딸려 보낼 이유가 없고, 그게 "직접 받아서
-   * 실행하면 둘 다 꺼진다"는 안내(README.ko.md)를 참말로 만든다.
+   * 실행하면 둘 다 꺼진다"는 안내(DEVELOP.ko.md)를 참말로 만든다.
    */
   const standalone = mode === 'standalone';
   const on = standalone ? { ga: '', ads: '' } : switches(mode);
