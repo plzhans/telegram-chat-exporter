@@ -101,6 +101,7 @@
     "warning": {
       "title": "Humihingi ang tool na ito ng login code mo",
       "principle": "Sinasabi ng Telegram na huwag mong ibahagi ang login code mo kaninuman. Tama ang payong iyon. Huwag mong gawing eksepsiyon ang site na ito — pagdudahan mo rin ito nang ganoon din.",
+      "more": "Bakit kailangan, at ano ang natitira",
       "why": "Gayunpaman, nagsa-sign in ang tool na ito sa Telegram bilang ikaw para kunin ang mga mensahe mo. Kung wala ang numero at login code mo, wala itong magagawa. Ginagamit lang ang mga halagang iyon sa kahilingan papuntang Telegram at hindi kailanman iniimbak.",
       "storage": "Pagkatapos mong mag-sign in, ang tanging natitira ay isang halagang nagpapanatili ng koneksyon, at nabubuhay lang iyon sa loob ng tab na tinitingnan mo — isara mo ang tab at mawawala na.",
       "selfHost": "Kung hindi ka pa rin kumbinsido, huwag kang maniwala sa salita ninuman. Basahin mo ang code, o i-download at patakbuhin sa sarili mong makina. Makukuha mo ang eksaktong screen na ito, na tumatakbo sa code na ikaw mismo ang sumuri."

@@ -100,6 +100,7 @@
     "warning": {
       "title": "Bu araç giriş kodunuzu ister",
       "principle": "Telegram, giriş kodunuzu asla kimseyle paylaşmamanızı söyler. Bu öğüt doğrudur. Bu siteyi de istisna yapmayın — ona da aynı ölçüde şüpheyle yaklaşın.",
+      "more": "Neden gerekli ve ne kalıyor",
       "why": "Yine de bu araç, mesajlarınızı getirmek için Telegram'a sizin adınıza girer. Telefon numaranız ve giriş kodunuz olmadan hiçbir şey yapamaz. Bu değerler yalnızca Telegram'a gönderilen istekte kullanılır ve hiçbir yerde saklanmaz.",
       "storage": "Giriş yaptıktan sonra geriye yalnızca bağlantıyı ayakta tutan tek bir değer kalır; o da yalnızca baktığınız sekmenin içinde yaşar — sekmeyi kapatınca yok olur.",
       "selfHost": "Yine de ikna olmadıysanız kimsenin sözüne güvenmeyin. Kodu kendiniz okuyun ya da indirip kendi makinenizde çalıştırın. O zaman tam olarak bu ekranı, kendi denetlediğiniz kodla kullanırsınız."

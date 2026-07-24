@@ -100,6 +100,7 @@
     "warning": {
       "title": "Alat ini meminta kode masuk Anda",
       "principle": "Telegram meminta Anda tidak pernah membagikan kode masuk kepada siapa pun. Nasihat itu benar. Jangan jadikan situs ini pengecualian — curigailah dengan kadar yang sama.",
+      "more": "Mengapa perlu, dan apa yang tersisa",
       "why": "Meski begitu, alat ini masuk ke Telegram sebagai Anda untuk mengambil pesan Anda. Tanpa nomor telepon dan kode masuk, ia tidak bisa berbuat apa-apa. Nilai-nilai itu hanya dipakai untuk permintaan ke Telegram dan tidak pernah disimpan di mana pun.",
       "storage": "Setelah Anda masuk, satu-satunya yang tersimpan adalah satu nilai yang menjaga koneksi tetap hidup, dan itu pun hanya hidup di dalam tab yang sedang Anda lihat — tutup tabnya dan nilai itu lenyap.",
       "selfHost": "Kalau Anda masih belum yakin, jangan percaya kata-kata siapa pun. Bacalah kodenya, atau unduh dan jalankan di komputer Anda sendiri. Anda akan mendapat layar yang persis sama, berjalan di atas kode yang Anda periksa sendiri."

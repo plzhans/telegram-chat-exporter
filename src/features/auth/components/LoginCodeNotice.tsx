@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { ChevronRight } from 'lucide-react';
 import { Alert } from '@/shared/ui/Alert';
 import { SOURCE_URL } from '@/shared/config/app';
 
@@ -18,6 +19,11 @@ import { SOURCE_URL } from '@/shared/config/app';
  *    **안 믿어도 되는 방법을 함께 주는 쪽**이다.
  *
  * 본문만 한 단계 작게 쓴다. 제목은 그대로 둔다 — 못 보고 지나치는 일은 없어야 한다.
+ *
+ * **핵심 한 문단만 펼쳐 두고 나머지는 접는다.** 네 문단을 다 세워 두면 입력칸이 화면
+ * 아래로 밀려, 정작 번호를 적으려는 사람에게 벽처럼 보인다. 위 순서에서 1번(의심하는 게
+ * 옳다)만 남기고, 이유·보관·확인 방법은 눌러서 펴게 둔다 — 감추는 게 아니라 순서를 정하는
+ * 것이다(`Disclosure` 주석과 같은 판단).
  */
 export function LoginCodeNotice() {
   const { t } = useTranslation();
@@ -25,19 +31,25 @@ export function LoginCodeNotice() {
   return (
     <Alert tone="warning" title={t('trust.warning.title')} className="text-xs">
       <p>{t('trust.warning.principle')}</p>
-      <p className="mt-1.5">{t('trust.warning.why')}</p>
-      <p className="mt-1.5">{t('trust.warning.storage')}</p>
-      <p className="mt-1.5">
-        {t('trust.warning.selfHost')}{' '}
-        <a
-          href={SOURCE_URL}
-          target="_blank"
-          rel="noreferrer noopener"
-          className="font-semibold underline underline-offset-2"
-        >
-          {t('common.source')}
-        </a>
-      </p>
+      <details className="group mt-1.5">
+        <summary className="flex cursor-pointer list-none items-center gap-1 font-semibold underline underline-offset-2 [&::-webkit-details-marker]:hidden">
+          {t('trust.warning.more')}
+          <ChevronRight className="h-3 w-3 shrink-0 transition-transform group-open:rotate-90" />
+        </summary>
+        <p className="mt-1.5">{t('trust.warning.why')}</p>
+        <p className="mt-1.5">{t('trust.warning.storage')}</p>
+        <p className="mt-1.5">
+          {t('trust.warning.selfHost')}{' '}
+          <a
+            href={SOURCE_URL}
+            target="_blank"
+            rel="noreferrer noopener"
+            className="font-semibold underline underline-offset-2"
+          >
+            {t('common.source')}
+          </a>
+        </p>
+      </details>
     </Alert>
   );
 }

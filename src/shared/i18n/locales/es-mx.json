@@ -100,6 +100,7 @@
     "warning": {
       "title": "Esta herramienta pide tu código de acceso",
       "principle": "Telegram indica que nunca compartas tu código de acceso con nadie. Ese consejo es correcto. No hagas una excepción con este sitio: desconfía de él igual.",
+      "more": "Por qué lo necesita y qué queda",
       "why": "Dicho eso, esta herramienta entra a Telegram como tú para traer tus mensajes. Sin tu número y tu código de acceso no puede hacer nada. Esos datos se usan solo en la petición a Telegram y nunca se almacenan.",
       "storage": "Después de entrar, lo único que queda es un valor que mantiene la conexión, y vive solo dentro de la pestaña que estás viendo: cierras la pestaña y desaparece.",
       "selfHost": "Si aun así no te convence, no le creas a nadie. Lee el código, o descárgalo y ejecútalo en tu propia máquina. Tendrás exactamente esta pantalla, corriendo con código que revisaste tú."

@@ -100,6 +100,7 @@
     "warning": {
       "title": "Công cụ này hỏi mã đăng nhập của bạn",
       "principle": "Telegram khuyên bạn đừng bao giờ chia sẻ mã đăng nhập với ai. Lời khuyên đó đúng. Đừng coi trang này là ngoại lệ — hãy nghi ngờ nó y như vậy.",
+      "more": "Vì sao cần và điều gì còn lại",
       "why": "Dù vậy, công cụ này đăng nhập vào Telegram với danh nghĩa của bạn để lấy tin nhắn. Không có số điện thoại và mã đăng nhập thì nó chẳng làm được gì. Những giá trị đó chỉ dùng cho yêu cầu gửi tới Telegram và không bao giờ được lưu ở đâu.",
       "storage": "Sau khi đăng nhập, thứ duy nhất còn lại là một giá trị giữ kết nối, và nó cũng chỉ sống bên trong thẻ bạn đang xem — đóng thẻ là mất.",
       "selfHost": "Nếu vẫn chưa yên tâm, đừng tin lời ai cả. Hãy tự đọc mã nguồn, hoặc tải về và chạy trên máy của mình. Khi đó bạn vẫn có đúng màn hình này, nhưng chạy bằng mã do chính bạn kiểm chứng."

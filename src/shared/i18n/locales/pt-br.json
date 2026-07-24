@@ -100,6 +100,7 @@
     "warning": {
       "title": "Esta ferramenta pede seu código de acesso",
       "principle": "O Telegram diz para você nunca compartilhar seu código de acesso com ninguém. O conselho está certo. Não abra exceção para este site — desconfie dele do mesmo jeito.",
+      "more": "Por que é necessário e o que fica",
       "why": "Dito isso, esta ferramenta entra no Telegram como você para buscar suas mensagens. Sem seu número e seu código de acesso, ela não consegue fazer nada. Esses valores são usados só na requisição ao Telegram e nunca são armazenados.",
       "storage": "Depois que você entra, a única coisa guardada é um valor que mantém a conexão aberta, e ele vive apenas dentro da aba que você está vendo — fechou a aba, acabou.",
       "selfHost": "Se ainda assim não convencer, não acredite na palavra de ninguém. Leia o código, ou baixe e rode na sua própria máquina. Você terá exatamente esta tela, rodando um código que você mesmo conferiu."
