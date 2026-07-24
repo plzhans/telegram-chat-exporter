@@ -165,7 +165,10 @@ belong in the changelog for 1.2.4.
 
 `commitlint` runs from `.husky/commit-msg`, so a message that breaks the convention cannot be
 committed. Rules live in `commitlint.config.js`; subject-case checking is off because the
-subjects are Korean. The hook is installed by `pnpm install` via the `prepare` script.
+subjects are Korean.
+
+The hook is installed by `pnpm install` via the `prepare` script. A fresh clone has no hook
+until you run it, so **run `pnpm install` first** — you need it to build anyway.
 
 ## Deploying under a sub-path
 

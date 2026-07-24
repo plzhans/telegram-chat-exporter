@@ -511,7 +511,8 @@ major 버전 신호로 읽는다.
 `commitlint` 가 `.husky/commit-msg` 에서 검사한다. 규약을 문서에만 적어 두면 곧 어긋나므로
 막아 둔다. 규칙은 `commitlint.config.js` 에 있고, 한국어 제목이라 대소문자 검사는 꺼 두었다.
 
-훅은 `pnpm install` 이 걸어 준다(`prepare` 스크립트). 새로 받은 사람이 따로 할 일은 없다.
+훅은 `pnpm install` 이 걸어 준다(`prepare` 스크립트). 클론만 한 상태에서는 훅이 없으니
+**받으면 먼저 `pnpm install` 을 한 번 돌린다** — 어차피 그것 없이는 개발이 안 된다.
 
 ## 배포
 
