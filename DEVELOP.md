@@ -134,7 +134,40 @@ The output is static files only, so any web server will serve it. `dist/` is git
 The chunk-size warning during the build is expected. The MTProto library alone is several hundred
 KB, so the threshold is raised to 1500KB.
 
-### Deploying under a sub-path
+### Commit convention
+
+[Conventional Commits](https://www.conventionalcommits.org/). The format is
+`type(scope): description`. The type is in English because tooling reads it; the description is
+written in Korean in this repository.
+
+| Type | When |
+| --- | --- |
+| `feat` | A new capability |
+| `fix` | A bug fix |
+| `docs` | Documentation only |
+| `refactor` | Same behaviour, different structure |
+| `perf` | Performance |
+| `ci` | Workflows |
+| `build` | Build configuration |
+| `chore` | Everything else, including dependency bumps |
+| `test` · `revert` | Tests · reverts |
+
+Scopes used here: `landing` · `export` · `auth` · `i18n` · `seo` · `security` · `deps`.
+
+**Breaking changes take a `!`** — `feat(export)!: change the exported file format`. Tooling reads
+that as a major bump.
+
+Version bumps are made by `pnpm release` as `chore(release): 1.2.4`. It is a `chore` because it
+is maintenance, and because that keeps it out of the change list — "released 1.2.4" does not
+belong in the changelog for 1.2.4.
+
+### It is enforced
+
+`commitlint` runs from `.husky/commit-msg`, so a message that breaks the convention cannot be
+committed. Rules live in `commitlint.config.js`; subject-case checking is off because the
+subjects are Korean. The hook is installed by `pnpm install` via the `prepare` script.
+
+## Deploying under a sub-path
 
 `base` in `vite.config.ts` is `'/'`. **You never need to touch this locally.**
 

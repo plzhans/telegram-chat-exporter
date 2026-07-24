@@ -473,6 +473,46 @@ script-src 'nonce-{매 응답마다 새 값}' 'unsafe-inline' 'unsafe-eval' 'str
 
 ---
 
+## 커밋 규약
+
+[Conventional Commits](https://www.conventionalcommits.org/ko/) 를 따른다. 형식은
+`type(scope): 한국어 설명` 이고, 타입은 도구가 읽어야 하므로 영어로 고정한다.
+
+```
+feat(export): 참여자 익명 처리를 더한다
+
+본문에는 왜 그렇게 했는지를 적는다. 무엇을 했는지는 diff 가 이미 말한다.
+```
+
+| 타입 | 언제 | 예시 |
+| --- | --- | --- |
+| `feat` | 기능 추가 | `feat(landing): 스크린샷 슬라이드를 넣는다` |
+| `fix` | 버그 수정 | `fix(i18n): 언어를 바꿔도 로그인 진행 상태를 잃지 않는다` |
+| `docs` | 문서만 | `docs: README 를 사용자용으로 바꾼다` |
+| `refactor` | 동작은 그대로, 구조만 | `refactor(landing): 문자열 조립을 컴포넌트로 바꾼다` |
+| `perf` | 성능 | `perf(landing): 스크린샷을 lazy 로 받는다` |
+| `ci` | 워크플로 | `ci: 배포를 릴리스 태그에서만 돌린다` |
+| `build` | 빌드 설정 | `build: 테일윈드 content 글롭을 고친다` |
+| `chore` | 그 밖의 관리 | `chore(deps): 액션 버전을 올린다` |
+| `test` · `revert` | 테스트 · 되돌리기 | |
+
+`scope` 는 선택이다. 이 저장소에서 쓰는 것: `landing` · `export` · `auth` · `i18n` ·
+`seo` · `security` · `deps`.
+
+**호환성이 깨지면 `!` 를 붙인다** — `feat(export)!: 내보낸 파일 형식을 바꾼다`. 도구가 이걸
+major 버전 신호로 읽는다.
+
+버전 올림 커밋은 `pnpm release` 가 `chore(release): 1.2.4` 형태로 만들어 준다. 관리 작업이라
+`chore` 이고, 그래야 변경 목록에서도 빠진다 — 1.2.4 의 변경 목록에 "1.2.4 를 릴리스함"이
+들어가면 이상하다.
+
+### 어기면 커밋이 안 된다
+
+`commitlint` 가 `.husky/commit-msg` 에서 검사한다. 규약을 문서에만 적어 두면 곧 어긋나므로
+막아 둔다. 규칙은 `commitlint.config.js` 에 있고, 한국어 제목이라 대소문자 검사는 꺼 두었다.
+
+훅은 `pnpm install` 이 걸어 준다(`prepare` 스크립트). 새로 받은 사람이 따로 할 일은 없다.
+
 ## 배포
 
 **GitHub Actions 로 GitHub Pages 에 올린다.** `.github/workflows/deploy.yml` 이

@@ -12,7 +12,8 @@
     "build:standalone": "tsc -b && vite build --mode standalone",
     "preview": "vite preview --port 5176 --strictPort",
     "release": "pnpm version --tag-version-prefix=release/v -m \"chore(release): %s\n\n이 커밋에 release/v%s 태그가 붙는다. 태그가 올라가면 배포본 zip 과 사이트가\n여기서 함께 나가므로, 둘의 버전과 커밋이 같아진다.\"",
-    "audit": "pnpm audit --audit-level=high"
+    "audit": "pnpm audit --audit-level=high",
+    "prepare": "husky"
   },
   "dependencies": {
     "@radix-ui/react-popover": "^1.1.19",
@@ -38,11 +39,14 @@
     "zustand": "^5.0.0"
   },
   "devDependencies": {
+    "@commitlint/cli": "^21.2.1",
+    "@commitlint/config-conventional": "^21.2.0",
     "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^4.3.0",
     "autoprefixer": "^10.4.20",
+    "husky": "^9.1.7",
     "postcss": "^8.5.1",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.7.0",
