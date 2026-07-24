@@ -3,6 +3,7 @@
 [![Open the app](https://img.shields.io/badge/Telegram-ChatExporter-26A5E4?logo=telegram&logoColor=white)](https://telegram-exporter.plzhans.com)
 [![Release](https://img.shields.io/github/v/release/plzhans/telegram-chat-exporter)](https://github.com/plzhans/telegram-chat-exporter/releases)
 [![Downloads](https://img.shields.io/github/downloads/plzhans/telegram-chat-exporter/latest/total)](https://github.com/plzhans/telegram-chat-exporter/releases/latest)
+[![License](https://img.shields.io/github/license/plzhans/telegram-chat-exporter)](LICENSE)
 
 **Save your whole Telegram history to your own computer.**
 

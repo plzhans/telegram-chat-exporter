@@ -1,9 +1,11 @@
 # telegram-chat-exporter
 
-[![ChatExporter](https://img.shields.io/badge/Telegram-ChatExporter-26A5E4?logo=telegram&logoColor=white)](https://telegram-exporter.plzhans.com)
-[![Release](https://github.com/plzhans/telegram-chat-exporter/actions/workflows/release.yml/badge.svg)](https://github.com/plzhans/telegram-chat-exporter/actions/workflows/release.yml)
-[![Deploy Pages](https://github.com/plzhans/telegram-chat-exporter/actions/workflows/deploy.yml/badge.svg)](https://github.com/plzhans/telegram-chat-exporter/actions/workflows/deploy.yml)
+[![Open the app](https://img.shields.io/badge/Telegram-ChatExporter-26A5E4?logo=telegram&logoColor=white)](https://telegram-exporter.plzhans.com)
+[![License](https://img.shields.io/github/license/plzhans/telegram-chat-exporter)](LICENSE)
 [![Release](https://img.shields.io/github/v/release/plzhans/telegram-chat-exporter)](https://github.com/plzhans/telegram-chat-exporter/releases)
+
+[![Release workflow](https://github.com/plzhans/telegram-chat-exporter/actions/workflows/release.yml/badge.svg)](https://github.com/plzhans/telegram-chat-exporter/actions/workflows/release.yml)
+[![Deploy Pages](https://github.com/plzhans/telegram-chat-exporter/actions/workflows/deploy.yml/badge.svg)](https://github.com/plzhans/telegram-chat-exporter/actions/workflows/deploy.yml)
 
 [![Issues](https://img.shields.io/github/issues/plzhans/telegram-chat-exporter)](https://github.com/plzhans/telegram-chat-exporter/issues)
 [![Last Commit](https://img.shields.io/github/last-commit/plzhans/telegram-chat-exporter)](https://github.com/plzhans/telegram-chat-exporter/commits/main)
