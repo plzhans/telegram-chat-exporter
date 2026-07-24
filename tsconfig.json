@@ -1,4 +1,13 @@
 {
+  /*
+    이 설정으로 타입체크를 하지는 않는다(`files: []`). 아래 두 프로젝트가 그 일을 한다.
+
+    그런데도 `jsx` 를 적어 두는 이유는 **esbuild 때문**이다. Vite 는 `vite.config.ts` 를
+    esbuild 로 묶어서 실행하는데, 그 설정 파일이 랜딩(`src/landing/*.tsx`)을 import 한다.
+    esbuild 는 가장 가까운 tsconfig 에서 jsx 설정을 읽으므로, 여기가 비어 있으면 클래식
+    런타임으로 떨어져 빌드가 `React is not defined` 로 죽는다.
+  */
+  "compilerOptions": { "jsx": "react-jsx" },
   "files": [],
   "references": [
     { "path": "./tsconfig.app.json" },

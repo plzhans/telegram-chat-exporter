@@ -2,14 +2,15 @@ import type { Config } from 'tailwindcss';
 
 const config: Config = {
   /*
-    `build/` 도 스캔해야 한다. 랜딩(`build/landing.ts`)은 React 가 아니라 **문자열로**
-    HTML 을 찍는데, 거기 적힌 클래스도 결국 이 CSS 한 벌에서 나온다.
-
-    빠뜨리면 조용히 깨진다 - 빌드는 통과하고, 랜딩이 쓰는 클래스 중 `src/` 어딘가에
-    우연히 같이 쓰인 것만 살아남는다. 실제로 이 줄에 `build/` 가 없던 동안 모든 섹션의
+    빌드 때만 쓰이는 코드라도 **클래스를 적는 곳이면 여기 들어와야 한다.** 빠뜨리면
+    조용히 깨진다 - 빌드는 통과하고, 그 파일이 쓰는 클래스 중 다른 데서 우연히 같이 쓰인
+    것만 살아남는다. 실제로 랜딩이 `src/` 밖(`build/landing.ts`)에 있던 동안 모든 섹션의
     상하 여백(`py-12 sm:py-16`)과 데스크톱 가로 배치(`sm:flex-row`)가 빠져 있었다.
+
+    랜딩(`src/landing/`)을 `src/` 안으로 들여온 이유가 이것이다 - 아래 한 줄이 이미
+    덮고 있어서 같은 실수가 날 자리가 없다.
   */
-  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}', './build/**/*.ts'],
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
       colors: {

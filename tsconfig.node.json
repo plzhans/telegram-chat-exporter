@@ -15,6 +15,8 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
+    /* vite.config.ts 가 랜딩 컴포넌트(src/landing/*.tsx)를 import 하므로 여기도 필요하다. */
+    "jsx": "react-jsx",
     "types": ["node"]
   },
   "include": ["vite.config.ts", "tailwind.config.ts"]

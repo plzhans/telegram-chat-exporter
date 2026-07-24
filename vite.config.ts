@@ -13,7 +13,21 @@ import {
   type SeoMeta,
   type SupportedLanguage,
 } from './src/shared/i18n/languages';
-import { landingBody, type LandingText } from './build/landing';
+/*
+  랜딩은 React 컴포넌트지만 **빌드할 때 한 번 그려지고 끝난다**(아래 `landingDoc`).
+  `react-dom/server` 는 그 렌더에만 쓰이므로 앱 번들에는 들어가지 않는다.
+
+  여기서 `src/landing/*.tsx` 를 직접 import 한다. 그래서 이 설정 파일을 esbuild 가
+  묶을 때 JSX 를 만나는데, 루트 `tsconfig.json` 의 `jsx` 설정이 그 처리를 정한다 -
+  없으면 클래식 런타임으로 떨어져 `React is not defined` 로 죽는다.
+
+  랜딩 파일들이 `@/` 별칭 대신 상대경로를 쓰는 이유도 이것이다. 그 별칭은 Vite 가 앱을
+  묶을 때만 풀어 주고, 설정 파일을 묶는 esbuild 는 모른다.
+*/
+import { createElement } from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { Landing } from './src/landing/Landing';
+import type { LandingText } from './src/landing/context';
 
 /**
  * 게시될 도메인. 배포하는 쪽이 알려 준다.
@@ -458,7 +472,7 @@ function localizedPages(opts: {
        * 색인되는 주소는 `/` 와 `/<언어>/` 뿐이라, 크롤러가 실제로 읽는 문서가 이것들이다.
        * 여기에 본문이 없으면(빈 `<div id="root">` 뿐이면) 구글은 렌더 큐를 한 바퀴 더 돌아야
        * 내용을 보고, JS 를 실행하지 않는 크롤러는 영영 못 본다. 자세한 근거는
-       * `build/landing.ts` 주석 참고.
+       * `src/landing/Landing.tsx` 주석 참고.
        */
       index.source = landingDoc(shell, DEFAULT_LANGUAGE);
       for (const lang of PREFIXED_LANGUAGES) {
@@ -492,22 +506,32 @@ function localizedPages(opts: {
         .map((part) => part.trim())
         .find((part) => part.startsWith('connect-src')) ?? '';
 
-    const body = landingBody(landingTextOf(lang), {
-      lang,
-      home: canonicalOf(lang),
-      start: `${base}${langSegment(lang) ? `${langSegment(lang)}/` : ''}start/`,
-      languages: SUPPORTED_LANGUAGES.map((l) => ({
-        code: l,
-        href: `${base}${langSegment(l) ? `${langSegment(l)}/` : ''}`,
-        label: String(localeOf(l).nativeName ?? l),
-        current: l === lang,
-      })),
-      connectSrc,
-      analytics: Boolean(opts.gaId),
-      sourceUrl: opts.sourceUrl,
-      copyright: opts.copyright,
-      version: opts.version,
-    });
+    /*
+      JSX 대신 `createElement` 를 쓴다. Vite 는 설정 파일을 `vite.config.{js,ts,mts,…}`
+      로만 찾아서 `.tsx` 가 될 수 없고, 그래서 이 파일에는 JSX 를 적을 수 없다. 랜딩
+      컴포넌트 쪽은 `.tsx` 라 평범하게 JSX 로 쓴다 - 여기 한 줄만 이 모양이다.
+    */
+    const body = renderToStaticMarkup(
+      createElement(Landing, {
+        text: landingTextOf(lang),
+        env: {
+          lang,
+          home: canonicalOf(lang),
+          start: `${base}${langSegment(lang) ? `${langSegment(lang)}/` : ''}start/`,
+          languages: SUPPORTED_LANGUAGES.map((l) => ({
+            code: l,
+            href: `${base}${langSegment(l) ? `${langSegment(l)}/` : ''}`,
+            label: String(localeOf(l).nativeName ?? l),
+            current: l === lang,
+          })),
+          connectSrc,
+          analytics: Boolean(opts.gaId),
+          sourceUrl: opts.sourceUrl,
+          copyright: opts.copyright,
+          version: opts.version,
+        },
+      }),
+    );
 
     /*
       애널리틱스를 켠 빌드에만 붙는다. 앱 번들(gzip 530KB)과 달리 이건 1KB 도 안 되고

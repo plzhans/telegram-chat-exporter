@@ -48,8 +48,9 @@ jobs:
 
           # 랜딩이 거는 고정 주소의 파일명과 여기서 올리는 이름이 어긋나면, 빌드도 릴리스도
           # 통과하는데 내려받기 버튼만 404 가 된다 - 아무도 모르는 채로 깨져 있다.
-          if ! grep -q "RELEASE_ASSET = '$ASSET_LATEST'" build/landing.ts; then
-            echo "::error::build/landing.ts 의 RELEASE_ASSET 이 $ASSET_LATEST 와 다르다. 둘을 맞춰라."
+          GUARD=src/landing/sections/Download.tsx
+          if ! grep -q "RELEASE_ASSET = '$ASSET_LATEST'" "$GUARD"; then
+            echo "::error::$GUARD 의 RELEASE_ASSET 이 $ASSET_LATEST 와 다르다. 둘을 맞춰라."
             exit 1
           fi
 
@@ -93,8 +94,9 @@ jobs:
       # 풀어 주는 예약어다. 뒤쪽 **파일명은 그대로 맞아야** 하므로, 에셋 이름이 릴리스마다
       # 달라지면 사이트에 적어 둘 고정 문자열이 없어진다. 그래서 한 벌 더 올린다.
       #
-      # **이 이름은 `build/landing.ts` 의 `RELEASE_ASSET` 과 같아야 한다.** 한쪽만 고치면
-      # 빌드도 릴리스도 성공하는데 랜딩의 내려받기 버튼만 조용히 404 가 된다.
+      # **이 이름은 `src/landing/sections/Download.tsx` 의 `RELEASE_ASSET` 과 같아야 한다.**
+      # 한쪽만 고치면 빌드도 릴리스도 성공하는데 랜딩의 내려받기 버튼만 조용히 404 가 된다
+      # — 그래서 위 Resolve version 단계가 릴리스 전에 둘을 대조한다.
       - name: Package
         run: |
           NAME="${{ steps.version.outputs.name }}"
