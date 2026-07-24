@@ -19,8 +19,8 @@ export function Hero() {
         </p>
         <div className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
           <StartButton />
-          <SourceButton />
           <DownloadButton />
+          <SourceButton />
         </div>
         <p className="mt-5 text-xs text-slate-400">
           {copy.note.replace('{{languages}}', String(env.languages.length))}
