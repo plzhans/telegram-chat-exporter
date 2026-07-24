@@ -13,6 +13,7 @@ import {
   type SeoMeta,
   type SupportedLanguage,
 } from './src/shared/i18n/languages';
+import { landingBody, type LandingText } from './build/landing';
 
 /**
  * 게시될 도메인. 배포하는 쪽이 알려 준다.
@@ -23,9 +24,29 @@ import {
 const SITE_ORIGIN = (process.env.SITE_ORIGIN ?? '').replace(/\/+$/, '');
 
 /** 언어별 문구는 로케일 JSON 이 들고 있다. 언어가 늘어도 이 파일은 그대로다. */
-const seoOf = (lang: SupportedLanguage): SeoMeta =>
-  JSON.parse(readFileSync(path.resolve(__dirname, `src/shared/i18n/locales/${lang}.json`), 'utf8'))
-    .seo;
+const localeOf = (lang: SupportedLanguage): Record<string, never> & Record<string, unknown> =>
+  JSON.parse(readFileSync(path.resolve(__dirname, `src/shared/i18n/locales/${lang}.json`), 'utf8'));
+
+const seoOf = (lang: SupportedLanguage): SeoMeta => localeOf(lang).seo as SeoMeta;
+
+/**
+ * 랜딩 문구. **없으면 한국어가 아니라 영어로 떨어진다.**
+ *
+ * 전역 폴백은 기본 언어(한국어)지만, 랜딩만은 영어로 받는다. 랜딩은 한국어·영어부터 넣고
+ * 나머지를 뒤따라 채우는데, 그동안 일본어 주소에 한국어 홍보문이 뜨는 것은 영어가 뜨는
+ * 것보다 나쁘다 — 읽을 수 있는 사람이 훨씬 적다.
+ *
+ * 로케일 JSON 에 `landing` 블록이 생기는 순간 저절로 그 언어를 쓴다. 여기는 안 고쳐도 된다.
+ */
+const landingTextOf = (lang: SupportedLanguage): LandingText => {
+  const own = localeOf(lang);
+  const fallback = localeOf('en-us');
+  return {
+    app: (own.app ?? fallback.app) as LandingText['app'],
+    common: (own.common ?? fallback.common) as LandingText['common'],
+    landing: (own.landing ?? fallback.landing) as LandingText['landing'],
+  };
+};
 
 const pkg = JSON.parse(readFileSync(path.resolve(__dirname, 'package.json'), 'utf8')) as {
   version: string;
@@ -43,6 +64,9 @@ function gitCommit(): string {
     return 'unknown';
   }
 }
+
+/** 랜딩이 부르는 애널리틱스 파일. 해시를 붙이지 않아 HTML 쪽에서 이름을 알 수 있다. */
+const ANALYTICS_FILE = 'assets/analytics.js';
 
 const BUILD_INFO = {
   version: pkg.version,
@@ -259,7 +283,46 @@ function fileProtocolPage(on: { ga: string; ads: string }): Plugin {
  *
  * 기본 언어는 `index.html` 그 자체다.
  */
-function localizedPages(): Plugin {
+/**
+ * 랜딩 전용 애널리틱스 로더.
+ *
+ * 랜딩에는 앱 번들이 없으므로 `src/shared/analytics/gtag.ts` 의 `initAnalytics()` 가 돌지
+ * 않는다. 그런데 그 함수가 보내던 유일한 이벤트가 **첫 화면 방문**이었다 — 그대로 두면
+ * 프리렌더로 바꾸는 순간 통계가 통째로 멎는다.
+ *
+ * 구글이 주는 스니펫은 `<script>` 안에 설정 코드가 들어 있어 `script-src 'unsafe-inline'`
+ * 을 요구한다. **그건 내주지 않는다** — 인라인이 열리는 순간 XSS 한 방이 곧 인증코드
+ * 탈취가 되고, 이 앱이 신뢰를 청하는 근거가 무너진다. 그래서 같은 일을 하는 **자기 파일**
+ * 하나를 내보내고 `<script src>` 로 부른다. `script-src 'self'` 로 덮이므로 정책을 한 칸도
+ * 더 열지 않는다.
+ *
+ * 보내는 값은 앱 쪽과 같은 규칙이다. 자동 수집을 끄고 지금 경로만 보낸다 — 랜딩 주소에는
+ * 대화방 id 가 들어갈 자리가 없으므로 이 화면에서는 그대로 보내도 안전하다.
+ */
+function landingAnalytics(id: string): string {
+  return `(function () {
+  var id = ${JSON.stringify(id)};
+  var tag = document.createElement('script');
+  tag.async = true;
+  tag.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(id);
+  document.head.appendChild(tag);
+
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { window.dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', id, { send_page_view: false, page_path: location.pathname, anonymize_ip: true });
+  gtag('event', 'page_view', { page_path: location.pathname });
+})();
+`;
+}
+
+function localizedPages(opts: {
+  sourceUrl: string;
+  copyright: string;
+  version: string;
+  /** 구글 애널리틱스 측정 ID. 비어 있으면 랜딩에 스크립트가 한 줄도 안 들어간다. */
+  gaId: string;
+}): Plugin {
   /** Vite 가 최종 결정한 `base`. `--base` 로 넘어온 값이 반영된 뒤라 이걸 써야 한다. */
   let base = '/';
 
@@ -353,17 +416,119 @@ function localizedPages(): Plugin {
     generateBundle(_options, bundle) {
       const index = bundle['index.html'];
       if (!index || index.type !== 'asset') return;
-      const source = String(index.source);
 
+      /** Vite 가 만든 원본. 스크립트가 붙어 있는 **앱 셸**이다. */
+      const shell = String(index.source);
+
+      /**
+       * 앱 셸이 놓이는 자리는 둘이다.
+       *
+       * - `start/index.html` — 랜딩의 "시작하기" 가 가리키는 곳. 실제 파일이라 200 으로
+       *   응답한다. 폴백에 맡기면 앱 진입점이 404 로 나가는데, 링크를 받아서 여는 사람도
+       *   있는 주소라 그건 곤란하다.
+       * - `404.html` — SPA 폴백. `/dialogs` 로 새로고침하면 Pages 가 이걸 내주고,
+       *   라우터가 주소를 읽어 정상 렌더한다.
+       *
+       * 예전에는 `deploy.yml` 이 셸 스크립트로 `index.html` 을 복사해 만들었다. 이제
+       * `index.html` 은 스크립트가 없는 랜딩이라 그 복사가 성립하지 않는다 — 앱이 안 뜨는
+       * 폴백이 된다. 어느 문서가 셸인지는 이 플러그인만 알므로 여기서 함께 찍는다.
+       */
+      const emitShell = (dir: string, html: string) => {
+        for (const name of [`${dir}start/index.html`, `${dir}404.html`]) {
+          this.emitFile({ type: 'asset', fileName: name, source: html });
+        }
+      };
+
+      emitShell('', shell);
+      for (const lang of PREFIXED_LANGUAGES) {
+        emitShell(`${langSegment(lang)}/`, applySeo(shell, lang));
+      }
+
+      if (opts.gaId) {
+        this.emitFile({
+          type: 'asset',
+          fileName: ANALYTICS_FILE,
+          source: landingAnalytics(opts.gaId),
+        });
+      }
+
+      /**
+       * 그리고 **첫 화면은 정적 HTML 로 갈아 끼운다.**
+       *
+       * 색인되는 주소는 `/` 와 `/<언어>/` 뿐이라, 크롤러가 실제로 읽는 문서가 이것들이다.
+       * 여기에 본문이 없으면(빈 `<div id="root">` 뿐이면) 구글은 렌더 큐를 한 바퀴 더 돌아야
+       * 내용을 보고, JS 를 실행하지 않는 크롤러는 영영 못 본다. 자세한 근거는
+       * `build/landing.ts` 주석 참고.
+       */
+      index.source = landingDoc(shell, DEFAULT_LANGUAGE);
       for (const lang of PREFIXED_LANGUAGES) {
         this.emitFile({
           type: 'asset',
           fileName: `${langSegment(lang)}/index.html`,
-          source: applySeo(source, lang),
+          source: landingDoc(applySeo(shell, lang), lang),
         });
       }
     },
   };
+
+  /**
+   * 앱 셸에서 스크립트를 걷어내고 그 자리에 랜딩 본문을 넣는다.
+   *
+   * `<head>` 를 새로 쓰지 않고 셸의 것을 그대로 쓰는 이유는, CSP·canonical·hreflang·
+   * og·구조화 데이터가 이미 그 안에서 언어별로 맞춰졌기 때문이다. 한 벌 더 만들면
+   * 두 문서가 어긋난다.
+   */
+  function landingDoc(html: string, lang: SupportedLanguage): string {
+    /**
+     * 문서에 실제로 걸린 `connect-src` 를 그대로 화면에 보여 준다.
+     *
+     * 손으로 적으면 애널리틱스를 켜고 끌 때마다 어긋난다. 방금 심어 둔 정책에서 뽑으면
+     * 어긋날 수가 없다 — 사용자가 개발자도구에서 대조하는 값과 같은 출처다.
+     */
+    const policy = /<meta http-equiv="Content-Security-Policy" content="([^"]*)"/.exec(html)?.[1];
+    const connectSrc =
+      policy
+        ?.split(';')
+        .map((part) => part.trim())
+        .find((part) => part.startsWith('connect-src')) ?? '';
+
+    const body = landingBody(landingTextOf(lang), {
+      lang,
+      home: canonicalOf(lang),
+      start: `${base}${langSegment(lang) ? `${langSegment(lang)}/` : ''}start/`,
+      languages: SUPPORTED_LANGUAGES.map((l) => ({
+        code: l,
+        href: `${base}${langSegment(l) ? `${langSegment(l)}/` : ''}`,
+        label: String(localeOf(l).nativeName ?? l),
+        current: l === lang,
+      })),
+      connectSrc,
+      analytics: Boolean(opts.gaId),
+      sourceUrl: opts.sourceUrl,
+      copyright: opts.copyright,
+      version: opts.version,
+    });
+
+    /*
+      애널리틱스를 켠 빌드에만 붙는다. 앱 번들(gzip 530KB)과 달리 이건 1KB 도 안 되고
+      `async` 라 렌더를 막지 않는다.
+    */
+    const analytics = opts.gaId
+      ? `\n    <script src="${base}${ANALYTICS_FILE}" async></script>`
+      : '';
+
+    return (
+      html
+        /*
+          모듈 스크립트와 그 프리로드를 걷어낸다. 이 문서는 앱 코드를 한 줄도 받지 않는다 —
+          랜딩의 무게를 줄이는 것이 프리렌더의 절반이다(나머지 절반이 본문 HTML).
+        */
+        .replace(/\s*<script\s+type="module"[^>]*><\/script>/g, '')
+        .replace(/\s*<link\s+rel="modulepreload"[^>]*>/g, '')
+        .replace('<div id="root"></div>', body)
+        .replace('</body>', `${analytics}\n  </body>`)
+    );
+  }
 }
 
 /**
@@ -386,15 +551,25 @@ function localizedPreview(): Plugin {
 
       server.middlewares.use((req, _res, next) => {
         const pathname = (req.url ?? '/').split('?')[0];
+        if (path.extname(pathname)) return next();
+
         const rest = pathname.startsWith(base)
           ? pathname.slice(base.length)
           : pathname.replace(/^\//, '');
-        const [first, ...deeper] = rest.split('/').filter(Boolean);
+        const parts = rest.split('/').filter(Boolean);
+        const lang = parts[0] && segments.includes(parts[0]) ? parts.shift() : '';
+        const dir = lang ? `${base}${lang}/` : base;
 
-        // 언어 디렉터리 안쪽 경로이고 파일 요청이 아닐 때만 그 언어의 셸로 돌린다.
-        if (first && segments.includes(first) && deeper.length > 0 && !path.extname(pathname)) {
-          req.url = `${base}${first}/index.html`;
-        }
+        /*
+          실제 파일이 있는 두 주소는 그대로 둔다 — 랜딩(빈 경로)과 앱 진입(`start`).
+          나머지는 배포본과 똑같이 **그 언어의 `404.html`** 로 돌린다.
+
+          루트 `index.html` 로 돌리면 안 된다. 그건 이제 스크립트가 없는 랜딩이라 앱이
+          아예 안 뜬다 — preview 에서만 `/dialogs` 새로고침이 깨져서, 정작 배포 전에
+          확인해야 할 것을 못 보게 된다.
+        */
+        if (parts.length === 0 || (parts.length === 1 && parts[0] === 'start')) return next();
+        req.url = `${dir}404.html`;
         next();
       });
     },
@@ -452,7 +627,24 @@ export default defineConfig(({ command, mode }) => {
        */
       ...(standalone
         ? [fileProtocolPage(on)]
-        : [contentSecurityPolicy(command === 'build', on), localizedPages(), localizedPreview()]),
+        : [
+            contentSecurityPolicy(command === 'build', on),
+            localizedPages({
+              /*
+                아래 셋은 `src/shared/config/app.ts` 가 앱 화면에 쓰는 값과 같은 것이다.
+                그쪽은 `__APP_VERSION__` 같은 define 을 읽어서 설정 파일이 그대로 가져다
+                쓸 수 없다. 형태가 어긋나면 랜딩 푸터와 앱 푸터가 다른 값을 적게 되므로,
+                고칠 일이 생기면 두 곳을 함께 본다.
+              */
+              sourceUrl:
+                loadEnv(mode, process.cwd(), '').VITE_SOURCE_URL ||
+                'https://github.com/plzhans/telegram-chat-exporter',
+              copyright: `© ${BUILD_INFO.date.slice(0, 4)} plzhans`,
+              version: `v${BUILD_INFO.version} · ${BUILD_INFO.commit} · ${BUILD_INFO.date}`,
+              gaId: on.ga,
+            }),
+            localizedPreview(),
+          ]),
     ],
     resolve: {
       alias: {

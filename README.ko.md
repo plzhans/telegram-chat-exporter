@@ -328,17 +328,51 @@ addEventListener('securitypolicyviolation', (e) =>
 ### 언어별로 진짜 HTML 파일이 나온다
 
 ```
-dist/index.html         <html lang="ko-KR">  canonical → /
-dist/en-us/index.html   <html lang="en-US">  canonical → /en-us/
+dist/index.html               첫 화면 (정적)   <html lang="ko-KR">  canonical → /
+dist/en-us/index.html         첫 화면 (정적)   <html lang="en-US">  canonical → /en-us/
+dist/start/index.html         앱 셸
+dist/en-us/start/index.html   앱 셸
+dist/404.html                 앱 셸 (SPA 폴백)
+dist/en-us/404.html           앱 셸 (SPA 폴백)
 ```
 
 SPA 폴백(`404.html`)으로 때울 수도 있지만 그 주소는 **응답 코드가 404** 라 검색엔진이
 색인하지 않는다. 언어별 주소를 만드는 목적이 색인이므로 실제 파일이 있어야 한다.
-`vite.config.ts` 의 `localizedPages` 플러그인이 만든다.
+`vite.config.ts` 의 `localizedPages` 플러그인이 여섯 가지를 전부 만든다.
 
 로그인 뒤 경로(`/en-us/dialogs`)는 실제 파일이 없어 404 폴백으로 뜬다. 어차피 색인 대상이
 아니라 문제되지 않지만, 그 경우에도 `<html lang>` 이 틀리지 않도록 앱이 실행 시점에
 문서의 언어를 실제 언어로 맞춘다.
+
+### 첫 화면은 React 가 아니라 정적 HTML 이다
+
+색인되는 주소는 `/` 와 `/<언어>/` 뿐이다. 즉 **크롤러가 실제로 읽는 문서가 그것들**이라,
+거기에 빈 `<div id="root">` 만 있으면 곤란하다. 구글은 JS 를 실행하긴 하지만 크롤과 렌더가
+다른 큐라 며칠씩 밀리고, 네이버·다음·GPTBot 은 사실상 못 읽는다.
+
+무게도 이유다. 앱 번들에는 MTProto 라이브러리가 들어 있어 gzip 530KB 인데, 홍보 한 장
+보여주려고 그걸 받게 하면 LCP·INP 가 나빠진다 — 둘 다 검색 순위에 직접 들어가는 신호다.
+
+| | 첫 화면 (`/`) | 앱 (`/start/`) |
+| --- | --- | --- |
+| HTML | 26KB (본문 포함) | 6KB |
+| CSS | 28KB | 28KB |
+| JS | **0.5KB**(애널리틱스만) | 1.76MB |
+
+`build/landing.ts` 가 문자열만 다룬다. React 컴포넌트로 두고 `renderToStaticMarkup` 하는
+방법도 있지만, 그러면 i18n·라우터·zustand 를 Node 에서 돌릴 준비를 해야 한다 — 얻는 것에
+비해 딸려 오는 게 너무 많다.
+
+**문구는 로케일 JSON 의 `landing` 블록이다.** 앱 화면과 같은 파일, 같은 키를 쓴다.
+없는 언어는 **한국어가 아니라 영어**로 떨어진다 — 일본어 주소에 한국어 홍보문이 뜨는 건
+영어가 뜨는 것보다 나쁘다. 블록을 채우는 순간 저절로 그 언어를 쓰므로 코드는 안 고쳐도 된다.
+
+화면에 적히는 `connect-src` 한 줄은 **방금 심은 CSP 에서 뽑아 온다.** 손으로 적으면
+애널리틱스를 켜고 끌 때마다 어긋나는데, 하필 그 문장이 이 앱의 신뢰 근거다.
+
+**개발 모드에서는 이 화면을 볼 수 없다.** 정적 랜딩은 빌드 때만 찍히고, dev 에서는 CSS 도
+JS 가 주입하므로 스크립트 없는 문서는 아예 스타일이 없다. `pnpm build && pnpm preview` 로
+확인한다 — CSP 와 같은 이유다.
 
 ---
 
@@ -457,9 +491,14 @@ script-src 'nonce-{매 응답마다 새 값}' 'unsafe-inline' 'unsafe-eval' 'str
 **이 저장소는 커스텀 도메인을 쓴다.** 그래서 실제 배포는 `--base` 없이(루트) 나가고
 canonical 은 `https://telegram-exporter.plzhans.com/` 을 가리킨다.
 
-그리고 **SPA 폴백**을 만든다. Pages 에는 리라이트 규칙이 없어서 `/dialogs` 로 새로고침하면
-없는 파일이 된다. 그때 Pages 가 `404.html` 을 내주므로, 그 내용을 `index.html` 과 같게
-만들어 두면 라우터가 경로를 읽고 정상 렌더한다. (응답 코드는 404 로 남지만 화면은 정상이다.)
+**SPA 폴백(`404.html`)은 워크플로가 아니라 빌드가 만든다.** Pages 에는 리라이트 규칙이
+없어서 `/dialogs` 로 새로고침하면 없는 파일이 되고, 그때 Pages 가 `404.html` 을 내준다.
+그 내용이 앱 셸이면 라우터가 경로를 읽고 정상 렌더한다. (응답 코드는 404 로 남지만 화면은
+정상이다.)
+
+예전에는 이 자리에서 `cp dist/index.html dist/404.html` 로 만들었다. 지금은 `index.html`
+이 **스크립트가 없는 정적 첫 화면**이라 그 복사가 성립하지 않는다 — 앱이 아예 안 뜨는
+폴백이 된다. 어느 문서가 앱 셸인지는 빌드만 아는 사실이라 `localizedPages` 가 함께 찍는다.
 
 **언어별 디렉터리도 각자 자기 `404.html` 을 갖는다.** 루트 것 하나로 때우면
 `/en-us/dialogs` 새로고침에서 한국어판 셸이 떠서 언어가 조용히 리셋된다.

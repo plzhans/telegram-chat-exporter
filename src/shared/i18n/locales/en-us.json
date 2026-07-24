@@ -16,6 +16,64 @@
     "title": "Telegram Exporter",
     "tagline": "Telegram chat backup with no server in between"
   },
+  "landing": {
+    "badge": "No install · No server · Free",
+    "title": "Save your whole Telegram history to your own computer",
+    "lede": "It runs right in your browser. Nothing to install, no account to create. Your phone number and your messages never pass through a server of ours — because there is no such server to pass through.",
+    "cta": "Start now",
+    "ctaSignedIn": "Open my chats",
+    "ctaSource": "View source",
+    "note": "Free · Open source · {{languages}} languages",
+    "why": {
+      "title": "How this differs from tools you install",
+      "install": {
+        "title": "Nothing to install",
+        "body": "No installing Python or Node, no opening a terminal. If you have a browser it works — Windows, macOS, Android and iPhone alike."
+      },
+      "server": {
+        "title": "No server in between",
+        "body": "Your browser connects to Telegram directly. There is simply no middle server for your phone number, login code or messages to pass through."
+      },
+      "output": {
+        "title": "Output a person can read",
+        "body": "Unzip it and you get an HTML document that looks like the conversation itself. It opens without an internet connection, and without this tool."
+      }
+    },
+    "zip": {
+      "title": "This is what you get",
+      "file": "telegram-<chat-name>-<date>.zip",
+      "html": "Reads like the conversation itself. Open this one first",
+      "jsonl": "One message per line. The raw form, for machines to read again",
+      "txt": "Human-readable, chronological, oldest first",
+      "meta": "Chat info, message count, export timestamp"
+    },
+    "steps": {
+      "title": "Three steps and you're done",
+      "one": {
+        "title": "Sign in with Telegram",
+        "body": "Enter your phone number and the login code Telegram sends you."
+      },
+      "two": {
+        "title": "Pick a chat and a date range",
+        "body": "Jump to a date on the calendar and take only the stretch you need."
+      },
+      "three": {
+        "title": "Download the zip",
+        "body": "You see the progress, and you can stop at any time."
+      }
+    },
+    "verify": {
+      "title": "Don't take our word for it",
+      "body": "Your browser locks this page so that it <strong>cannot connect to any address</strong> other than Telegram. Not even the author of this page can break that rule.",
+      "bodyAnalytics": "Your browser locks this page so that it <strong>cannot connect to any address</strong> other than Telegram and Google Analytics, which counts visitors. Not even the author of this page can break that rule. Your messages, phone number and login code are not sent to Google either.",
+      "devtools": "Press F12 and open the <strong>Network</strong> tab to see every address this page actually connects to.",
+      "source": "The full source code is public."
+    },
+    "final": {
+      "title": "Back up your chats now",
+      "body": "No sign-up, no install, no payment."
+    }
+  },
   "common": {
     "next": "Next",
     "back": "Back",

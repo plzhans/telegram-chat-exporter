@@ -87,22 +87,12 @@ jobs:
           # 넣는 순간 광고망 호스트가 script/frame/img/connect 에 전부 추가된다.
           VITE_GOOGLE_ADSENSE_ID: ${{ vars.VITE_GOOGLE_ADSENSE_ID }}
 
-      # SPA 폴백. Pages 에는 리라이트 규칙이 없어서 /dialogs 로 새로고침하면 없는 파일이 된다.
-      # 그때 Pages 가 404.html 을 내주므로, 그걸 index.html 과 같게 만들어 두면 라우터가
-      # 경로를 읽고 정상 렌더한다. (응답 코드는 404 로 남지만 화면은 정상이다.)
+      # SPA 폴백(404.html)은 빌드가 직접 찍는다. 여기서 만들지 않는다.
       #
-      # 언어별 디렉터리(dist/en/ 등)도 각자 자기 404.html 을 가져야 한다. 루트 것 하나로
-      # 때우면 /en/dialogs 새로고침에서 한국어판이 뜬다 — 언어가 조용히 리셋된다.
-      # 언어판이 없는 빌드에서도 그냥 아무것도 안 하고 지나간다.
-      - name: SPA fallback
-        run: |
-          cp dist/index.html dist/404.html
-          for dir in dist/*/; do
-            if [ -f "$dir/index.html" ]; then
-              cp "$dir/index.html" "$dir/404.html"
-              echo "404 폴백 생성: $dir"
-            fi
-          done
+      # 예전에는 이 자리에서 `cp dist/index.html dist/404.html` 로 만들었다. 지금은
+      # index.html 이 **스크립트가 없는 정적 랜딩**이라 그 복사가 성립하지 않는다 —
+      # 앱이 아예 안 뜨는 폴백이 된다. 어느 문서가 앱 셸인지는 빌드만 아는 사실이라
+      # vite.config.ts 의 localizedPages 가 404.html 과 start/index.html 을 함께 찍는다.
 
       - uses: actions/upload-pages-artifact@v3
         with:

@@ -346,17 +346,54 @@ themselves based on `dir`. Icons whose direction carries meaning (previous/next,
 ### Real HTML files per language
 
 ```
-dist/index.html         <html lang="ko-KR">  canonical → /
-dist/en-us/index.html   <html lang="en-US">  canonical → /en-us/
+dist/index.html               landing (static)   <html lang="ko-KR">  canonical → /
+dist/en-us/index.html         landing (static)   <html lang="en-US">  canonical → /en-us/
+dist/start/index.html         app shell
+dist/en-us/start/index.html   app shell
+dist/404.html                 app shell (SPA fallback)
+dist/en-us/404.html           app shell (SPA fallback)
 ```
 
 This could be papered over with the SPA fallback (`404.html`), but those URLs **respond with 404**
 and search engines don't index them. Since indexing is the whole point of per-language URLs, real
-files have to exist. The `localizedPages` plugin in `vite.config.ts` creates them.
+files have to exist. The `localizedPages` plugin in `vite.config.ts` creates all six kinds.
 
 Post-login paths (`/en-us/dialogs`) have no real file and are served through the 404 fallback.
 They aren't indexing targets anyway, so that's fine — but even then the app fixes the document's
 language at runtime so `<html lang>` is never wrong.
+
+### The landing page is static HTML, not React
+
+The only indexed URLs are `/` and `/<lang>/`. Those are **the documents crawlers actually read**,
+so an empty `<div id="root">` there won't do. Google does execute JS, but crawling and rendering
+are separate queues that can run days apart, and Naver, Daum and GPTBot effectively can't read it
+at all.
+
+Weight is the other reason. The app bundle carries the MTProto library, so it's 530KB gzipped —
+making someone download that to see one marketing page hurts LCP and INP, both of which feed
+directly into ranking.
+
+| | Landing (`/`) | App (`/start/`) |
+| --- | --- | --- |
+| HTML | 26KB (content included) | 6KB |
+| CSS | 28KB | 28KB |
+| JS | **0.5KB** (analytics only) | 1.76MB |
+
+`build/landing.ts` deals only in strings. Keeping it as a React component and calling
+`renderToStaticMarkup` was an option, but that means getting i18n, the router and zustand to run
+under Node — too much baggage for what it buys.
+
+**The copy lives in the locale JSON under `landing`.** Same files, same keys as the app screens.
+Languages without that block fall back to **English, not Korean** — a Korean pitch on a Japanese
+URL is worse than an English one. Filling the block in is all it takes; no code changes.
+
+The `connect-src` line shown on screen is **extracted from the CSP that was just injected**.
+Writing it by hand would drift every time analytics is toggled — and that sentence is precisely
+this app's basis for trust.
+
+**You can't see this screen in dev mode.** The static landing is only emitted at build time, and
+in dev even the CSS is injected by JS, so a script-less document would have no styling at all.
+Check it with `pnpm build && pnpm preview` — the same reason CSP changes need preview.
 
 ---
 
@@ -483,10 +520,15 @@ commit as the deployment lives.
 **This repository uses a custom domain.** So the real deployment goes out without `--base` (at the
 root) and canonical points at `https://telegram-exporter.plzhans.com/`.
 
-It also generates an **SPA fallback**. Pages has no rewrite rules, so reloading `/dialogs` hits a
-nonexistent file. Pages serves `404.html` in that case, so making its content identical to
-`index.html` lets the router read the path and render normally. (The response code stays 404, but
-the screen is correct.)
+**The SPA fallback (`404.html`) is produced by the build, not the workflow.** Pages has no rewrite
+rules, so reloading `/dialogs` hits a nonexistent file and Pages serves `404.html`. As long as
+that file is the app shell, the router reads the path and renders normally. (The response code
+stays 404, but the screen is correct.)
+
+This step used to be `cp dist/index.html dist/404.html` here in the workflow. That no longer
+works: `index.html` is now the **script-less static landing**, so copying it produces a fallback
+where the app never boots. Which document is the shell is a fact only the build knows, so
+`localizedPages` emits it.
 
 **Each language directory gets its own `404.html` too.** Making do with the root one alone would
 show the Korean shell on an `/en-us/dialogs` reload, silently resetting the language.

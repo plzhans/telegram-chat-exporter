@@ -61,6 +61,19 @@ function safePath(): string | null {
   return null;
 }
 
+/**
+ * **웹 배포에서는 더 이상 여기서 방문이 잡히지 않는다.**
+ *
+ * 보낼 수 있는 경로가 첫 화면뿐인데(`safePath`), 그 첫 화면은 이제 앱 번들을 받지 않는
+ * 정적 HTML 이다(`build/landing.ts`). 그래서 이 함수가 도는 시점의 경로는 항상 `/start`
+ * 이하이고 `safePath()` 가 `null` 을 준다. 랜딩 쪽 집계는 빌드가 따로 내보내는 작은
+ * 자기 파일이 맡는다(`vite.config.ts` 의 `landingAnalytics`).
+ *
+ * 그래도 지우지 않는 이유는 두 가지다. `ANALYTICS_ENABLED` 는 화면이 외부 연결을 고지할
+ * 근거로 계속 쓰이고(CSP 가 실제로 구글 쪽에 열려 있으므로 그 고지는 여전히 참이어야
+ * 한다), 단일 파일 배포처럼 랜딩이 없는 형태가 생기면 이 경로가 다시 유일한 집계 지점이
+ * 된다.
+ */
 export function initAnalytics(): void {
   if (!ID) return;
 
