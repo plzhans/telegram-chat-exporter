@@ -114,6 +114,31 @@ export const Info = ({ className }: IconProps) => (
   </Svg>
 );
 
+export const Pause = ({ className }: IconProps) => (
+  <Svg className={className}>
+    <rect x="14" y="4" width="4" height="16" rx="1" />
+    <rect x="6" y="4" width="4" height="16" rx="1" />
+  </Svg>
+);
+
+export const Play = ({ className }: IconProps) => (
+  <Svg className={className}>
+    <polygon points="6 3 20 12 6 21 6 3" />
+  </Svg>
+);
+
+export const ChevronLeft = ({ className }: IconProps) => (
+  <Svg className={className}>
+    <path d="m15 18-6-6 6-6" />
+  </Svg>
+);
+
+export const ChevronRight = ({ className }: IconProps) => (
+  <Svg className={className}>
+    <path d="m9 18 6-6-6-6" />
+  </Svg>
+);
+
 export const ChevronDown = ({ className }: IconProps) => (
   <Svg className={className}>
     <path d="m6 9 6 6 6-6" />

@@ -359,6 +359,16 @@ function localizedPages(opts: {
   /** Vite 가 최종 결정한 `base`. `--base` 로 넘어온 값이 반영된 뒤라 이걸 써야 한다. */
   let base = '/';
 
+  /**
+   * 랜딩 스크린샷 슬라이더 스크립트.
+   *
+   * **앱 번들과 따로 빌드한다.** 별개의 진입점으로 emit 하므로 랜딩을 연 사람이 앱의
+   * MTProto 라이브러리까지 받는 일이 없다. 이름은 Rollup 이 해시로 정하니 emit 할 때 받은
+   * 표를 들고 있다가 `generateBundle` 에서 실제 파일명을 묻는다.
+   */
+  let sliderRef = '';
+  let sliderFile = '';
+
   const canonicalOf = (lang: SupportedLanguage) =>
     `${SITE_ORIGIN}${base}${langSegment(lang) ? `${langSegment(lang)}/` : ''}`;
 
@@ -439,6 +449,13 @@ function localizedPages(opts: {
     configResolved(config) {
       base = config.base;
     },
+    buildStart() {
+      sliderRef = this.emitFile({
+        type: 'chunk',
+        id: path.resolve(__dirname, 'src/landing/slider.ts'),
+        name: 'landing-slider',
+      });
+    },
     transformIndexHtml(html) {
       // hreflang 은 모든 언어판이 같은 목록을 들고 있어야 하므로 여기서 한 번만 심는다.
       return applySeo(html, DEFAULT_LANGUAGE).replace(
@@ -452,6 +469,9 @@ function localizedPages(opts: {
 
       /** Vite 가 만든 원본. 스크립트가 붙어 있는 **앱 셸**이다. */
       const shell = String(index.source);
+
+      // 해시가 붙은 실제 파일명은 이 시점에야 정해진다.
+      sliderFile = this.getFileName(sliderRef);
 
       /**
        * 앱 셸이 놓이는 자리는 둘이다.
@@ -562,6 +582,15 @@ function localizedPages(opts: {
       ? `\n    <script src="${base}${ANALYTICS_FILE}" async></script>`
       : '';
 
+    /*
+      스크린샷 슬라이더. **위에서 모듈 스크립트를 걷어낸 뒤에 붙어야** 살아남는다 -
+      아래 `replace` 순서가 그래서 중요하다.
+
+      `type="module"` 이라 기본이 defer 다. 렌더를 막지 않고, 이게 늦게 와도 슬라이더는
+      가로 스크롤로 이미 동작한다(`slider.ts` 주석).
+    */
+    const slider = `\n    <script type="module" src="${base}${sliderFile}"></script>`;
+
     return (
       html
         /*
@@ -571,7 +600,7 @@ function localizedPages(opts: {
         .replace(/\s*<script\s+type="module"[^>]*><\/script>/g, '')
         .replace(/\s*<link\s+rel="modulepreload"[^>]*>/g, '')
         .replace('<div id="root"></div>', body)
-        .replace('</body>', `${analytics}\n  </body>`)
+        .replace('</body>', `${analytics}${slider}\n  </body>`)
     );
   }
 }

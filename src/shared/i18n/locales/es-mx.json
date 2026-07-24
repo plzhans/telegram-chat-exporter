@@ -16,6 +16,71 @@
     "title": "Telegram Exporter",
     "tagline": "Respaldo de chats de Telegram sin servidor de por medio"
   },
+  "landing": {
+    "badge": "Sin instalar · Sin servidor · Gratis",
+    "title": "Guarda todo tu historial de Telegram en tu propia computadora",
+    "lede": "Funciona directamente en tu navegador. Nada que instalar, ninguna cuenta que crear. Tu número de teléfono y tus mensajes nunca pasan por un servidor nuestro — porque no existe tal servidor por donde pasar.",
+    "cta": "Empezar ahora",
+    "ctaSignedIn": "Abrir mis chats",
+    "ctaSource": "Ver el código fuente",
+    "note": "Gratis · Código abierto · {{languages}} idiomas",
+    "screenshots": {
+      "title": "Mira las pantallas reales",
+      "body": "Desliza de lado. Desde iniciar sesión hasta descargar, esto es exactamente lo que verás."
+    },
+    "why": {
+      "title": "En qué se diferencia de las herramientas que hay que instalar",
+      "install": {
+        "title": "Nada que instalar",
+        "body": "Sin instalar Python ni Node, sin abrir una terminal. Si tienes un navegador, funciona — igual en Windows, macOS, Android y iPhone."
+      },
+      "server": {
+        "title": "Ningún servidor de por medio",
+        "body": "Tu navegador se conecta directo a Telegram. Sencillamente no hay un servidor intermedio por donde pasen tu número, tu código de acceso ni tus mensajes."
+      },
+      "output": {
+        "title": "Un resultado que una persona puede leer",
+        "body": "Descomprímelo y tendrás un documento HTML que se ve como la conversación misma. Se abre sin internet y sin esta herramienta."
+      }
+    },
+    "zip": {
+      "title": "Esto es lo que recibes",
+      "file": "telegram-<nombre-del-chat>-<fecha>.zip",
+      "html": "Se lee como la conversación misma. Abre este primero",
+      "jsonl": "Un mensaje por línea. La forma cruda, para que las máquinas vuelvan a leerla",
+      "txt": "Legible para personas, en orden cronológico, de lo más antiguo a lo más nuevo",
+      "meta": "Datos del chat, número de mensajes, hora de la exportación"
+    },
+    "steps": {
+      "title": "Tres pasos y listo",
+      "one": {
+        "title": "Inicia sesión con Telegram",
+        "body": "Escribe tu número de teléfono y el código de acceso que te envía Telegram."
+      },
+      "two": {
+        "title": "Elige un chat y un rango de fechas",
+        "body": "Señala una fecha en el calendario y llévate solo el tramo que necesitas."
+      },
+      "three": {
+        "title": "Descarga el zip",
+        "body": "Ves el avance y puedes detenerlo cuando quieras."
+      }
+    },
+    "verify": {
+      "title": "No te pedimos que nos creas",
+      "body": "Tu navegador deja esta página encerrada de modo que <strong>no puede conectarse a ninguna dirección</strong> que no sea Telegram. Ni siquiera quien la escribió puede romper esa regla.",
+      "bodyAnalytics": "Tu navegador deja esta página encerrada de modo que <strong>no puede conectarse a ninguna dirección</strong> que no sea Telegram y Google Analytics, que cuenta visitantes. Ni siquiera quien la escribió puede romper esa regla. Tus mensajes, tu número y tu código de acceso tampoco llegan a Google.",
+      "devtools": "Pulsa F12 y abre la pestaña <strong>Network</strong> para ver cada dirección a la que esta página se conecta de verdad.",
+      "source": "Todo el código fuente es público."
+    },
+    "download": {
+      "cta": "Descargar (zip)"
+    },
+    "final": {
+      "title": "Respalda tus chats ahora",
+      "body": "Sin registro, sin instalación, sin pagos."
+    }
+  },
   "common": {
     "next": "Siguiente",
     "back": "Atrás",

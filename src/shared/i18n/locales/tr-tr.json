@@ -16,6 +16,71 @@
     "title": "Telegram Exporter",
     "tagline": "Aracı sunucu olmadan Telegram sohbet yedeği"
   },
+  "landing": {
+    "badge": "Kurulum yok · Sunucu yok · Ücretsiz",
+    "title": "Telegram yazışmalarınızın tamamını kendi bilgisayarınıza kaydedin",
+    "lede": "Doğrudan tarayıcınızın içinde çalışır. Kuracak bir şey yok, hesap açmanız da gerekmiyor. Telefon numaranız ve mesajlarınız bize ait hiçbir sunucudan geçmez — çünkü geçeceği böyle bir sunucu yok.",
+    "cta": "Hemen başlayın",
+    "ctaSignedIn": "Sohbetlerimi aç",
+    "ctaSource": "Kaynak kodunu görün",
+    "note": "Ücretsiz · Açık kaynak · {{languages}} dil",
+    "screenshots": {
+      "title": "Gerçek ekranları görün",
+      "body": "Yana kaydırın. Girişten indirmeye kadar, tam olarak göreceğiniz şey bu."
+    },
+    "why": {
+      "title": "Kurulum gerektiren araçlardan farkı ne",
+      "install": {
+        "title": "Kurulacak bir şey yok",
+        "body": "Python ya da Node kurmak, terminal açmak yok. Tarayıcınız varsa çalışır — Windows, macOS, Android ve iPhone'da aynı şekilde."
+      },
+      "server": {
+        "title": "Arada sunucu yok",
+        "body": "Tarayıcınız doğrudan Telegram'a bağlanır. Telefon numaranızın, giriş kodunuzun ya da mesajlarınızın uğrayacağı bir ara sunucu hiç yok."
+      },
+      "output": {
+        "title": "İnsanın okuyabileceği bir çıktı",
+        "body": "Arşivi açtığınızda karşınıza sohbetin kendisi gibi görünen bir HTML belgesi çıkar. İnternet olmadan da, bu araç olmadan da açılır."
+      }
+    },
+    "zip": {
+      "title": "Elinize geçen şey bu",
+      "file": "telegram-<sohbet-adı>-<tarih>.zip",
+      "html": "Sohbetin kendisi gibi okunur. Önce bunu açın",
+      "jsonl": "Her satırda bir mesaj. Makinelerin yeniden okuması için ham hâli",
+      "txt": "İnsanın okuyacağı biçim, eskiden yeniye zaman sırasıyla",
+      "meta": "Sohbet bilgisi, mesaj sayısı, dışa aktarma zamanı"
+    },
+    "steps": {
+      "title": "Üç adımda biter",
+      "one": {
+        "title": "Telegram hesabınızla girin",
+        "body": "Telefon numaranızı yazın ve Telegram'ın gönderdiği giriş kodunu girin."
+      },
+      "two": {
+        "title": "Sohbeti ve tarih aralığını seçin",
+        "body": "Takvimde bir tarihe gidip yalnızca ihtiyacınız olan aralığı alabilirsiniz."
+      },
+      "three": {
+        "title": "Zip dosyasını indirin",
+        "body": "İlerlemeyi görürsünüz ve istediğiniz an durdurabilirsiniz."
+      }
+    },
+    "verify": {
+      "title": "Sözümüze inanmak zorunda değilsiniz",
+      "body": "Tarayıcınız bu sayfayı öyle kilitler ki Telegram dışında <strong>hiçbir adrese bağlanamaz</strong>. Bu sayfayı yazan kişi bile o kuralı çiğneyemez.",
+      "bodyAnalytics": "Tarayıcınız bu sayfayı öyle kilitler ki Telegram ve ziyaretçi sayan Google Analytics dışında <strong>hiçbir adrese bağlanamaz</strong>. Bu sayfayı yazan kişi bile o kuralı çiğneyemez. Mesajlarınız, telefon numaranız ve giriş kodunuz Google tarafına da gitmez.",
+      "devtools": "F12'ye basıp <strong>Network</strong> sekmesini açın; bu sayfanın gerçekte hangi adreslere bağlandığını kendiniz görün.",
+      "source": "Kaynak kodun tamamı herkese açık."
+    },
+    "download": {
+      "cta": "İndir (zip)"
+    },
+    "final": {
+      "title": "Sohbetlerinizi hemen yedekleyin",
+      "body": "Kayıt yok, kurulum yok, ödeme yok."
+    }
+  },
   "common": {
     "next": "İleri",
     "back": "Geri",

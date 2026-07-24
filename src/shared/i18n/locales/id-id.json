@@ -16,6 +16,71 @@
     "title": "Telegram Exporter",
     "tagline": "Cadangan obrolan Telegram tanpa server perantara"
   },
+  "landing": {
+    "badge": "Tanpa instal · Tanpa server · Gratis",
+    "title": "Simpan seluruh riwayat Telegram Anda ke komputer sendiri",
+    "lede": "Semuanya berjalan langsung di peramban Anda. Tidak ada yang perlu dipasang, tidak perlu membuat akun. Nomor telepon dan pesan Anda tidak pernah melewati server kami — karena memang tidak ada server seperti itu.",
+    "cta": "Mulai sekarang",
+    "ctaSignedIn": "Buka obrolan saya",
+    "ctaSource": "Lihat kode sumber",
+    "note": "Gratis · Sumber terbuka · {{languages}} bahasa",
+    "screenshots": {
+      "title": "Lihat tampilan aslinya",
+      "body": "Geser ke samping. Dari masuk sampai mengunduh, persis seperti inilah yang akan Anda lihat."
+    },
+    "why": {
+      "title": "Apa bedanya dengan alat yang harus dipasang",
+      "install": {
+        "title": "Tidak ada yang perlu dipasang",
+        "body": "Tidak perlu memasang Python atau Node, tidak perlu membuka terminal. Asal ada peramban, ini jalan — di Windows, macOS, Android, maupun iPhone."
+      },
+      "server": {
+        "title": "Tidak ada server di tengah",
+        "body": "Peramban Anda terhubung langsung ke Telegram. Tidak ada server perantara yang dilewati nomor telepon, kode masuk, atau pesan Anda."
+      },
+      "output": {
+        "title": "Hasil yang bisa dibaca manusia",
+        "body": "Ekstrak berkasnya dan Anda mendapat dokumen HTML yang tampil persis seperti percakapannya. Bisa dibuka tanpa internet, dan tanpa alat ini."
+      }
+    },
+    "zip": {
+      "title": "Inilah isi berkas yang Anda terima",
+      "file": "telegram-<nama-obrolan>-<tanggal>.zip",
+      "html": "Terbaca seperti percakapan aslinya. Buka yang ini lebih dulu",
+      "jsonl": "Satu pesan per baris. Bentuk mentah, untuk dibaca mesin lagi",
+      "txt": "Untuk dibaca manusia, urut waktu dari yang paling lama",
+      "meta": "Info obrolan, jumlah pesan, waktu ekspor"
+    },
+    "steps": {
+      "title": "Tiga langkah dan selesai",
+      "one": {
+        "title": "Masuk dengan akun Telegram",
+        "body": "Masukkan nomor telepon Anda dan kode masuk yang dikirim Telegram."
+      },
+      "two": {
+        "title": "Pilih obrolan dan rentang tanggal",
+        "body": "Tunjuk tanggal di kalender dan ambil hanya bagian yang Anda perlukan."
+      },
+      "three": {
+        "title": "Unduh zip-nya",
+        "body": "Kemajuannya terlihat, dan Anda bisa berhenti kapan saja."
+      }
+    },
+    "verify": {
+      "title": "Jangan percaya begitu saja",
+      "body": "Peramban Anda mengunci halaman ini sehingga ia <strong>tidak bisa terhubung ke alamat mana pun</strong> selain Telegram. Pembuat halaman ini pun tidak bisa melanggar aturan itu.",
+      "bodyAnalytics": "Peramban Anda mengunci halaman ini sehingga ia <strong>tidak bisa terhubung ke alamat mana pun</strong> selain Telegram dan Google Analytics, yang menghitung jumlah pengunjung. Pembuat halaman ini pun tidak bisa melanggar aturan itu. Pesan, nomor telepon, dan kode masuk Anda juga tidak dikirim ke Google.",
+      "devtools": "Tekan F12 lalu buka tab <strong>Network</strong> untuk melihat sendiri setiap alamat yang benar-benar dihubungi halaman ini.",
+      "source": "Seluruh kode sumbernya terbuka."
+    },
+    "download": {
+      "cta": "Unduh (zip)"
+    },
+    "final": {
+      "title": "Cadangkan obrolan Anda sekarang",
+      "body": "Tanpa pendaftaran, tanpa pemasangan, tanpa bayaran."
+    }
+  },
   "common": {
     "next": "Lanjut",
     "back": "Kembali",

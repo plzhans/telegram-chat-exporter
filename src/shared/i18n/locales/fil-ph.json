@@ -17,6 +17,71 @@
     "title": "Telegram Exporter",
     "tagline": "Backup ng Telegram chat na walang server sa gitna"
   },
+  "landing": {
+    "badge": "Walang install · Walang server · Libre",
+    "title": "I-save ang buong Telegram chat history mo sa sarili mong computer",
+    "lede": "Diretsong tumatakbo sa browser mo. Walang i-install, walang account na gagawin. Ang numero mo at ang mga mensahe mo ay hindi dumadaan sa kahit anong server namin — dahil wala talagang ganoong server na dadaanan.",
+    "cta": "Magsimula na",
+    "ctaSignedIn": "Buksan ang mga chat ko",
+    "ctaSource": "Tingnan ang source code",
+    "note": "Libre · Open source · {{languages}} wika",
+    "screenshots": {
+      "title": "Tingnan ang totoong mga screen",
+      "body": "Mag-swipe sa gilid. Mula sa pag-sign in hanggang sa pag-download, ito mismo ang makikita mo."
+    },
+    "why": {
+      "title": "Ano ang pinagkaiba nito sa mga tool na kailangang i-install",
+      "install": {
+        "title": "Walang i-install",
+        "body": "Walang pag-install ng Python o Node, walang pagbukas ng terminal. Basta may browser ka, gumagana ito — sa Windows, macOS, Android at iPhone."
+      },
+      "server": {
+        "title": "Walang server sa gitna",
+        "body": "Diretso sa Telegram kumakabit ang browser mo. Wala talagang panggitnang server na daraanan ng numero mo, ng login code o ng mga mensahe mo."
+      },
+      "output": {
+        "title": "Resultang kayang basahin ng tao",
+        "body": "I-unzip mo at may HTML document kang makukuha na kamukha mismo ng usapan. Bumubukas ito kahit walang internet, at kahit wala ang tool na ito."
+      }
+    },
+    "zip": {
+      "title": "Ito ang matatanggap mo",
+      "file": "telegram-<pangalan-ng-chat>-<petsa>.zip",
+      "html": "Nababasa na parang ang usapan mismo. Ito ang unang buksan",
+      "jsonl": "Isang mensahe kada linya. Ang hilaw na anyo, para mabasa ulit ng makina",
+      "txt": "Para sa tao, sunod-sunod sa oras, mula sa pinakaluma",
+      "meta": "Impormasyon ng chat, bilang ng mensahe, oras ng pag-export"
+    },
+    "steps": {
+      "title": "Tatlong hakbang at tapos ka na",
+      "one": {
+        "title": "Mag-sign in gamit ang Telegram",
+        "body": "Ilagay ang numero mo at ang login code na ipapadala ng Telegram."
+      },
+      "two": {
+        "title": "Pumili ng chat at ng saklaw ng petsa",
+        "body": "Ituro ang petsa sa kalendaryo at kunin lang ang bahaging kailangan mo."
+      },
+      "three": {
+        "title": "I-download ang zip",
+        "body": "Kita mo ang progreso, at puwede kang huminto anumang oras."
+      }
+    },
+    "verify": {
+      "title": "Huwag mo kaming basta paniwalaan",
+      "body": "Nilalagyan ng kandado ng browser mo ang page na ito kaya <strong>hindi ito makakakabit sa kahit anong address</strong> maliban sa Telegram. Kahit ang gumawa ng page na ito ay hindi kayang sirain ang panuntunang iyon.",
+      "bodyAnalytics": "Nilalagyan ng kandado ng browser mo ang page na ito kaya <strong>hindi ito makakakabit sa kahit anong address</strong> maliban sa Telegram at sa Google Analytics na nagbibilang ng bisita. Kahit ang gumawa ng page na ito ay hindi kayang sirain ang panuntunang iyon. Ang mga mensahe, numero at login code mo ay hindi rin napupunta sa Google.",
+      "devtools": "Pindutin ang F12 at buksan ang <strong>Network</strong> tab para makita mismo ang bawat address na talagang kinakabitan ng page na ito.",
+      "source": "Bukas sa lahat ang buong source code."
+    },
+    "download": {
+      "cta": "I-download (zip)"
+    },
+    "final": {
+      "title": "I-backup na ang mga chat mo ngayon",
+      "body": "Walang sign-up, walang install, walang bayad."
+    }
+  },
   "common": {
     "next": "Susunod",
     "back": "Bumalik",

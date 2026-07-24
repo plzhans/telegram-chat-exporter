@@ -24,8 +24,13 @@ export interface LandingCopy {
   ctaSource: string;
   /** `{{languages}}` 자리에 지원 언어 수가 들어간다. */
   note: string;
-  /** 실제 화면 스크린샷 캐러셀. 이미지는 언어와 무관하게 한 벌만 두므로 문구가 둘뿐이다. */
-  screenshots: { title: string; body: string };
+  /**
+   * 실제 화면 스크린샷 캐러셀.
+   *
+   * 이미지는 언어와 무관하게 한 벌만 둔다. 그래서 번역이 필요한 것은 제목·설명과, 자동
+   * 넘김 버튼의 이름(화면에는 안 보이고 화면 읽기 프로그램이 읽는다)뿐이다.
+   */
+  screenshots: { title: string; body: string; pause: string; play: string };
   why: { title: string } & Record<'install' | 'server' | 'output', Card>;
   zip: {
     title: string;

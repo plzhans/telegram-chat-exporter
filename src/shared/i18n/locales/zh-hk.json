@@ -16,6 +16,71 @@
     "title": "Telegram Exporter",
     "tagline": "不經中間伺服器的 Telegram 對話備份"
   },
+  "landing": {
+    "badge": "免安裝 · 無伺服器 · 免費",
+    "title": "把整段 Telegram 對話完整儲存到自己的電腦",
+    "lede": "直接在你的瀏覽器裡運作。不用安裝，也不用註冊帳號。你的電話號碼和對話內容不會經過我們的伺服器 — 因為根本沒有這樣一台伺服器可以經過。",
+    "cta": "立即開始",
+    "ctaSignedIn": "開啟我的對話",
+    "ctaSource": "查看原始碼",
+    "note": "免費 · 開放原始碼 · {{languages}} 種語言",
+    "screenshots": {
+      "title": "看看實際畫面",
+      "body": "向旁邊滑動。由登入到下載，你看到的就是這些畫面。"
+    },
+    "why": {
+      "title": "跟要安裝的工具有甚麼不同",
+      "install": {
+        "title": "不用安裝任何東西",
+        "body": "不用裝 Python 或 Node，也不用開終端機。有瀏覽器就能用 — Windows、macOS、Android 和 iPhone 都一樣。"
+      },
+      "server": {
+        "title": "中間沒有伺服器",
+        "body": "你的瀏覽器直接連上 Telegram。根本不存在一台中間伺服器，讓你的電話號碼、登入驗證碼或對話內容經過。"
+      },
+      "output": {
+        "title": "人看得懂的成果",
+        "body": "解壓縮後會得到一份 HTML 文件，樣子就跟對話本身一樣。沒有網絡也能開，沒有這個工具也能開。"
+      }
+    },
+    "zip": {
+      "title": "你會收到這些檔案",
+      "file": "telegram-<對話名稱>-<日期>.zip",
+      "html": "讀起來就跟對話本身一樣。先開這個",
+      "jsonl": "一行一則訊息。給機器再次讀取的原始格式",
+      "txt": "給人閱讀，按時間排序，由舊到新",
+      "meta": "對話資料、訊息數量、匯出時間"
+    },
+    "steps": {
+      "title": "三個步驟就完成",
+      "one": {
+        "title": "用 Telegram 帳戶登入",
+        "body": "輸入電話號碼，再填上 Telegram 傳來的登入驗證碼。"
+      },
+      "two": {
+        "title": "選擇對話和日期範圍",
+        "body": "在日曆上指定日期，只取你需要的那一段。"
+      },
+      "three": {
+        "title": "下載 zip",
+        "body": "進度看得到，隨時可以停止。"
+      }
+    },
+    "verify": {
+      "title": "不必只信我們一面之詞",
+      "body": "你的瀏覽器把這個頁面鎖住，令它<strong>除了 Telegram 之外連不上任何位址</strong>。連寫這個頁面的人也破不了這條規則。",
+      "bodyAnalytics": "你的瀏覽器把這個頁面鎖住，令它<strong>除了 Telegram 和用來統計訪客人數的 Google Analytics 之外連不上任何位址</strong>。連寫這個頁面的人也破不了這條規則。你的對話內容、電話號碼和登入驗證碼同樣不會送到 Google。",
+      "devtools": "按 F12 打開<strong>網絡</strong>分頁，就可以親眼看到這個頁面實際連上哪些位址。",
+      "source": "全部原始碼都公開。"
+    },
+    "download": {
+      "cta": "下載 (zip)"
+    },
+    "final": {
+      "title": "現在就備份你的對話",
+      "body": "不用註冊、不用安裝、不用付費。"
+    }
+  },
   "common": {
     "next": "下一步",
     "back": "返回",

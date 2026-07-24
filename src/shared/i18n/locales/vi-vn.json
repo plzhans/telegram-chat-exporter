@@ -16,6 +16,71 @@
     "title": "Telegram Exporter",
     "tagline": "Sao lưu trò chuyện Telegram không qua máy chủ trung gian"
   },
+  "landing": {
+    "badge": "Không cài đặt · Không máy chủ · Miễn phí",
+    "title": "Lưu toàn bộ lịch sử trò chuyện Telegram về máy của bạn",
+    "lede": "Chạy thẳng trong trình duyệt. Không phải cài gì, không phải tạo tài khoản. Số điện thoại và tin nhắn của bạn không đi qua máy chủ nào của chúng tôi — vì đơn giản là chẳng có máy chủ nào để đi qua.",
+    "cta": "Bắt đầu ngay",
+    "ctaSignedIn": "Mở cuộc trò chuyện của tôi",
+    "ctaSource": "Xem mã nguồn",
+    "note": "Miễn phí · Mã nguồn mở · {{languages}} ngôn ngữ",
+    "screenshots": {
+      "title": "Xem màn hình thật",
+      "body": "Vuốt sang ngang. Từ lúc đăng nhập đến lúc tải về, bạn sẽ thấy đúng như vậy."
+    },
+    "why": {
+      "title": "Khác gì so với những công cụ phải cài đặt",
+      "install": {
+        "title": "Không phải cài gì",
+        "body": "Không cài Python hay Node, không mở terminal. Có trình duyệt là chạy được — Windows, macOS, Android hay iPhone đều như nhau."
+      },
+      "server": {
+        "title": "Không có máy chủ ở giữa",
+        "body": "Trình duyệt kết nối thẳng tới Telegram. Đơn giản là không tồn tại máy chủ trung gian nào để số điện thoại, mã đăng nhập hay tin nhắn của bạn đi qua."
+      },
+      "output": {
+        "title": "Kết quả con người đọc được",
+        "body": "Giải nén ra là một tài liệu HTML trông y như chính cuộc trò chuyện. Nó mở được cả khi không có mạng, và không cần đến công cụ này."
+      }
+    },
+    "zip": {
+      "title": "Bạn sẽ nhận được những gì",
+      "file": "telegram-<tên-cuộc-trò-chuyện>-<ngày>.zip",
+      "html": "Đọc y như chính cuộc trò chuyện. Hãy mở tệp này trước",
+      "jsonl": "Mỗi dòng một tin nhắn. Dạng thô, để máy đọc lại",
+      "txt": "Dạng người đọc, theo thứ tự thời gian, cũ trước",
+      "meta": "Thông tin cuộc trò chuyện, số tin nhắn, thời điểm xuất"
+    },
+    "steps": {
+      "title": "Ba bước là xong",
+      "one": {
+        "title": "Đăng nhập bằng tài khoản Telegram",
+        "body": "Nhập số điện thoại rồi nhập mã đăng nhập Telegram gửi tới."
+      },
+      "two": {
+        "title": "Chọn cuộc trò chuyện và khoảng thời gian",
+        "body": "Chỉ một ngày trên lịch để lấy đúng đoạn bạn cần."
+      },
+      "three": {
+        "title": "Tải tệp zip",
+        "body": "Bạn thấy được tiến độ và có thể dừng bất cứ lúc nào."
+      }
+    },
+    "verify": {
+      "title": "Đừng vội tin lời chúng tôi",
+      "body": "Trình duyệt khóa trang này lại để nó <strong>không thể kết nối tới bất kỳ địa chỉ nào</strong> ngoài Telegram. Ngay cả người viết ra trang này cũng không phá được luật đó.",
+      "bodyAnalytics": "Trình duyệt khóa trang này lại để nó <strong>không thể kết nối tới bất kỳ địa chỉ nào</strong> ngoài Telegram và Google Analytics — thứ chỉ để đếm lượt truy cập. Ngay cả người viết ra trang này cũng không phá được luật đó. Tin nhắn, số điện thoại và mã đăng nhập của bạn cũng không hề gửi sang Google.",
+      "devtools": "Nhấn F12 rồi mở thẻ <strong>Network</strong> để tự xem trang này thực sự kết nối tới những địa chỉ nào.",
+      "source": "Toàn bộ mã nguồn được công khai."
+    },
+    "download": {
+      "cta": "Tải về (zip)"
+    },
+    "final": {
+      "title": "Sao lưu ngay bây giờ",
+      "body": "Không đăng ký, không cài đặt, không trả tiền."
+    }
+  },
   "common": {
     "next": "Tiếp",
     "back": "Quay lại",

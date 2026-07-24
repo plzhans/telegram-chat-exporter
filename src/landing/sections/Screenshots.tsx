@@ -1,4 +1,5 @@
 import { useLanding } from '../context';
+import { ChevronLeft, ChevronRight, Pause, Play } from '../icons';
 
 /**
  * `public/landing/` 에 있는 스크린샷 장수.
@@ -51,35 +52,92 @@ export function Screenshots() {
         줘야 첫 장과 마지막 장도 가운데에 선다.
       */}
       {/*
-        스크롤바는 감춘다. 손가락으로 미는 자리에 회색 막대가 걸쳐 있으면 그림이 잘려 보이고,
-        데스크톱에서는 늘 떠 있어 지저분하다. 스크롤 자체는 그대로라 넘기는 데 지장이 없다.
+        `data-embla` 안쪽을 `slider.ts` 가 찾아 붙는다. 스크립트가 없거나 늦게 와도
+        뷰포트는 그냥 가로 스크롤 상자라 손가락으로 밀어 볼 수 있고, Embla 가 붙는 순간
+        `is-embla` 가 스크롤을 넘겨받는다. 화살표와 점은 그때 함께 드러난다(`is-ready`).
+
+        섹션을 화면 끝까지 흘리지 않고 본문 폭 안에 가둔다 - 다른 섹션과 같은 자리에서
+        시작하고 끝나야 페이지가 한 덩어리로 읽힌다.
       */}
-      <div className="mt-6 flex snap-x snap-mandatory gap-5 overflow-x-auto px-6 pb-4 [scrollbar-width:none] sm:gap-8 sm:px-10 [&::-webkit-scrollbar]:hidden">
-        {shots.map((n, i) => (
-          /*
-            휴대전화 테두리를 둘러 준다. 스크린샷이 흰 화면이라 맨몸으로 두면 그냥 흰
-            네모가 되어 어디까지가 그림인지 흐려진다. 검은 베젤을 두르면 한눈에 "휴대전화
-            화면"으로 읽히고, 흰 배경 위에서 각 장의 경계도 또렷해진다.
-          */
-          <div
-            key={n}
-            className="shrink-0 snap-center rounded-[1.75rem] bg-slate-900 p-1.5 shadow-lg ring-1 ring-slate-900/5"
-          >
-            <img
-              src={`${env.assetBase}landing/shot-${n}.png`}
-              width={WIDTH}
-              height={HEIGHT}
+      <div data-embla className="group/embla relative mx-auto mt-6 max-w-5xl px-4">
+        <div
+          data-embla-viewport
+          className="overflow-x-auto [scrollbar-width:none] [&.is-embla]:overflow-hidden [&::-webkit-scrollbar]:hidden"
+        >
+          <div className="flex snap-x snap-mandatory gap-5 pb-4 sm:gap-8">
+            {shots.map((n, i) => (
               /*
-                첫 장만 곧바로 받는다. 나머지는 스크롤해 다가올 때 받게 두지 않으면 이 한
-                섹션이 수 MB 를 끌고 와서, 정작 첫 화면이 늦게 뜬다.
+                휴대전화 테두리를 둘러 준다. 스크린샷이 흰 화면이라 맨몸으로 두면 그냥 흰
+                네모가 되어 어디까지가 그림인지 흐려진다. 검은 베젤을 두르면 한눈에
+                "휴대전화 화면"으로 읽히고, 흰 배경 위에서 경계도 또렷해진다.
               */
-              loading={i === 0 ? 'eager' : 'lazy'}
-              decoding="async"
-              alt={`${copy.screenshots.title} ${i + 1}`}
-              className="block w-56 rounded-[1.4rem] sm:w-64"
-            />
+              <div
+                key={n}
+                className="shrink-0 snap-center rounded-[1.75rem] bg-slate-900 p-1.5 shadow-lg ring-1 ring-slate-900/5"
+              >
+                <img
+                  src={`${env.assetBase}landing/shot-${n}.png`}
+                  width={WIDTH}
+                  height={HEIGHT}
+                  /*
+                    첫 장만 곧바로 받는다. 나머지는 다가올 때 받게 두지 않으면 이 한 섹션이
+                    수 MB 를 끌고 와서, 정작 첫 화면이 늦게 뜬다.
+                  */
+                  loading={i === 0 ? 'eager' : 'lazy'}
+                  decoding="async"
+                  alt={`${copy.screenshots.title} ${i + 1}`}
+                  className="block w-56 rounded-[1.4rem] sm:w-64"
+                />
+              </div>
+            ))}
           </div>
-        ))}
+        </div>
+
+        {/*
+          조작부는 **그림 아래 한 줄로 모은다.** 화살표를 그림 위에 겹쳐 두면 화면을 가리고,
+          어느 장을 보고 있는지 알려 주는 점과도 떨어져 있어 눈이 두 군데를 오간다.
+
+          기본은 숨김이고 `is-ready`(스크립트가 붙음)여야 드러난다 - 눌러도 아무 일 없는
+          버튼을 보여 주는 것보다 낫다.
+        */}
+        <div className="mt-2 hidden items-center justify-center gap-2 group-[.is-ready]/embla:flex">
+          <button
+            type="button"
+            data-embla-prev
+            aria-label="Previous"
+            className="rounded-full border border-slate-200 bg-white p-1.5 text-slate-600 transition-colors hover:bg-slate-50 disabled:opacity-30"
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </button>
+
+          {/* 점 표시. 지금 몇 번째를 보고 있는지 알려 준다. 스크립트가 채운다. */}
+          <div data-embla-dots className="flex items-center gap-2 px-1" />
+
+          <button
+            type="button"
+            data-embla-next
+            aria-label="Next"
+            className="rounded-full border border-slate-200 bg-white p-1.5 text-slate-600 transition-colors hover:bg-slate-50 disabled:opacity-30"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </button>
+
+          {/*
+            자동 넘김을 세우는 버튼. 움직임을 줄여 달라고 설정한 사람에게는 자동 넘김 자체를
+            안 걸므로(`slider.ts`) 이 버튼도 나오지 않는다.
+          */}
+          <button
+            type="button"
+            data-embla-toggle
+            data-label-pause={copy.screenshots.pause}
+            data-label-play={copy.screenshots.play}
+            aria-label={copy.screenshots.pause}
+            className="ms-1 hidden rounded-full border border-slate-200 bg-white p-1.5 text-slate-600 transition-colors hover:bg-slate-50 group-[.is-autoplay]/embla:block"
+          >
+            <Pause className="h-4 w-4 [.is-paused_&]:hidden" />
+            <Play className="hidden h-4 w-4 [.is-paused_&]:block" />
+          </button>
+        </div>
       </div>
     </section>
   );

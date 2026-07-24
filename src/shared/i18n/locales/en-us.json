@@ -26,7 +26,9 @@
     "note": "Free · Open source · {{languages}} languages",
     "screenshots": {
       "title": "See the actual screens",
-      "body": "Swipe through. From signing in to downloading, this is exactly what you will see."
+      "body": "Swipe through. From signing in to downloading, this is exactly what you will see.",
+      "pause": "Pause autoplay",
+      "play": "Play autoplay"
     },
     "why": {
       "title": "How this differs from tools you install",

@@ -16,6 +16,71 @@
     "title": "Telegram Exporter",
     "tagline": "Backup de conversas do Telegram sem servidor intermediário"
   },
+  "landing": {
+    "badge": "Sem instalar · Sem servidor · Grátis",
+    "title": "Salve todo o seu histórico do Telegram no seu próprio computador",
+    "lede": "Funciona direto no seu navegador. Nada para instalar, nenhuma conta para criar. Seu número de telefone e suas mensagens nunca passam por um servidor nosso — porque não existe servidor nenhum por onde passar.",
+    "cta": "Começar agora",
+    "ctaSignedIn": "Abrir minhas conversas",
+    "ctaSource": "Ver o código-fonte",
+    "note": "Grátis · Código aberto · {{languages}} idiomas",
+    "screenshots": {
+      "title": "Veja as telas de verdade",
+      "body": "Deslize para o lado. Do login ao download, é exatamente isso que você vai ver."
+    },
+    "why": {
+      "title": "Como isto difere das ferramentas que você instala",
+      "install": {
+        "title": "Nada para instalar",
+        "body": "Sem instalar Python ou Node, sem abrir terminal. Se você tem um navegador, funciona — no Windows, no macOS, no Android e no iPhone."
+      },
+      "server": {
+        "title": "Nenhum servidor no meio",
+        "body": "Seu navegador se conecta direto ao Telegram. Simplesmente não existe servidor intermediário por onde passem seu número, seu código de login ou suas mensagens."
+      },
+      "output": {
+        "title": "Um resultado que uma pessoa lê",
+        "body": "Descompacte e você tem um documento HTML com a cara da própria conversa. Ele abre sem internet e sem esta ferramenta."
+      }
+    },
+    "zip": {
+      "title": "É isto que você recebe",
+      "file": "telegram-<nome-da-conversa>-<data>.zip",
+      "html": "Lê-se como a própria conversa. Abra este primeiro",
+      "jsonl": "Uma mensagem por linha. A forma bruta, para as máquinas lerem de novo",
+      "txt": "Legível por pessoas, em ordem cronológica, das mais antigas às mais novas",
+      "meta": "Dados da conversa, número de mensagens, hora da exportação"
+    },
+    "steps": {
+      "title": "Três passos e pronto",
+      "one": {
+        "title": "Entre com a conta do Telegram",
+        "body": "Digite seu número de telefone e o código de login que o Telegram enviar."
+      },
+      "two": {
+        "title": "Escolha a conversa e o período",
+        "body": "Aponte uma data no calendário e leve só o trecho de que precisa."
+      },
+      "three": {
+        "title": "Baixe o zip",
+        "body": "Você vê o progresso e pode parar quando quiser."
+      }
+    },
+    "verify": {
+      "title": "Não acredite só na nossa palavra",
+      "body": "Seu navegador tranca esta página de modo que ela <strong>não consegue se conectar a endereço nenhum</strong> além do Telegram. Nem o autor da página consegue quebrar essa regra.",
+      "bodyAnalytics": "Seu navegador tranca esta página de modo que ela <strong>não consegue se conectar a endereço nenhum</strong> além do Telegram e do Google Analytics, que conta visitantes. Nem o autor da página consegue quebrar essa regra. Suas mensagens, seu número e seu código de login também não vão para o Google.",
+      "devtools": "Aperte F12 e abra a aba <strong>Network</strong> para ver cada endereço a que esta página realmente se conecta.",
+      "source": "Todo o código-fonte é público."
+    },
+    "download": {
+      "cta": "Baixar (zip)"
+    },
+    "final": {
+      "title": "Faça o backup das suas conversas agora",
+      "body": "Sem cadastro, sem instalação, sem pagamento."
+    }
+  },
   "common": {
     "next": "Avançar",
     "back": "Voltar",
