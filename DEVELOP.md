@@ -157,7 +157,7 @@ Scopes used here: `landing` · `export` · `auth` · `i18n` · `seo` · `securit
 **Breaking changes take a `!`** — `feat(export)!: change the exported file format`. Tooling reads
 that as a major bump.
 
-Version bumps are made by `pnpm release` as `chore(release): 1.2.4`. It is a `chore` because it
+Version bumps are made by release-please as `chore(release): 1.2.4`. It is a `chore` because it
 is maintenance, and because that keeps it out of the change list — "released 1.2.4" does not
 belong in the changelog for 1.2.4.
 
@@ -598,28 +598,42 @@ Cloudflare deploys at the root, so plain `pnpm build` without `--base` is enough
 
 ### Releases — the downloadable build
 
-`.github/workflows/release.yml` reacts to **`release/v*` tags**. When a tag is pushed it runs the
-[standalone build](#standalone-build), zips it, and creates a release under that name with the zip
-attached.
+**Tags are not created by hand.** As commits land on `main`, release-please keeps a **Release
+PR** open saying what the next version would be. Merging that PR *is* the release.
 
-```bash
-# Bump the version, commit, and tag in one step.
-pnpm release minor          # patch · minor · major, or an exact value like 1.0.0
-git push --follow-tags
+```
+commit (feat:/fix:) → the bot opens or updates the Release PR
+                    → merging it makes the bot write the version, CHANGELOG, tag and release,
+                      and the same run then attaches the zip and deploys the site
 ```
 
-`pnpm release` is just `pnpm version` with `--tag-version-prefix=release/v` attached. It edits
-`package.json`, makes a `chore(release): 1.0.0` commit, and adds a `release/v1.0.0` tag — all
-three always move together, so you can't push a version that's out of sync. (Putting the prefix in
-`.npmrc` as `tag-version-prefix` doesn't work, because **pnpm doesn't read it.** Hence the script.)
+The version comes from the commit messages — `fix` is a patch, `feat` a minor, `!` a major (see
+[commit convention](#commit-convention)). Nothing edits `package.json` by hand, so the tag and the
+version cannot drift apart.
 
-The tag is annotated, so `--follow-tags` pushes it along with the commit. If the working tree is
-dirty, `pnpm version` stops first.
+To pin an exact version, put `Release-As: 1.5.0` in a commit body.
 
-**If the tag and the version in `package.json` disagree, the workflow stops.** The version printed
-at the bottom of the screen and in exported documents comes from `package.json` — pushing only the
-tag would ship a file saying `v0.1.0` under the name `v1.0.0`, and the recipient would have no way
-to know which to believe.
+### Prereleases do not reach the site
+
+A release being created is not enough. The site is deployed **only when GitHub marks that release
+as `latest`**.
+
+The download button on the site points at `releases/latest`, and GitHub never counts a prerelease
+(beta, rc) as latest. Deploying prereleases would put the site ahead on `beta` while the download
+still served the previous stable zip — the exact mismatch this setup exists to prevent.
+
+The zip and its provenance attestation are still produced for prereleases, because people testing
+a beta need the file. Only the site deployment is held back.
+
+### Why deployment lives in the release workflow
+
+**A tag created by `GITHUB_TOKEN` does not wake other workflows.** That is GitHub's guard against
+infinite loops, so a workflow waiting on `on: push: tags` never fires when the bot tags. This is
+why `deploy.yml` does not watch tags itself and is invoked through `workflow_call` — which also
+guarantees the release and the site come from the same commit.
+
+Giving the bot a personal access token would restore the old triggers, but that means keeping a
+credential with no expiry in the repository, so we don't.
 
 Inside the zip is a single `telegram-exporter-v1.0.0/` folder. Unzipping gives you `index.html`,
 `assets/`, and a `README.txt` (`.github/release-assets/`) describing how to run it and what goes

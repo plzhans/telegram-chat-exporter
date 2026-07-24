@@ -1,28 +1,22 @@
-# `release/vX.Y.Z` 태그가 붙으면 빌드해서 GitHub Pages 로 올린다.
+# 사이트를 빌드해서 GitHub Pages 로 올린다.
 #
 # Pages 설정에서 Source 를 "GitHub Actions" 로 둬야 동작한다(Settings → Pages).
 # 브랜치 배포(gh-pages) 방식이 아니라서 빌드 결과물을 저장소에 커밋하지 않는다.
 #
-# ## 왜 main 푸시가 아니라 태그인가
+# **스스로 태그를 지켜보지 않는다.** 릴리스가 났을 때 release.yml 이 이 워크플로를 불러
+# 준다(`workflow_call`). 사이트와 내려받는 zip 은 같은 커밋에서 나와야 하는데, 서로 다른
+# 트리거로 각자 돌면 그 보장이 없다 - 한쪽만 성공하거나 순서가 엇갈릴 수 있다.
 #
-# **사이트와 내려받는 zip 이 같은 버전이어야 한다.** 둘은 실제로 묶여 있다 - 사이트의
-# 내려받기 버튼이 "가장 최신 릴리스"를 가리키고, 화면 하단에는 package.json 의 버전과
-# 커밋이 찍힌다. main 에 푸시할 때마다 배포하면 같은 v1.2.0 인데 커밋이 다른 사이트가
-# 계속 올라가고, 사이트가 설명하는 기능이 정작 내려받은 zip 에는 없는 일이 생긴다.
-#
-# release.yml 과 **같은 태그**에 걸어 두면 그 어긋남이 생길 자리가 없다. 두 워크플로가
-# 같은 커밋을 보고 나란히 돈다.
-#
-# 대가는 있다 - 랜딩 문구의 오타 하나를 고치려 해도 버전을 올리고 태그를 붙여야 한다.
-# 그게 부담스러운 경우를 위해 아래 수동 실행을 남겨 둔다.
+# 수동 실행은 남겨 둔다. 되돌릴 때(옛 태그를 골라 다시 배포)와 Variables 만 바꿨을 때 쓴다.
 name: Deploy to GitHub Pages
 
 on:
-  push:
-    tags:
-      # 형식 검사는 release.yml 이 한다. 여기는 같은 태그에 함께 걸리기만 하면 된다.
-      - 'release/*'
-  # 태그 없이 다시 배포하고 싶을 때. Variables 만 바꿨거나, 문구만 급히 고칠 때 쓴다.
+  workflow_call:
+    inputs:
+      ref:
+        description: 배포할 지점. 비우면 부르는 쪽의 ref 를 쓴다.
+        type: string
+        required: false
   # 실행 화면에서 브랜치·태그를 골라 그 지점으로 배포한다.
   workflow_dispatch:
 
@@ -43,7 +37,12 @@ jobs:
     steps:
       # 빌드가 커밋 해시를 박으므로(vite.config.ts 의 BUILD_INFO) .git 이 필요하다.
       # 얕은 클론이라도 HEAD 는 있으니 fetch-depth 는 기본값으로 둔다.
+      #
+      # 불려서 도는 경우에는 **릴리스 태그를 명시적으로 받아** 그 지점을 체크아웃한다.
+      # 부르는 쪽의 ref 는 main 이라, 그대로 두면 태그가 붙은 뒤 들어온 커밋까지 섞인다.
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.ref || github.ref }}
 
       # package.json 의 packageManager 필드에서 pnpm 버전을 읽는다.
       - uses: pnpm/action-setup@v6

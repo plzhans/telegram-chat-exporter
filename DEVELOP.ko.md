@@ -502,7 +502,7 @@ feat(export): 참여자 익명 처리를 더한다
 **호환성이 깨지면 `!` 를 붙인다** — `feat(export)!: 내보낸 파일 형식을 바꾼다`. 도구가 이걸
 major 버전 신호로 읽는다.
 
-버전 올림 커밋은 `pnpm release` 가 `chore(release): 1.2.4` 형태로 만들어 준다. 관리 작업이라
+버전 올림 커밋은 release-please 가 `chore(release): 1.2.4` 형태로 만들어 준다. 관리 작업이라
 `chore` 이고, 그래야 변경 목록에서도 빠진다 — 1.2.4 의 변경 목록에 "1.2.4 를 릴리스함"이
 들어가면 이상하다.
 
@@ -576,23 +576,42 @@ Cloudflare 는 루트 배포라 `--base` 없이 `pnpm build` 그대로 올리면
 [standalone 빌드](#받아서-실행하는-배포본-standalone)를 돌려 zip 으로 묶고, 그 이름의
 릴리스를 만들어 첨부한다.
 
-```bash
-# version 을 올리고, 커밋하고, 태그까지 한 번에.
-pnpm release minor          # patch · minor · major, 또는 1.0.0 같은 정확한 값
-git push --follow-tags
+**손으로 태그를 붙이지 않는다.** main 에 커밋이 쌓이면 release-please 가 "다음 버전은
+이것" 이라는 **Release PR** 을 열어 두고, 그 PR 을 머지하는 순간이 릴리스다.
+
+```
+커밋(feat:/fix:) → 봇이 Release PR 을 열거나 갱신
+                 → PR 을 머지하면 봇이 버전·CHANGELOG·태그·릴리스를 만들고
+                   같은 실행이 이어서 zip 을 붙이고 사이트를 배포한다
 ```
 
-`pnpm release` 는 `pnpm version` 에 `--tag-version-prefix=release/v` 를 붙인 것뿐이다.
-`package.json` 을 고치고, `chore(release): 1.0.0` 커밋을 만들고, `release/v1.0.0` 태그를 단다 —
-셋이 항상 같이 움직이니 버전을 어긋나게 밀어 넣을 수가 없다. (프리픽스를 `.npmrc` 의
-`tag-version-prefix` 에 적어 두는 방법은 **pnpm 이 읽지 않아서** 안 된다. 그래서 스크립트다.)
+버전은 커밋 메시지가 정한다 — `fix` 는 patch, `feat` 는 minor, `!` 가 붙으면 major
+([커밋 규약](#커밋-규약) 참고). 그래서 `package.json` 을 손으로 고칠 일이 없고, 태그와
+버전이 어긋날 자리도 없다.
 
-태그는 annotated 라 `--follow-tags` 로 커밋과 함께 올라간다. 작업 트리가 지저분하면
-`pnpm version` 이 먼저 멈춘다.
+특정 버전으로 못 박아야 하면 커밋 본문에 `Release-As: 1.5.0` 을 적는다.
 
-**태그와 `package.json` 의 버전이 다르면 워크플로가 멈춘다.** 화면 하단과 내보낸 문서에
-찍히는 버전은 `package.json` 에서 오기 때문이다 — 태그만 올리면 `v1.0.0` 이라는 이름으로
-`v0.1.0` 이라 적힌 파일이 나가고, 받은 사람은 어느 쪽을 믿어야 할지 알 수 없다.
+### 프리릴리스는 사이트에 안 나간다
+
+릴리스가 났다고 무조건 배포하지 않는다. **GitHub 이 `latest` 로 표시한 릴리스일 때만**
+사이트를 올린다.
+
+사이트의 내려받기 버튼이 `releases/latest` 를 가리키는데, GitHub 은 프리릴리스(beta·rc)를
+`latest` 로 치지 않는다. 그래서 프리릴리스까지 배포하면 **사이트만 beta 로 앞서 나가고
+내려받는 zip 은 옛 안정판**이 되는 어긋남이 생긴다.
+
+zip 과 출처 증명은 프리릴리스에도 붙는다 - 베타를 시험하는 사람도 파일을 받아야 하기
+때문이다. 막는 것은 사이트 배포뿐이다.
+
+### 왜 배포까지 릴리스 워크플로 안에 있나
+
+**GITHUB_TOKEN 이 만든 태그는 다른 워크플로를 깨우지 않는다.** 무한 루프를 막으려는
+GitHub 의 규칙이라, 봇이 태그를 붙여도 `on: push: tags` 로 기다리는 워크플로는 안 돈다.
+그래서 `deploy.yml` 은 스스로 태그를 지켜보지 않고 `workflow_call` 로 불려 간다 - 릴리스와
+사이트가 반드시 같은 커밋에서 나가게 하는 장치이기도 하다.
+
+개인 토큰(PAT)을 주면 예전처럼 트리거가 살아나지만, 만료 없는 자격증명을 저장소에
+상주시키는 셈이라 쓰지 않았다.
 
 zip 안은 `telegram-exporter-v1.0.0/` 폴더 하나다. 압축을 풀면 `index.html`, `assets/`,
 그리고 실행 방법과 "무엇이 어디로 가는가"를 적은 `README.txt`(`.github/release-assets/`)가
