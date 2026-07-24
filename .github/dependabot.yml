@@ -31,8 +31,8 @@ updates:
       major:
         update-types: [major]
     ignore:
-      # telegram 은 GramJS(이 앱이 쓰는 텔레그램 MTProto 라이브러리)의 npm 패키지
-      # 이름이다. 이름이 달라 헷갈리기 쉬운데 같은 것을 가리킨다.
+      # telegram 은 GramJS(이 앱이 쓰는 텔레그램 MTProto 라이브러리)의 npm 패키지 이름이다.
+      # 이름이 달라 헷갈리기 쉬운데 같은 것을 가리킨다.
       #
       # 패치까지 포함해 어떤 자리도 올리지 않는다. 이 패키지는 브라우저용과 Node 용을
       # dist-tag(browser / latest)로 나눠 같은 패키지에 번갈아 배포하기 때문이다. 그래서
