@@ -31,7 +31,15 @@ updates:
       major:
         update-types: [major]
     ignore:
-      # GramJS 는 **올리면 안 된다.** 같은 패키지로 Node 빌드와 브라우저 빌드를 따로
+      # GramJS 는 **평시에는 올리지 않는다.** 같은 패키지로 Node 빌드와 브라우저 빌드를 따로
       # 배포하는데 그 경계가 버전마다 달라진다 - DEVELOP.ko.md 의 "telegram 버전을 올리지
       # 말 것" 참고. package.json 에도 캐럿 없이 고정해 두었다.
+      #
+      # **`update-types` 를 반드시 붙인다.** 이름만 적으면 보안 업데이트까지 막힌다 -
+      # 전화번호와 대화 내용을 다루는 라이브러리라 그건 가장 알아야 할 알림이다.
+      # `version-update:` 는 평시 업데이트만 가리키므로 보안 PR 은 그대로 올라온다.
       - dependency-name: telegram
+        update-types:
+          - version-update:semver-major
+          - version-update:semver-minor
+          - version-update:semver-patch
