@@ -70,6 +70,19 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      # 알려진 고위험 취약점을 가진 의존성이 있으면 **여기서 멈춘다.**
+      #
+      # 찾아내는 일은 Dependabot 이 이미 매일 하고 PR 까지 만들어 준다. 다만 그건 알림일
+      # 뿐이라 머지도 릴리스도 막지 않는다 - 취약한 채로 물건이 나갈 수 있다. 이 한 줄이
+      # 그 마지막 문을 잠근다.
+      #
+      # `high` 아래는 통과시킨다. 전이 의존성의 low/moderate 까지 막으면 우리가 고칠 수
+      # 없는 이유로 릴리스가 통째로 멈춘다(지금도 빌드 도구가 물고 오는 low 가 하나 있다).
+      # 정말 막아야 하는데 고칠 수 없는 건이 생기면 package.json 의
+      # `pnpm.auditConfig.ignoreCves` 에 사유와 함께 적는다.
+      - name: Audit dependencies
+        run: pnpm audit --audit-level=high
+
       - name: Build
         run: pnpm build:standalone
         env:
