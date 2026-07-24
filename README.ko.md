@@ -77,6 +77,10 @@ English: [README.md](README.md)
   gh attestation verify telegram-exporter.zip --repo plzhans/telegram-chat-exporter
   ```
 
+  최신 [GitHub CLI](https://cli.github.com/) 가 필요합니다. 오래된 버전은
+  `unsupported tlog public key type` 오류를 냅니다 — 파일에 문제가 있는 것이 아니라 CLI 가
+  낡은 것이니, 올린 뒤 다시 실행하시면 됩니다.
+
 - **아니면 우리 것을 아예 안 쓰셔도 됩니다.** 위에서 배포본을 받아 본인 컴퓨터에서 띄우면
   됩니다. 그 배포본에는 애널리틱스가 하나도 없습니다 — 방문자 수를 세는 코드조차 없습니다.
 

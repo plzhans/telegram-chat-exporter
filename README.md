@@ -77,6 +77,10 @@ So instead of asking for trust, here is how to verify:
   gh attestation verify telegram-exporter.zip --repo plzhans/telegram-chat-exporter
   ```
 
+  This needs a recent [GitHub CLI](https://cli.github.com/). An older one fails with
+  `unsupported tlog public key type` — that is the CLI being out of date, not a problem with the
+  file. Upgrade it and run the command again.
+
 - **Or don't use our copy at all.** Download the release above and run it from your own machine.
   That build contains no analytics at all — not a visitor counter, nothing.
 
