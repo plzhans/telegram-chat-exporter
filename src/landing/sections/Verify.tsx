@@ -11,6 +11,9 @@ import { Rich } from '../ui';
 export function Verify() {
   const { text, env, copy } = useLanding();
 
+  /** `connect-src wss://a wss://b` → 지시어 하나와 주소 목록. */
+  const [directive, ...sources] = env.connectSrc.split(/\s+/).filter(Boolean);
+
   return (
     <section className="bg-slate-900">
       <div className="mx-auto max-w-3xl px-4 py-12 sm:py-16">
@@ -22,9 +25,20 @@ export function Verify() {
               className="mt-3 text-sm leading-relaxed text-slate-300"
               text={env.analytics ? copy.verify.bodyAnalytics : copy.verify.body}
             />
+            {/*
+              한 줄로 늘어놓으면 어디서 끊기는지가 화면 폭에 달려서, 주소 하나가 두 줄에
+              걸쳐 잘린다. 이 문단은 사용자가 개발자도구의 값과 **눈으로 대조하는** 것이
+              목적이라 그 상태로는 쓸모가 없다. 그래서 지시어 다음에 허용된 주소를 한 줄에
+              하나씩 놓는다.
+            */}
             <p className="mt-4 rounded-xl bg-slate-800 px-4 py-3 font-mono text-xs leading-relaxed text-slate-300">
-              <code dir="ltr" className="break-words">
-                {env.connectSrc}
+              <code dir="ltr" className="block break-words">
+                {directive}
+                {sources.map((source) => (
+                  <span key={source} className="block ps-4">
+                    {source}
+                  </span>
+                ))}
               </code>
             </p>
             <Rich className="mt-4 text-sm leading-relaxed text-slate-300" text={copy.verify.devtools} />
