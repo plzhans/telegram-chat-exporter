@@ -373,7 +373,9 @@
     "confirmAbortTitle": "書き出しを中断しますか？",
     "confirmAbortBody": "ここまでの内容は保存されません。もう一度始めると最初からになります。",
     "confirmAbortOk": "中断する",
-    "confirmKeep": "続ける"
+    "confirmKeep": "続ける",
+    "anonymize": "参加者を匿名化",
+    "anonymizeHint": "名前は A・B・C、ID は 1・2・3 に置き換わり、プロフィール写真は外れます。チャット名も隠されます。写真やスタンプなどの内容はそのまま残ります。"
   },
   "errors": {
     "title": "エラー",

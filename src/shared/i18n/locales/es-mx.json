@@ -373,7 +373,9 @@
     "confirmAbortTitle": "¿Detener la exportación?",
     "confirmAbortBody": "Lo descargado hasta ahora no se guardará. Volver a empezar es desde el principio.",
     "confirmAbortOk": "Detener",
-    "confirmKeep": "Continuar"
+    "confirmKeep": "Continuar",
+    "anonymize": "Anonimizar participantes",
+    "anonymizeHint": "Los nombres pasan a ser A, B, C y los identificadores 1, 2, 3, sin fotos de perfil. También se oculta el nombre del chat. Las fotos, stickers y demás contenido quedan igual."
   },
   "errors": {
     "title": "Error",
