@@ -679,6 +679,11 @@ Moving to teleproto would mean swapping the transport layer by hand and acceptin
 
 GramJS **ships a Node build and a browser build under the same package.**
 
+A `dist-tag` here is npm's **label** on a version. It has nothing to do with version ordering — the
+maintainer simply points a name at a version. `latest` does not mean "newest"; it is **npm's default
+label**, which is what `npm install telegram` resolves to. In this package `next` points at 2.24.9,
+the lowest of the three.
+
 | dist-tag | Version | What `CryptoFile.js` points at |
 | --- | --- | --- |
 | `latest` | 2.26.22 | `require("crypto")` — Node only |

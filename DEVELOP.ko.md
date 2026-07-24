@@ -655,6 +655,11 @@ PBKDF2-SHA512 가 특히 느려진다). 그래서 archived 리스크를 안고 G
 
 GramJS 는 **같은 패키지로 Node 빌드와 브라우저 빌드를 따로 배포한다.**
 
+여기서 `dist-tag` 는 npm 이 버전에 붙이는 **이름표**다. 버전 순서와는 무관하고, 관리자가
+"이 이름표는 이 버전" 이라고 정해 둔 것뿐이다. `latest` 는 "가장 최신" 이라는 뜻이 아니라
+**npm 의 기본 이름표**여서, `npm install telegram` 하면 그게 설치된다. 실제로 이 패키지의
+`next` 는 2.24.9 를 가리켜 셋 중 가장 낮다.
+
 | dist-tag | 버전 | `CryptoFile.js` 가 가리키는 것 |
 | --- | --- | --- |
 | `latest` | 2.26.22 | `require("crypto")` — Node 전용 |
