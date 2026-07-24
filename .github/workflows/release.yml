@@ -1,14 +1,14 @@
 # 릴리스를 자동으로 낸다.
 #
-# main 에 커밋이 쌓이면 release-please 가 "다음 버전은 이것" 이라는 **Release PR** 을 열어
+# main 에 커밋이 쌓이면 release-please 가 "다음 버전은 이것" 이라는 Release PR 을 열어
 # 둔다. 그 PR 을 머지하는 순간이 릴리스다 - 봇이 버전을 올리고, CHANGELOG 를 쓰고,
-# `release/vX.Y.Z` 태그와 GitHub 릴리스를 만든다. 버전은 커밋 메시지에서 정해진다
-# (`feat` → minor, `fix` → patch, `!` → major. DEVELOP.md 의 "커밋 규약" 참고).
+# release/vX.Y.Z 태그와 GitHub 릴리스를 만든다. 버전은 커밋 메시지에서 정해진다
+# (feat → minor, fix → patch, ! → major. DEVELOP.md 의 "커밋 규약" 참고).
 #
-# ## 왜 배포까지 이 파일에 있나
+# [왜 배포까지 이 파일에 있나]
 #
-# **GITHUB_TOKEN 이 만든 태그는 다른 워크플로를 깨우지 않는다.** 무한 루프를 막으려는
-# GitHub 의 규칙이라, 봇이 태그를 붙여도 `on: push: tags` 로 기다리는 워크플로는 안 돈다.
+# GITHUB_TOKEN 이 만든 태그는 다른 워크플로를 깨우지 않는다. 무한 루프를 막으려는
+# GitHub 의 규칙이라, 봇이 태그를 붙여도 on: push: tags 로 기다리는 워크플로는 안 돈다.
 # 그래서 릴리스 직후 할 일(zip 만들기·배포)을 같은 실행 안에 이어 붙인다.
 #
 # 개인 토큰(PAT)을 쓰면 예전 구조를 유지할 수 있지만, 만료 없는 자격증명을 저장소에 상주
@@ -28,7 +28,7 @@ jobs:
   #        그 PR 이 머지된 커밋에서 돌 때만 실제 릴리스가 만들어진다.
   release_please:
     runs-on: ubuntu-latest
-    # 매니페스트 모드는 출력 이름에 패키지 경로를 붙인다(`.--tag_name`). 단일 패키지일 때는
+    # 매니페스트 모드는 출력 이름에 패키지 경로를 붙인다(.--tag_name). 단일 패키지일 때는
     # 접두사 없는 이름도 함께 오므로 둘 다 받아 둔다 - 한쪽이 비어도 릴리스가 멈추지 않는다.
     outputs:
       created: ${{ steps.release.outputs.releases_created || steps.release.outputs.release_created }}
@@ -157,10 +157,10 @@ jobs:
 
           gh release edit "$TAG" --notes-file notes.md
 
-  # 3단계. **이 릴리스가 latest 일 때만** 사이트를 배포한다.
+  # 3단계. 이 릴리스가 latest 일 때만 사이트를 배포한다.
   #
   # 릴리스가 났다고 다 내보내면 안 된다. 프리릴리스(beta·rc)는 GitHub 이 latest 로 치지
-  # 않는데, 사이트의 내려받기 버튼은 `releases/latest` 를 가리킨다. 그대로 배포하면
+  # 않는데, 사이트의 내려받기 버튼은 releases/latest 를 가리킨다. 그대로 배포하면
   # 사이트만 beta 로 앞서 나가고 내려받는 zip 은 옛 안정판이 되는 어긋남이 생긴다.
   #
   # 그래서 GitHub 이 지금 latest 로 주는 태그와 방금 만든 태그가 같은지 직접 물어본다.
