@@ -24,6 +24,10 @@
     "ctaSignedIn": "Open my chats",
     "ctaSource": "View source",
     "note": "Free · Open source · {{languages}} languages",
+    "screenshots": {
+      "title": "See the actual screens",
+      "body": "Swipe through. From signing in to downloading, this is exactly what you will see."
+    },
     "why": {
       "title": "How this differs from tools you install",
       "install": {

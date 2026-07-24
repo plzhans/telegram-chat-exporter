@@ -24,6 +24,10 @@
     "ctaSignedIn": "내 대화방 열기",
     "ctaSource": "소스 코드 보기",
     "note": "무료 · 오픈소스 · {{languages}}개 언어",
+    "screenshots": {
+      "title": "실제 화면 보기",
+      "body": "옆으로 넘겨 보세요. 로그인부터 내려받기까지, 실제로 보이는 화면 그대로입니다."
+    },
     "why": {
       "title": "설치형 도구와 무엇이 다른가",
       "install": {

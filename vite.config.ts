@@ -536,6 +536,7 @@ function localizedPages(opts: {
         env: {
           lang,
           home: canonicalOf(lang),
+          assetBase: base,
           start: `${base}${langSegment(lang) ? `${langSegment(lang)}/` : ''}start/`,
           languages: SUPPORTED_LANGUAGES.map((l) => ({
             code: l,

@@ -30,6 +30,7 @@
 import { LandingProvider, type LandingValue } from './context';
 import { Header } from './sections/Header';
 import { Hero } from './sections/Hero';
+import { Screenshots } from './sections/Screenshots';
 import { Why } from './sections/Why';
 import { Zip } from './sections/Zip';
 import { Steps } from './sections/Steps';
@@ -43,6 +44,7 @@ export function Landing(value: LandingValue) {
       <Header />
       <main>
         <Hero />
+        <Screenshots />
         <Why />
         <Zip />
         <Steps />

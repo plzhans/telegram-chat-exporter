@@ -24,6 +24,8 @@ export interface LandingCopy {
   ctaSource: string;
   /** `{{languages}}` 자리에 지원 언어 수가 들어간다. */
   note: string;
+  /** 실제 화면 스크린샷 캐러셀. 이미지는 언어와 무관하게 한 벌만 두므로 문구가 둘뿐이다. */
+  screenshots: { title: string; body: string };
   why: { title: string } & Record<'install' | 'server' | 'output', Card>;
   zip: {
     title: string;
@@ -61,6 +63,13 @@ export interface LandingEnv {
   lang: SupportedLanguage;
   /** 이 언어판의 첫 화면 주소. `base` 가 반영된 값이다. */
   home: string;
+  /**
+   * 정적 자산(`public/`)이 놓이는 주소 앞부분. 배포 위치(`base`)가 반영된 값이다.
+   *
+   * 스크린샷 같은 이미지를 `${assetBase}landing/shot-01.png` 로 가리킬 때 쓴다. 하위
+   * 경로 배포에서도 `--base` 를 그대로 따라가므로 손으로 `/` 를 적으면 안 된다.
+   */
+  assetBase: string;
   /** 앱 진입 주소. 랜딩에는 앱 코드가 없으므로 여기서부터 React 가 뜬다. */
   start: string;
   languages: { code: SupportedLanguage; href: string; label: string; current: boolean }[];
