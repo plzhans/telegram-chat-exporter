@@ -61,6 +61,22 @@ function setupDots(embla: EmblaCarouselType, host: HTMLElement): void {
   paint();
 }
 
+/**
+ * 좁은 화면에서 점을 대신하는 숫자(`3 / 16`).
+ *
+ * 점은 장수만큼 늘어나 휴대전화 폭을 넘긴다. 숫자는 장수와 무관하게 자리가 일정하고,
+ * 몇 번째인지도 점보다 정확히 알려 준다. 숫자와 빗금뿐이라 번역할 것도 없다.
+ */
+function setupCounter(embla: EmblaCarouselType, host: HTMLElement): void {
+  const total = embla.scrollSnapList().length;
+  const paint = () => {
+    host.textContent = `${embla.selectedScrollSnap() + 1} / ${total}`;
+  };
+  embla.on('select', paint);
+  embla.on('reInit', paint);
+  paint();
+}
+
 /** 끝에 닿으면 그 방향 버튼을 잠근다. 눌러도 안 움직이는 버튼은 고장으로 읽힌다. */
 function setupArrows(embla: EmblaCarouselType, root: HTMLElement): void {
   const prev = root.querySelector<HTMLButtonElement>('[data-embla-prev]');
@@ -150,6 +166,9 @@ function start(root: HTMLElement): void {
 
   const dotsHost = root.querySelector<HTMLElement>('[data-embla-dots]');
   if (dotsHost) setupDots(embla, dotsHost);
+
+  const counter = root.querySelector<HTMLElement>('[data-embla-counter]');
+  if (counter) setupCounter(embla, counter);
 
   // 화살표·점은 스크립트가 살아 있을 때만 뜻이 있다. 여기까지 왔으면 드러낸다.
   root.classList.add('is-ready');

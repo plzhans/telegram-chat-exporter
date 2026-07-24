@@ -26,7 +26,9 @@
     "note": "Grátis · Código aberto · {{languages}} idiomas",
     "screenshots": {
       "title": "Veja as telas de verdade",
-      "body": "Deslize para o lado. Do login ao download, é exatamente isso que você vai ver."
+      "body": "Deslize para o lado. Do login ao download, é exatamente isso que você vai ver.",
+      "pause": "Parar a passagem automática",
+      "play": "Iniciar a passagem automática"
     },
     "why": {
       "title": "Como isto difere das ferramentas que você instala",

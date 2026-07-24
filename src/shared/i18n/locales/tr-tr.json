@@ -26,7 +26,9 @@
     "note": "Ücretsiz · Açık kaynak · {{languages}} dil",
     "screenshots": {
       "title": "Gerçek ekranları görün",
-      "body": "Yana kaydırın. Girişten indirmeye kadar, tam olarak göreceğiniz şey bu."
+      "body": "Yana kaydırın. Girişten indirmeye kadar, tam olarak göreceğiniz şey bu.",
+      "pause": "Otomatik geçişi durdur",
+      "play": "Otomatik geçişi başlat"
     },
     "why": {
       "title": "Kurulum gerektiren araçlardan farkı ne",

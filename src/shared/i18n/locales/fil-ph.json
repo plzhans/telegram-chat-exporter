@@ -27,7 +27,9 @@
     "note": "Libre · Open source · {{languages}} wika",
     "screenshots": {
       "title": "Tingnan ang totoong mga screen",
-      "body": "Mag-swipe sa gilid. Mula sa pag-sign in hanggang sa pag-download, ito mismo ang makikita mo."
+      "body": "Mag-swipe sa gilid. Mula sa pag-sign in hanggang sa pag-download, ito mismo ang makikita mo.",
+      "pause": "Ihinto ang kusang pagpalit",
+      "play": "Simulan ang kusang pagpalit"
     },
     "why": {
       "title": "Ano ang pinagkaiba nito sa mga tool na kailangang i-install",

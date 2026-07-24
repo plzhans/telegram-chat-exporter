@@ -26,7 +26,9 @@
     "note": "Miễn phí · Mã nguồn mở · {{languages}} ngôn ngữ",
     "screenshots": {
       "title": "Xem màn hình thật",
-      "body": "Vuốt sang ngang. Từ lúc đăng nhập đến lúc tải về, bạn sẽ thấy đúng như vậy."
+      "body": "Vuốt sang ngang. Từ lúc đăng nhập đến lúc tải về, bạn sẽ thấy đúng như vậy.",
+      "pause": "Dừng tự động chuyển",
+      "play": "Bật tự động chuyển"
     },
     "why": {
       "title": "Khác gì so với những công cụ phải cài đặt",

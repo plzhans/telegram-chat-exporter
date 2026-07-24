@@ -26,7 +26,9 @@
     "note": "Gratis · Sumber terbuka · {{languages}} bahasa",
     "screenshots": {
       "title": "Lihat tampilan aslinya",
-      "body": "Geser ke samping. Dari masuk sampai mengunduh, persis seperti inilah yang akan Anda lihat."
+      "body": "Geser ke samping. Dari masuk sampai mengunduh, persis seperti inilah yang akan Anda lihat.",
+      "pause": "Hentikan geser otomatis",
+      "play": "Mulai geser otomatis"
     },
     "why": {
       "title": "Apa bedanya dengan alat yang harus dipasang",

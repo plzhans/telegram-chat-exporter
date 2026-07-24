@@ -110,8 +110,17 @@ export function Screenshots() {
             <ChevronLeft className="h-4 w-4" />
           </button>
 
-          {/* 점 표시. 지금 몇 번째를 보고 있는지 알려 준다. 스크립트가 채운다. */}
-          <div data-embla-dots className="flex items-center gap-2 px-1" />
+          {/*
+            지금 몇 번째인지 알려 주는 자리. **폭에 따라 다른 것을 쓴다.**
+
+            점은 장수만큼 늘어나서, 16장이면 휴대전화 폭을 넘겨 조작부가 깨진다. 좁은
+            화면에서는 자리를 일정하게 먹는 숫자로 바꾼다 - 장수가 더 늘어도 안 넘친다.
+          */}
+          <div data-embla-dots className="hidden items-center gap-2 px-1 sm:flex" />
+          <span
+            data-embla-counter
+            className="px-1 font-mono text-xs tabular-nums text-slate-500 sm:hidden"
+          />
 
           <button
             type="button"
