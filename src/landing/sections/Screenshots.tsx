@@ -44,7 +44,7 @@ export function Screenshots() {
         `snap-x snap-mandatory` 로 한 장씩 걸리게 한다. 좌우 여백을 스크롤 패딩으로 함께
         줘야 첫 장과 마지막 장도 가운데에 선다.
       */}
-      <div className="mt-6 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-3 sm:gap-5">
+      <div className="mt-6 flex snap-x snap-mandatory gap-5 overflow-x-auto px-6 pb-3 sm:gap-8 sm:px-10">
         {shots.map((n, i) => (
           <img
             key={n}
