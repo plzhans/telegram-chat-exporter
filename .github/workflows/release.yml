@@ -13,8 +13,7 @@ on:
 # 릴리스를 만들려면 쓰기 권한이 필요하다. 나머지는 기본값(읽기)으로 둔다.
 permissions:
   contents: write
-  # 아래 둘은 빌드 출처 증명(attestation)용이다. id-token 으로 Sigstore 에서 서명을 받고,
-  # attestations 로 그 증명을 저장소에 붙인다. 서명 키를 우리가 들고 있지 않아도 된다.
+  # 빌드 출처 증명용. Sigstore 서명(id-token)과 증명 저장(attestations).
   id-token: write
   attestations: write
 
@@ -74,16 +73,9 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      # 알려진 고위험 취약점을 가진 의존성이 있으면 **여기서 멈춘다.**
-      #
-      # 찾아내는 일은 Dependabot 이 이미 매일 하고 PR 까지 만들어 준다. 다만 그건 알림일
-      # 뿐이라 머지도 릴리스도 막지 않는다 - 취약한 채로 물건이 나갈 수 있다. 이 한 줄이
-      # 그 마지막 문을 잠근다.
-      #
-      # `high` 아래는 통과시킨다. 전이 의존성의 low/moderate 까지 막으면 우리가 고칠 수
-      # 없는 이유로 릴리스가 통째로 멈춘다(지금도 빌드 도구가 물고 오는 low 가 하나 있다).
-      # 정말 막아야 하는데 고칠 수 없는 건이 생기면 package.json 의
-      # `pnpm.auditConfig.ignoreCves` 에 사유와 함께 적는다.
+      # 고위험 취약점을 가진 의존성이 있으면 릴리스를 멈춘다(Dependabot 은 알리기만 한다).
+      # high 미만은 통과시킨다 - 고칠 수 없는 전이 의존성 때문에 릴리스가 막히면 안 된다.
+      # 예외가 필요하면 package.json 의 `pnpm.auditConfig.ignoreCves` 에 적는다.
       - name: Audit dependencies
         run: pnpm audit --audit-level=high
 
@@ -122,19 +114,11 @@ jobs:
           cp "$NAME.zip" "${{ steps.version.outputs.asset }}"
           unzip -l "$NAME.zip"
 
-      # 이 zip 이 **이 저장소의 이 커밋에서, 이 워크플로가** 만든 것임을 서명으로 남긴다.
-      #
-      # 이 도구의 신뢰 논지는 "코드를 읽어 보라"인데, 읽은 코드와 내려받은 파일이 같은
-      # 것인지 확인할 방법이 여태 없었다. 저장소를 아무리 감사해도 배포본이 다르면 소용이
-      # 없다. 이 증명이 그 마지막 칸을 메운다 - 받은 사람이 직접 대조할 수 있다:
+      # 이 zip 이 이 저장소의 이 커밋에서 만들어졌음을 서명으로 남긴다. 받는 쪽 확인:
       #
       #   gh attestation verify telegram-exporter.zip --repo <소유자>/<저장소>
       #
-      # 서명 키를 우리가 보관하지 않는다. Sigstore 가 워크플로의 OIDC 신원으로 그 자리에서
-      # 발급하고 공개 투명성 로그에 남긴다 - 우리가 키를 잃어버리거나 도둑맞을 자리가 없다.
-      #
-      # **릴리스를 만들기 전에 붙인다.** 순서가 반대면 증명이 실패했을 때 이미 공개된
-      # 파일만 남는다 - 받는 사람은 검증되지 않은 파일을 검증된 것으로 오해할 수 있다.
+      # 릴리스를 만들기 전에 붙인다. 증명이 실패하면 파일이 공개되지 않아야 한다.
       - name: Attest build provenance
         uses: actions/attest-build-provenance@v4
         with:
