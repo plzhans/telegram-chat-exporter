@@ -11,7 +11,7 @@
     "build": "tsc -b && vite build",
     "build:standalone": "tsc -b && vite build --mode standalone",
     "preview": "vite preview --port 5176 --strictPort",
-    "release": "pnpm version --tag-version-prefix=release/v",
+    "release": "pnpm version --tag-version-prefix=release/v -m \"릴리스 %s\n\n이 커밋에 release/v%s 태그가 붙는다. 태그가 올라가면 배포본 zip 과 사이트가\n여기서 함께 나가므로, 둘의 버전과 커밋이 같아진다.\"",
     "audit": "pnpm audit --audit-level=high"
   },
   "dependencies": {

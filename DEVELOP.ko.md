@@ -542,7 +542,7 @@ git push --follow-tags
 ```
 
 `pnpm release` 는 `pnpm version` 에 `--tag-version-prefix=release/v` 를 붙인 것뿐이다.
-`package.json` 을 고치고, 그 버전만 적힌 커밋을 만들고, `release/v1.0.0` 태그를 단다 —
+`package.json` 을 고치고, 무엇이 나가는지 적은 커밋을 만들고, `release/v1.0.0` 태그를 단다 —
 셋이 항상 같이 움직이니 버전을 어긋나게 밀어 넣을 수가 없다. (프리픽스를 `.npmrc` 의
 `tag-version-prefix` 에 적어 두는 방법은 **pnpm 이 읽지 않아서** 안 된다. 그래서 스크립트다.)
 

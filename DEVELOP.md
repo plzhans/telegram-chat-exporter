@@ -573,7 +573,7 @@ git push --follow-tags
 ```
 
 `pnpm release` is just `pnpm version` with `--tag-version-prefix=release/v` attached. It edits
-`package.json`, makes a commit containing only that version, and adds a `release/v1.0.0` tag — all
+`package.json`, makes a commit that says what the tag will ship, and adds a `release/v1.0.0` tag — all
 three always move together, so you can't push a version that's out of sync. (Putting the prefix in
 `.npmrc` as `tag-version-prefix` doesn't work, because **pnpm doesn't read it.** Hence the script.)
 
