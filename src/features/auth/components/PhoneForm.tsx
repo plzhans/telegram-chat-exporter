@@ -6,12 +6,7 @@ import { Checkbox } from '@/shared/ui/Checkbox';
 import { Field } from '@/shared/ui/Field';
 import { Input } from '@/shared/ui/Input';
 import { IDLE_TTL_MINUTES } from '@/shared/telegram/session';
-import {
-  countryFromLanguage,
-  examplePhone,
-  normalizePhone,
-  type CountryCode,
-} from '@/shared/lib/phone';
+import { browserCountry, examplePhone, normalizePhone, type CountryCode } from '@/shared/lib/phone';
 import { CountrySelect } from './CountrySelect';
 
 interface PhoneFormProps {
@@ -37,8 +32,9 @@ interface PhoneFormProps {
  * 봤는데, 그러면 **미국 번호를 적은 사람에게 존재하지 않는 한국 번호로 코드가 발송된다.**
  * 화면이 한국어뿐일 때는 넘어갈 수 있었지만 지금은 아니다.
  *
- * 기본 나라는 화면 언어에서 유추한다. 한국어 화면이면 대한민국이 이미 골라져 있어서
- * 한국 사용자가 하던 대로 번호만 적으면 된다.
+ * 기본 나라는 **화면 언어가 아니라 브라우저가 알려주는 지역**에서 온다(`browserCountry`).
+ * 한국에서 쓰면서 화면만 영어로 바꾸는 일은 흔한데, 그때 전화번호 국가까지 미국으로
+ * 따라가면 자기 번호를 넣을 수 없다.
  *
  * **`+` 로 시작하면 고른 나라를 무시한다.** 목록에 자기 나라가 없거나 형식이 특이한
  * 사람이 국가번호째로 적어 넣을 수 있는 탈출구다.
@@ -55,11 +51,9 @@ export function PhoneForm({
   notice,
   footer,
 }: PhoneFormProps) {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const [phone, setPhone] = useState('');
-  const [country, setCountry] = useState<CountryCode | undefined>(() =>
-    countryFromLanguage(i18n.resolvedLanguage ?? ''),
-  );
+  const [country, setCountry] = useState<CountryCode | undefined>(browserCountry);
   const { value, valid, detectedCountry, formatted } = normalizePhone(phone, country);
 
   // `+82...` 처럼 국가번호를 직접 적으면 선택 상자를 거기에 맞춰 준다.

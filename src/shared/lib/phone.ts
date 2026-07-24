@@ -38,10 +38,43 @@ export function countryFlag(country: string): string {
   return String.fromCodePoint(...[...country.toUpperCase()].map((c) => 0x1f1a5 + c.charCodeAt(0)));
 }
 
-/** 화면 언어에서 기본 국가를 유추한다. `ko-kr` → `KR`. 못 읽어내면 없는 채로 둔다. */
-export function countryFromLanguage(lang: string): CountryCode | undefined {
+/** 언어 태그에서 국가를 읽어낸다. `ko-kr` → `KR`. 지역이 안 적혀 있으면 없는 채로 둔다. */
+function countryFromLanguage(lang: string): CountryCode | undefined {
   const region = lang.split('-')[1]?.toUpperCase();
   return region && (COUNTRIES as string[]).includes(region) ? (region as CountryCode) : undefined;
+}
+
+/**
+ * 전화번호 칸에 처음 세워 둘 국가.
+ *
+ * **화면 언어가 아니라 브라우저가 알려주는 지역을 본다.** 한국에서 쓰면서 화면만 영어로
+ * 바꾸는 일은 흔한데, 그때 전화번호 국가까지 미국으로 따라가면 자기 번호를 넣을 수 없다.
+ * 화면 언어는 "어떤 글로 읽고 싶은가"이지 "어느 나라 번호를 쓰는가"가 아니다.
+ *
+ * 브라우저가 `ko` 처럼 지역 없이 알려 주는 경우가 있어서, 그때는 언어에서 가장 그럴듯한
+ * 지역을 끌어낸다(`ko` → `KR`). 그래도 못 정하면 비운 채로 두고 사용자가 고르게 한다 -
+ * 틀린 나라를 넣어 두는 것보다 낫다.
+ */
+export function browserCountry(): CountryCode | undefined {
+  const tags = navigator.languages?.length ? [...navigator.languages] : [navigator.language];
+
+  // 지역이 적혀 있으면 그게 가장 확실하다. `ko-KR` → `KR`
+  for (const tag of tags) {
+    const country = countryFromLanguage(tag ?? '');
+    if (country) return country;
+  }
+
+  // 지역이 없으면 언어만으로 유추한다. 브라우저의 CLDR 자료가 `ko` → `KR` 을 알고 있다.
+  for (const tag of tags) {
+    try {
+      const region = new Intl.Locale(tag).maximize().region;
+      if (region && (COUNTRIES as string[]).includes(region)) return region as CountryCode;
+    } catch {
+      // 형식이 어긋난 태그는 건너뛴다. 하나 실패했다고 나머지를 못 볼 이유가 없다.
+    }
+  }
+
+  return undefined;
 }
 
 export interface NormalizedPhone {
