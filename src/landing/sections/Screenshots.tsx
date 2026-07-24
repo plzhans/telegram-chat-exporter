@@ -50,22 +50,35 @@ export function Screenshots() {
         `snap-x snap-mandatory` 로 한 장씩 걸리게 한다. 좌우 여백을 스크롤 패딩으로 함께
         줘야 첫 장과 마지막 장도 가운데에 선다.
       */}
-      <div className="mt-6 flex snap-x snap-mandatory gap-5 overflow-x-auto px-6 pb-3 sm:gap-8 sm:px-10">
+      {/*
+        스크롤바는 감춘다. 손가락으로 미는 자리에 회색 막대가 걸쳐 있으면 그림이 잘려 보이고,
+        데스크톱에서는 늘 떠 있어 지저분하다. 스크롤 자체는 그대로라 넘기는 데 지장이 없다.
+      */}
+      <div className="mt-6 flex snap-x snap-mandatory gap-5 overflow-x-auto px-6 pb-4 [scrollbar-width:none] sm:gap-8 sm:px-10 [&::-webkit-scrollbar]:hidden">
         {shots.map((n, i) => (
-          <img
+          /*
+            휴대전화 테두리를 둘러 준다. 스크린샷이 흰 화면이라 맨몸으로 두면 그냥 흰
+            네모가 되어 어디까지가 그림인지 흐려진다. 검은 베젤을 두르면 한눈에 "휴대전화
+            화면"으로 읽히고, 흰 배경 위에서 각 장의 경계도 또렷해진다.
+          */
+          <div
             key={n}
-            src={`${env.assetBase}landing/shot-${n}.png`}
-            width={WIDTH}
-            height={HEIGHT}
-            /*
-              첫 장만 곧바로 받는다. 나머지는 스크롤해 다가올 때 받게 두지 않으면 이 한
-              섹션이 수 MB 를 끌고 와서, 정작 첫 화면이 늦게 뜬다.
-            */
-            loading={i === 0 ? 'eager' : 'lazy'}
-            decoding="async"
-            alt={`${copy.screenshots.title} ${i + 1}`}
-            className="w-60 shrink-0 snap-center rounded-2xl border border-slate-200 shadow-sm sm:w-64"
-          />
+            className="shrink-0 snap-center rounded-[1.75rem] bg-slate-900 p-1.5 shadow-lg ring-1 ring-slate-900/5"
+          >
+            <img
+              src={`${env.assetBase}landing/shot-${n}.png`}
+              width={WIDTH}
+              height={HEIGHT}
+              /*
+                첫 장만 곧바로 받는다. 나머지는 스크롤해 다가올 때 받게 두지 않으면 이 한
+                섹션이 수 MB 를 끌고 와서, 정작 첫 화면이 늦게 뜬다.
+              */
+              loading={i === 0 ? 'eager' : 'lazy'}
+              decoding="async"
+              alt={`${copy.screenshots.title} ${i + 1}`}
+              className="block w-56 rounded-[1.4rem] sm:w-64"
+            />
+          </div>
         ))}
       </div>
     </section>
