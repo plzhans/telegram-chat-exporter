@@ -188,7 +188,12 @@
       "submit": "Xác nhận"
     },
     "confirmSignOutTitle": "Đăng xuất?",
-    "confirmSignOutBody": "Phiên này trên tài khoản Telegram cũng sẽ kết thúc. Muốn dùng lại bạn cần mã đăng nhập mới."
+    "confirmSignOutBody": "Phiên này trên tài khoản Telegram cũng sẽ kết thúc. Muốn dùng lại bạn cần mã đăng nhập mới.",
+    "download": {
+      "title": "Tự chạy trên máy bạn",
+      "body": "Cách dùng mà không qua trang này. Giải nén zip rồi mở index.html. Bản tải về không có công cụ phân tích và không thể kết nối tới đâu ngoài Telegram.",
+      "cta": "Tải xuống (zip)"
+    }
   },
   "dialogs": {
     "title": "Cuộc trò chuyện",

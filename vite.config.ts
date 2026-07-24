@@ -27,7 +27,7 @@ import {
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { Landing } from './src/landing/Landing';
-import { DEFAULT_RELEASE_ASSET, githubLatestDownloadUrl } from './src/landing/config';
+import { DEFAULT_RELEASE_ASSET, githubLatestDownloadUrl } from './src/shared/config/release';
 import type { LandingText } from './src/landing/context';
 
 /**
@@ -333,7 +333,7 @@ function landingAnalytics(id: string): string {
 
 function localizedPages(opts: {
   sourceUrl: string;
-  /** 내려받기 버튼이 걸 주소. 이미 완성된 형태다. `src/landing/config.ts` 참고. */
+  /** 내려받기 버튼이 걸 주소. 이미 완성된 형태다. `src/shared/config/release.ts` 참고. */
   downloadUrl: string;
   copyright: string;
   version: string;
@@ -618,7 +618,7 @@ export default defineConfig(({ command, mode }) => {
 
   /**
    * 랜딩이 쓸 바깥 주소들. **랜딩은 `import.meta.env` 를 못 읽으므로 여기서 정한다** -
-   * 빌드 도중 Node 에서 한 번 그려지고 끝나기 때문이다(`src/landing/config.ts` 주석).
+   * 빌드 도중 Node 에서 한 번 그려지고 끝나기 때문이다(`src/shared/config/release.ts` 주석).
    *
    * 접두사를 비워 `loadEnv` 를 부르므로 `VITE_` 가 붙지 않은 변수도 읽힌다.
    */

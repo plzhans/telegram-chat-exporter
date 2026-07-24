@@ -249,7 +249,12 @@
       "submit": "Confirm"
     },
     "confirmSignOutTitle": "Sign out?",
-    "confirmSignOutBody": "This also ends the session on your Telegram account. Using the tool again means requesting a new login code."
+    "confirmSignOutBody": "This also ends the session on your Telegram account. Using the tool again means requesting a new login code.",
+    "download": {
+      "title": "Run it yourself",
+      "body": "Use it without going through this site. Unpack the zip and open index.html. The downloaded copy ships without analytics and cannot reach anything other than Telegram.",
+      "cta": "Download (zip)"
+    }
   },
   "dialogs": {
     "title": "Chats",

@@ -189,7 +189,12 @@
       "submit": "Kumpirmahin"
     },
     "confirmSignOutTitle": "Mag-sign out?",
-    "confirmSignOutBody": "Matatapos din ang session na ito sa iyong Telegram account. Kailangan ng bagong login code para gamitin ulit."
+    "confirmSignOutBody": "Matatapos din ang session na ito sa iyong Telegram account. Kailangan ng bagong login code para gamitin ulit.",
+    "download": {
+      "title": "Patakbuhin mo mismo",
+      "body": "Paraan para gamitin ito nang hindi dumadaan sa site na ito. I-extract ang zip at buksan ang index.html. Walang analytics ang na-download na kopya at hindi ito makakakonekta kahit saan maliban sa Telegram.",
+      "cta": "I-download (zip)"
+    }
   },
   "dialogs": {
     "title": "Mga chat",

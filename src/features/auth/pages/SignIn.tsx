@@ -7,6 +7,7 @@ import { Spinner } from '@/shared/ui/Spinner';
 import { useAuth } from '@/shared/auth/useAuth';
 import { AuthStepForm } from '../components/AuthStepForm';
 import { CredentialsForm } from '../components/CredentialsForm';
+import { DownloadPanel } from '../components/DownloadPanel';
 import { LoginCodeNotice } from '../components/LoginCodeNotice';
 import { PhoneForm } from '../components/PhoneForm';
 import { SessionNotice } from '../components/SessionNotice';
@@ -43,16 +44,6 @@ export default function SignIn() {
       <SessionNotice />
 
       {/*
-        **첫 화면에서만 띄운다.**
-
-        "어떻게 동작하나요 · 직접 확인하는 방법 · 남는 것" 은 시작할지 말지를 정하려는
-        사람에게 필요한 글이다. 이미 시작하기를 누른 사람은 그 판단을 끝냈고, 지금은
-        번호를 적으려고 손이 멈춘 상태다. 그 자리에 같은 글이 계속 서 있으면 정작 읽어야
-        할 로그인 코드 경고가 스크롤 아래로 밀린다.
-      */}
-      {step === 'idle' && <TrustPanel />}
-
-      {/*
         **오류는 그 오류를 낸 버튼 옆에 붙인다.**
 
         전에는 여기 맨 위에 한 번만 띄웠다. 그런데 이 화면은 로그인 코드 경고와 입력칸이
@@ -69,6 +60,26 @@ export default function SignIn() {
       {step === 'idle' && (
         <CredentialsForm busy={busy} onSubmit={(c, remember) => void start(c, remember)} />
       )}
+
+      {/*
+        **첫 화면에서만, 그리고 시작하기 아래에 둔다.**
+
+        "어떻게 동작하나요 · 직접 확인하는 방법 · 남는 것" 은 시작할지 말지를 정하려는
+        사람에게 필요한 글이다. 이미 시작하기를 누른 사람은 그 판단을 끝냈고, 지금은
+        번호를 적으려고 손이 멈춘 상태다. 그 자리에 같은 글이 계속 서 있으면 정작 읽어야
+        할 로그인 코드 경고가 스크롤 아래로 밀린다.
+
+        위가 아니라 아래인 이유도 같다. 이 화면에 온 사람의 대부분은 랜딩에서 이미 읽고
+        누르기로 정한 사람이라, 첫 화면을 열었을 때 먼저 보여야 하는 것은 설명이 아니라
+        시작 버튼이다. 아직 망설이는 사람은 접힌 제목만 보고 펼치면 된다.
+      */}
+      {step === 'idle' && <TrustPanel />}
+
+      {/*
+        단일 파일 배포에서는 뺀다 - 이미 받아서 연 사람에게 내려받기를 권하게 된다.
+        `__STANDALONE__` 은 빌드가 박아 주는 상수라 그쪽 번들에서는 통째로 사라진다.
+      */}
+      {step === 'idle' && !__STANDALONE__ && <DownloadPanel />}
 
       {step === 'connecting' && (
         <div className="flex flex-col items-center gap-3 edge-card bg-white p-8">

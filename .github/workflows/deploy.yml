@@ -72,7 +72,7 @@ jobs:
           VITE_SITE_URL: ${{ steps.pages.outputs.base_url }}
           # 랜딩의 내려받기 버튼이 걸 주소. **둘 다 비워 두는 것이 기본이다** — 그러면
           # 위 VITE_GITHUB_REPO_URL 의 릴리스에서 코드 기본값 이름으로 조립한다
-          # (src/landing/config.ts). 릴리스 워크플로도 같은 규칙으로 그 이름을 정하므로
+          # (src/shared/config/release.ts). 릴리스 워크플로도 같은 규칙으로 그 이름을 정하므로
           # 아무것도 안 채우면 양쪽이 저절로 맞는다.
           #
           # 배포처가 GitHub 가 아니면(자체 서버·CDN·S3 등) 주소를 통째로 넣는다. 그때는

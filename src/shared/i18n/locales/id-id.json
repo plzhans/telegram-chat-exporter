@@ -188,7 +188,12 @@
       "submit": "Konfirmasi"
     },
     "confirmSignOutTitle": "Keluar?",
-    "confirmSignOutBody": "Sesi ini di akun Telegram Anda juga akan diakhiri. Untuk memakainya lagi perlu kode masuk baru."
+    "confirmSignOutBody": "Sesi ini di akun Telegram Anda juga akan diakhiri. Untuk memakainya lagi perlu kode masuk baru.",
+    "download": {
+      "title": "Jalankan sendiri",
+      "body": "Cara memakainya tanpa melalui situs ini. Ekstrak zip lalu buka index.html. Salinan yang diunduh tidak memuat analitik dan tidak bisa terhubung ke mana pun selain Telegram.",
+      "cta": "Unduh (zip)"
+    }
   },
   "dialogs": {
     "title": "Obrolan",

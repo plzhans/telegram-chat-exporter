@@ -51,7 +51,7 @@ jobs:
           # 빌드도 같은 Variable 을 읽는다), 없으면 코드의 기본값.
           ASSET="${{ vars.VITE_RELEASE_ASSET_FILE_NAME }}"
           if [ -z "$ASSET" ]; then
-            ASSET=$(node -p "require('fs').readFileSync('src/landing/config.ts','utf8').match(/DEFAULT_RELEASE_ASSET = '([^']+)'/)[1]")
+            ASSET=$(node -p "require('fs').readFileSync('src/shared/config/release.ts','utf8').match(/DEFAULT_RELEASE_ASSET = '([^']+)'/)[1]")
           fi
           echo "에셋 이름: $ASSET"
 

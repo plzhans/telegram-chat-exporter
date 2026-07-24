@@ -188,7 +188,12 @@
       "submit": "Confirmar"
     },
     "confirmSignOutTitle": "Sair?",
-    "confirmSignOutBody": "Isso também encerra a sessão na sua conta do Telegram. Para usar de novo, será preciso um novo código de acesso."
+    "confirmSignOutBody": "Isso também encerra a sessão na sua conta do Telegram. Para usar de novo, será preciso um novo código de acesso.",
+    "download": {
+      "title": "Execute por conta própria",
+      "body": "Use sem passar por este site. Extraia o zip e abra o index.html. A cópia baixada não inclui análises e não consegue se conectar a nada além do Telegram.",
+      "cta": "Baixar (zip)"
+    }
   },
   "dialogs": {
     "title": "Conversas",

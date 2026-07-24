@@ -188,7 +188,12 @@
       "submit": "確認"
     },
     "confirmSignOutTitle": "ログアウトしますか？",
-    "confirmSignOutBody": "Telegram アカウントのこのセッションも終了します。再び使うには認証コードを取り直してログインが必要です。"
+    "confirmSignOutBody": "Telegram アカウントのこのセッションも終了します。再び使うには認証コードを取り直してログインが必要です。",
+    "download": {
+      "title": "ダウンロードして自分で実行する",
+      "body": "このサイトを経由せずに使う方法です。zip を解凍して index.html を開くだけです。ダウンロードしたものには解析ツールが含まれず、Telegram 以外のどこにも接続できません。",
+      "cta": "ダウンロード (zip)"
+    }
   },
   "dialogs": {
     "title": "トーク",

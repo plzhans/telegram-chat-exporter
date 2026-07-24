@@ -1,6 +1,22 @@
+import { DEFAULT_RELEASE_ASSET, githubLatestDownloadUrl } from './release';
+
 /** 이 도구의 소스 저장소. 화면에 그대로 노출해서 사용자가 코드를 직접 확인할 수 있게 한다. */
 export const SOURCE_URL =
   import.meta.env.VITE_GITHUB_REPO_URL ?? 'https://github.com/plzhans/telegram-chat-exporter';
+
+/**
+ * 배포본을 내려받는 주소. 랜딩과 같은 곳을 가리킨다.
+ *
+ * `??` 가 아니라 `||` 인 이유: CI 는 값이 없어도 **빈 문자열로** 넘긴다
+ * (`${{ vars.X }}` 는 미설정 시 `''`). `??` 는 빈 문자열을 통과시켜서, 그러면 버튼이
+ * 아무 데도 안 가는 링크가 된다.
+ */
+export const DOWNLOAD_URL =
+  import.meta.env.VITE_RELEASE_DOWNLOAD_URL ||
+  githubLatestDownloadUrl(
+    SOURCE_URL,
+    import.meta.env.VITE_RELEASE_ASSET_FILE_NAME || DEFAULT_RELEASE_ASSET,
+  );
 
 /** api_id 발급 페이지. 안내 문구에서 여러 번 쓰인다. */
 export const MY_TELEGRAM_URL = 'https://my.telegram.org/apps';
