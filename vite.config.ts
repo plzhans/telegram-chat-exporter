@@ -431,11 +431,27 @@ function localizedPages(opts: {
       .replace(/\s*<meta property="og:locale(?::alternate)?" content="[^"]*" \/>/g, '')
       .replace('<meta name="twitter:card"', `${localeTags}\n    <meta name="twitter:card"`);
 
-    // 구조화 데이터
-    return out
-      .replace(/("url": ")[^"]*(")/, `$1${url}$2`)
-      .replace(/("description": ")[^"]*(")/, `$1${meta.shareDescription.replace(/"/g, '\\"')}$2`)
-      .replace(/("inLanguage": )\[[^\]]*\]/, `$1${JSON.stringify(SUPPORTED_LANGUAGES.map((l) => seoOf(l).tag))}`);
+    /*
+      구조화 데이터. 값은 **`JSON.stringify` 로 통째로** 만들어 넣는다.
+
+      전에는 따옴표만 손으로 이스케이프했는데, 역슬래시가 든 문구가 오면 JSON 이 깨졌다.
+      바꿔 넣는 쪽도 문자열이 아니라 함수다 - 문자열이면 값 안의 `$&` 같은 조각을
+      치환 지시로 읽어 버린다.
+    */
+    /** `"key": <값>` 을 통째로 갈아 끼운다. 함수라 값 안의 `$` 가 치환 지시로 안 읽힌다. */
+    const setJson = (source: string, key: string, value: unknown) =>
+      source.replace(
+        new RegExp(`"${key}": (?:"[^"]*"|\\[[^\\]]*\\])`),
+        () => `"${key}": ${JSON.stringify(value)}`,
+      );
+
+    let data = setJson(out, 'url', url);
+    data = setJson(data, 'description', meta.shareDescription);
+    return setJson(
+      data,
+      'inLanguage',
+      SUPPORTED_LANGUAGES.map((l) => seoOf(l).tag),
+    );
   };
 
   return {
