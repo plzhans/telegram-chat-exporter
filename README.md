@@ -68,6 +68,14 @@ So instead of asking for trust, here is how to verify:
 
 - **Read the code.** It is all in this repository.
 
+- **Check that the download really came from this code.** Every release is signed with a build
+  provenance attestation, so you can confirm the zip was built by this repository's workflow from
+  a specific commit — not swapped out somewhere along the way:
+
+  ```
+  gh attestation verify telegram-exporter.zip --repo plzhans/telegram-chat-exporter
+  ```
+
 - **Or don't use our copy at all.** Download the release above and run it from your own machine.
   That build contains no analytics at all — not a visitor counter, nothing.
 

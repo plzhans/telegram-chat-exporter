@@ -47,6 +47,10 @@ only supported one. Fixes go into a new release rather than being backported.
 - **Dependabot** watches dependencies and opens pull requests for known vulnerabilities.
 - Releases fail if a dependency has a known high-severity vulnerability (`pnpm audit`).
 - Release tags cannot be moved or deleted, so a version you verified stays that version.
+- Every release artifact carries a **build provenance attestation**, so anyone can confirm the
+  download was produced by this repository's workflow from a specific commit
+  (`gh attestation verify`). Verifying the source is only meaningful if you can tie it to the
+  binary you actually ran.
 
 None of this is a substitute for reading the code, and the README tells you how to do that.
 
