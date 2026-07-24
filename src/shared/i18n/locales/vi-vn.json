@@ -374,7 +374,9 @@
     "confirmAbortTitle": "Dừng xuất?",
     "confirmAbortBody": "Phần đã tải sẽ không được lưu. Bắt đầu lại sẽ từ đầu.",
     "confirmAbortOk": "Dừng",
-    "confirmKeep": "Tiếp tục"
+    "confirmKeep": "Tiếp tục",
+    "anonymize": "Ẩn danh người tham gia",
+    "anonymizeHint": "Tên trở thành A, B, C và ID trở thành 1, 2, 3, ảnh đại diện bị loại bỏ. Tên cuộc trò chuyện cũng được ẩn. Ảnh, nhãn dán và nội dung khác vẫn giữ nguyên."
   },
   "errors": {
     "title": "Lỗi",

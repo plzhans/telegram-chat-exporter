@@ -375,7 +375,9 @@
     "confirmAbortTitle": "Ihinto ang pag-export?",
     "confirmAbortBody": "Hindi mase-save ang nadownload na. Ang muling pagsisimula ay mula sa umpisa.",
     "confirmAbortOk": "Ihinto",
-    "confirmKeep": "Magpatuloy"
+    "confirmKeep": "Magpatuloy",
+    "anonymize": "Gawing anonymous ang mga kalahok",
+    "anonymizeHint": "Ang mga pangalan ay magiging A, B, C at ang mga ID ay 1, 2, 3, at aalisin ang mga profile photo. Itinatago rin ang pangalan ng chat. Nananatili ang mga larawan, sticker at iba pang content."
   },
   "errors": {
     "title": "Error",

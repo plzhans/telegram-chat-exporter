@@ -374,7 +374,9 @@
     "confirmAbortTitle": "要停止匯出嗎？",
     "confirmAbortBody": "目前已下載的內容不會儲存。重新開始就是從頭再來。",
     "confirmAbortOk": "停止",
-    "confirmKeep": "繼續"
+    "confirmKeep": "繼續",
+    "anonymize": "參與者匿名化",
+    "anonymizeHint": "名稱會變成 A、B、C，編號變成 1、2、3，並移除頭像。對話名稱亦會隱藏。相片、貼圖等內容維持不變。"
   },
   "errors": {
     "title": "錯誤",

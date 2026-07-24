@@ -99,6 +99,13 @@ export function ExportPanel({ dialog, defaultFrom, defaultTo }: ExportPanelProps
    * 제3자에게 내밀 때만 평평하게 바꾸면 된다.
    */
   const [layout, setLayout] = useState<'chat' | 'flat'>('chat');
+  /**
+   * 참여자 신원을 가릴지.
+   *
+   * 기본은 끔이다. 대부분은 자기 자료로 백업하고, 그때 이름이 A·B·C 로 바뀌면 오히려
+   * 읽기 어렵다. 제3자에게 내밀 때만 켠다 - 이름·회원번호·프로필이 가려진다.
+   */
+  const [anonymize, setAnonymize] = useState(false);
   /** 어디에 저장했는지. 완료 안내에 파일 이름을 적어 주려고 들고 있는다. */
   const [saved, setSaved] = useState<{ name: string; kind: 'picked' | 'download' } | null>(null);
   /**
@@ -194,7 +201,7 @@ export function ExportPanel({ dialog, defaultFrom, defaultTo }: ExportPanelProps
      * 내보내기를 시작한 뒤(await 를 여러 번 건넌 뒤)에 부르면 제스처가 소진돼 거절당한다.
      * 지원하지 않는 브라우저나 사용자가 대화상자를 닫으면 메모리 방식으로 떨어진다.
      */
-    const filename = exportFilename(dialog);
+    const filename = exportFilename(dialog, anonymize);
     const picked = await createFileSink(filename);
     // 저장 대화상자에서 취소를 눌렀다. 시작하지 않는다.
     if (picked.status === 'cancelled') return;
@@ -221,6 +228,7 @@ export function ExportPanel({ dialog, defaultFrom, defaultTo }: ExportPanelProps
         range: wholeHistory ? {} : { from: from || undefined, to: to || undefined },
         include: { photos: includePhotos, stickers: includeStickers },
         layout,
+        anonymize,
         signal: controller.signal,
         onProgress: (next) => {
           lastTickRef.current = Date.now();
@@ -239,7 +247,7 @@ export function ExportPanel({ dialog, defaultFrom, defaultTo }: ExportPanelProps
     } finally {
       abortRef.current = null;
     }
-  }, [dialog, from, to, wholeHistory, includePhotos, includeStickers, layout, me]);
+  }, [dialog, from, to, wholeHistory, includePhotos, includeStickers, layout, anonymize, me]);
 
   /**
    * 시작 버튼이 부르는 자리.
@@ -517,6 +525,20 @@ export function ExportPanel({ dialog, defaultFrom, defaultTo }: ExportPanelProps
             <p className="mt-1.5 text-xs leading-relaxed text-slate-500">
               {t('export.layoutHint')}
             </p>
+          </div>
+
+          {/*
+            신원 가리기. 제3자에게 대화를 내밀 때만 켠다 - 이름·회원번호·프로필이 A·B·C /
+            1·2·3 으로 바뀐다. 되돌릴 수 없는 선택이 아니므로(다시 내보내면 된다) 배치 옵션
+            옆에 나란히 둔다.
+          */}
+          <div className="rounded-xl bg-slate-50 p-3">
+            <Checkbox
+              checked={anonymize}
+              onChange={(e) => setAnonymize(e.target.checked)}
+              label={t('export.anonymize')}
+              hint={t('export.anonymizeHint')}
+            />
           </div>
         </div>
       )}

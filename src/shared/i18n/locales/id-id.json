@@ -374,7 +374,9 @@
     "confirmAbortTitle": "Hentikan ekspor?",
     "confirmAbortBody": "Yang sudah terunduh tidak akan disimpan. Memulai lagi berarti dari awal.",
     "confirmAbortOk": "Hentikan",
-    "confirmKeep": "Lanjutkan"
+    "confirmKeep": "Lanjutkan",
+    "anonymize": "Anonimkan peserta",
+    "anonymizeHint": "Nama menjadi A, B, C dan ID menjadi 1, 2, 3, foto profil dihapus. Nama obrolan juga disembunyikan. Foto, stiker, dan konten lain tetap seperti aslinya."
   },
   "errors": {
     "title": "Kesalahan",

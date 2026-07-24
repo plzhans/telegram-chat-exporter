@@ -374,7 +374,9 @@
     "confirmAbortTitle": "Interromper a exportação?",
     "confirmAbortBody": "O que já foi baixado não será salvo. Recomeçar significa começar do zero.",
     "confirmAbortOk": "Interromper",
-    "confirmKeep": "Continuar"
+    "confirmKeep": "Continuar",
+    "anonymize": "Anonimizar participantes",
+    "anonymizeHint": "Os nomes viram A, B, C e os IDs viram 1, 2, 3, sem fotos de perfil. O nome da conversa também fica oculto. Fotos, figurinhas e outros conteúdos permanecem como estão."
   },
   "errors": {
     "title": "Erro",

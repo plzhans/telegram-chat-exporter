@@ -435,7 +435,9 @@
     "confirmAbortTitle": "Stop the export?",
     "confirmAbortBody": "What has been downloaded so far will not be saved. Starting again begins from the beginning.",
     "confirmAbortOk": "Stop",
-    "confirmKeep": "Keep going"
+    "confirmKeep": "Keep going",
+    "anonymize": "Anonymize participants",
+    "anonymizeHint": "Names become A, B, C and IDs become 1, 2, 3, with profile photos dropped. The chat name is hidden too. Photos, stickers and other content stay as they are."
   },
   "errors": {
     "title": "Error",

@@ -374,7 +374,9 @@
     "confirmAbortTitle": "Dışa aktarma durdurulsun mu?",
     "confirmAbortBody": "Şimdiye kadar indirilenler kaydedilmez. Yeniden başlamak baştan almak demektir.",
     "confirmAbortOk": "Durdur",
-    "confirmKeep": "Devam et"
+    "confirmKeep": "Devam et",
+    "anonymize": "Katılımcıları anonimleştir",
+    "anonymizeHint": "İsimler A, B, C; kimlikler 1, 2, 3 olur ve profil fotoğrafları kaldırılır. Sohbet adı da gizlenir. Fotoğraflar, çıkartmalar ve diğer içerik olduğu gibi kalır."
   },
   "errors": {
     "title": "Hata",

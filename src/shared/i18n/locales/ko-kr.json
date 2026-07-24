@@ -436,7 +436,9 @@
     "confirmAbortTitle": "내보내기를 중단할까요?",
     "confirmAbortBody": "지금까지 받은 내용은 저장되지 않습니다. 다시 시작하면 처음부터 받습니다.",
     "confirmAbortOk": "중단하기",
-    "confirmKeep": "계속하기"
+    "confirmKeep": "계속하기",
+    "anonymize": "참여자 익명 처리",
+    "anonymizeHint": "이름은 A·B·C, 회원번호는 1·2·3 으로 바뀌고 프로필 사진은 빠집니다. 대화방 이름도 가려집니다. 사진·이모티콘 같은 내용은 그대로 남습니다."
   },
   "errors": {
     "title": "오류",

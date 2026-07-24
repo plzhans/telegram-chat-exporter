@@ -18,6 +18,7 @@ import {
   type MessageSummary,
 } from '@/features/dialogs/api';
 import { loadProfilePhoto } from '@/features/dialogs/lib/profilePhoto';
+import { createAnonymizer } from './anonymize';
 import { HtmlReport } from './htmlReport';
 import type { ZipSink } from './zipWriter';
 import { ZipWriter } from './zipWriter';
@@ -96,6 +97,14 @@ export interface ExportOptions {
    * - `flat` : 모두 왼쪽. 누가 말했는지는 이름만이 말한다.
    */
   layout?: 'chat' | 'flat';
+  /**
+   * 참여자 신원을 가릴지.
+   *
+   * 켜면 이름은 A·B·C, 회원번호는 1·2·3 으로 바뀌고 프로필 사진은 빠진다. 대화방 제목·
+   * 아이콘과 meta.json 의 받은 계정도 지운다. 이미지·이모티콘 같은 내용은 그대로다.
+   * 자세한 규칙은 `anonymize.ts` 참고.
+   */
+  anonymize?: boolean;
   onProgress: (progress: ExportProgress) => void;
   signal: AbortSignal;
 }
@@ -454,8 +463,11 @@ function safeFilename(title: string): string {
  * 받은 계정이 누구인지는 파일 이름에 넣지 않는다. 이름만 길어지는 데 비해, 그 정보는
  * `meta.json` 을 열면 나온다.
  */
-export function exportFilename(dialog: DialogSummary): string {
-  const parts = ['telegram', dialog.id, formatFileTimestamp(), safeFilename(dialog.title)];
+export function exportFilename(dialog: DialogSummary, anonymize = false): string {
+  // 익명화하면 파일 이름에도 방 id·제목이 남으면 안 된다. 중립 값으로 바꾼다.
+  const id = anonymize ? 'chat' : dialog.id;
+  const title = anonymize ? 'chat' : safeFilename(dialog.title);
+  const parts = ['telegram', id, formatFileTimestamp(), title];
   return `${parts.join('_')}.zip`;
 }
 
@@ -479,11 +491,19 @@ export async function exportChat({
   range,
   include,
   layout,
+  anonymize,
   onProgress,
   signal,
 }: ExportOptions): Promise<void> {
   const client = requireClient();
   const zip = new ZipWriter(sink);
+  /*
+    참여자 신원을 가리는 변환. 꺼져 있으면 받은 값을 그대로 돌려주므로, 아래 코드는 켜짐
+    여부를 신경 쓰지 않고 늘 이걸 거쳐 쓴다.
+  */
+  const anon = createAnonymizer(Boolean(anonymize));
+  // 대화방 제목·id·아이콘을 한 번만 가려 두고, HtmlReport·meta·파일명이 같은 값을 쓴다.
+  const identity = anon.dialog({ title: dialog.title, id: dialog.id, photo: dialog.photo });
   const pushJsonl = zip.startFile('messages.jsonl');
   const pushText = zip.startFile('messages.txt');
   /**
@@ -506,16 +526,16 @@ export async function exportChat({
    */
   const pushHtml = zip.startFile('index.html');
   const report = new HtmlReport({
-    dialogTitle: dialog.title,
-    dialogId: dialog.id,
+    dialogTitle: identity.title,
+    dialogId: identity.id,
     // 받은 계정은 index.html 에 넣지 않는다. 출처 기록은 meta.json 이 맡는다(htmlReport 참고).
     // index.html 의 글자는 영어로 고정한다(htmlReport 참고). 이 값도 거기 실린다.
     rangeLabel:
       range.from || range.to ? `${range.from ?? 'start'} ~ ${range.to ?? 'end'}` : 'All history',
     timezone: localTimeZone(),
     exportedAt: formatExportTimestamp(Math.floor(Date.now() / 1000)),
-    // 목록에서 이미 받아 둔 값이라 요청이 더 들지 않는다.
-    dialogPhoto: dialog.photo,
+    // 목록에서 이미 받아 둔 값이라 요청이 더 들지 않는다. 익명화하면 identity 가 뗀다.
+    dialogPhoto: identity.photo,
     alignOwnRight: layout !== 'flat',
     photosIncluded: Boolean(include?.photos),
   });
@@ -706,15 +726,23 @@ export async function exportChat({
         }
       }
 
-      jsonlBuffer += `${JSON.stringify(toExportRecord(summary))}\n`;
-      textBuffer += toReadableLine(summary);
-      htmlBuffer += report.push(summary);
+      /*
+        **신원을 가리는 유일한 지점이다.** 위 미디어 처리는 원본 summary 로 끝냈고(사진·
+        스티커 같은 내용은 그대로 담는다), 여기서부터 네 갈래(JSONL·TXT·HTML·첨부 인덱스)로
+        같은 사람을 쓴다. 한 번 갈아 끼우면 넷이 모두 같은 라벨을 쓴다. 익명화가 꺼져 있으면
+        record 는 summary 와 같은 객체다.
+      */
+      const record = anon.message(summary);
+
+      jsonlBuffer += `${JSON.stringify(toExportRecord(record))}\n`;
+      textBuffer += toReadableLine(record);
+      htmlBuffer += report.push(record);
       if (summary.mediaType) {
         attachmentBuffer += `${JSON.stringify({
           messageId: summary.id,
           date: summary.date,
-          senderId: summary.senderId ?? null,
-          senderName: summary.senderName ?? null,
+          senderId: record.senderId ?? null,
+          senderName: record.senderName ?? null,
           kind: summary.mediaType,
           tlClass: summary.mediaClass ?? null,
           file: summary.mediaInfo ?? null,
@@ -868,8 +896,8 @@ export async function exportChat({
       'meta.json',
       `${JSON.stringify(
         {
-          account: account ?? null,
-          dialog: { id: dialog.id, title: dialog.title, kind: dialog.kind },
+          account: anon.account(account) ?? null,
+          dialog: { id: identity.id, title: identity.title, kind: dialog.kind },
           range: { from: range.from ?? null, to: range.to ?? null },
           messageCount: count,
           /** 첨부 개수. attachments.jsonl 의 줄 수와 같아야 한다. */
@@ -883,6 +911,14 @@ export async function exportChat({
            */
           /** index.html 의 배치. 문서 모양이 왜 그런지 나중에 설명할 근거다. */
           layout: layout ?? 'chat',
+          /**
+           * 참여자 신원을 가린 백업인가.
+           *
+           * **이게 없으면 읽는 사람이 A·B·C 를 실명으로 오해한다.** 이름이 A, 회원번호가 1
+           * 인 것이 원래 그런 것인지 가린 것인지 가릴 근거가 이 값이다. 대화방 제목·아이콘과
+           * 받은 계정도 이때 함께 빠진다(`anonymize.ts`).
+           */
+          anonymized: anon.enabled,
           attachments: {
             included: [include?.photos ? 'photo' : '', include?.stickers ? 'sticker' : ''].filter(
               Boolean,
