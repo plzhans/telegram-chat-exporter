@@ -95,7 +95,9 @@ cp .env.example .env.local   # Vite 가 자동으로 읽는다. gitignore 되어
 | --- | --- | --- |
 | `VITE_TELEGRAM_API_ID` | 첫 화면에 "내 api_id 직접 입력"만 나온다 | "바로 시작" 선택지가 함께 뜬다 |
 | `VITE_TELEGRAM_API_HASH` | 위와 같음 (둘은 항상 같이 넣는다) | 위와 같음 |
-| `VITE_SOURCE_URL` | 이 저장소 주소가 기본값 | 헤더의 "소스 보기" 링크가 바뀐다 |
+| `VITE_GITHUB_REPO_URL` | 이 저장소 주소가 기본값 | 헤더의 "소스 보기" 링크가 바뀐다 |
+| `VITE_RELEASE_DOWNLOAD_URL` | 위 저장소의 최신 릴리스에서 조립한다 | 첫 화면 "내려받기" 버튼이 그 주소를 그대로 건다 (GitHub 가 아닌 곳에 올릴 때) |
+| `VITE_RELEASE_ASSET_FILE_NAME` | `telegram-exporter.zip` | 조립할 때 쓰는 에셋 이름만 바뀐다. 위 주소를 직접 넣었다면 쓰이지 않는다 |
 
 `VITE_*` 는 **빌드 시점에 번들에 박힌다.** 실행 중에 바꿀 수 없고, 감춰지지도 않는다.
 공용 api_id 를 넣을지 말지는 정책 판단이라 아래 [api_id 정책](#api_id-정책)에 따로 적었다.
@@ -485,7 +487,7 @@ script-src 'nonce-{매 응답마다 새 값}' 'unsafe-inline' 'unsafe-eval' 'str
 | `--base` | `/` | `/<저장소이름>/` |
 | `SITE_ORIGIN` | `https://<커스텀 도메인>` | `https://<소유자>.github.io` |
 
-`VITE_SOURCE_URL` 도 CI 가 자기 저장소 주소로 채운다 — 배포본과 같은 커밋이 올라간 곳을
+`VITE_GITHUB_REPO_URL` 도 CI 가 자기 저장소 주소로 채운다 — 배포본과 같은 커밋이 올라간 곳을
 가리켜야 하기 때문이다.
 
 **이 저장소는 커스텀 도메인을 쓴다.** 그래서 실제 배포는 `--base` 없이(루트) 나가고

@@ -27,6 +27,7 @@ import {
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { Landing } from './src/landing/Landing';
+import { DEFAULT_RELEASE_ASSET, githubLatestDownloadUrl } from './src/landing/config';
 import type { LandingText } from './src/landing/context';
 
 /**
@@ -332,6 +333,8 @@ function landingAnalytics(id: string): string {
 
 function localizedPages(opts: {
   sourceUrl: string;
+  /** 내려받기 버튼이 걸 주소. 이미 완성된 형태다. `src/landing/config.ts` 참고. */
+  downloadUrl: string;
   copyright: string;
   version: string;
   /** 구글 애널리틱스 측정 ID. 비어 있으면 랜딩에 스크립트가 한 줄도 안 들어간다. */
@@ -527,6 +530,7 @@ function localizedPages(opts: {
           connectSrc,
           analytics: Boolean(opts.gaId),
           sourceUrl: opts.sourceUrl,
+          downloadUrl: opts.downloadUrl,
           copyright: opts.copyright,
           version: opts.version,
         },
@@ -612,6 +616,26 @@ export default defineConfig(({ command, mode }) => {
   const standalone = mode === 'standalone';
   const on = standalone ? { ga: '', ads: '' } : switches(mode);
 
+  /**
+   * 랜딩이 쓸 바깥 주소들. **랜딩은 `import.meta.env` 를 못 읽으므로 여기서 정한다** -
+   * 빌드 도중 Node 에서 한 번 그려지고 끝나기 때문이다(`src/landing/config.ts` 주석).
+   *
+   * 접두사를 비워 `loadEnv` 를 부르므로 `VITE_` 가 붙지 않은 변수도 읽힌다.
+   */
+  const env = loadEnv(mode, process.cwd(), '');
+  const repoUrl = env.VITE_GITHUB_REPO_URL || 'https://github.com/plzhans/telegram-chat-exporter';
+
+  /**
+   * 내려받기 버튼이 걸 주소.
+   *
+   * **주소를 통째로 받는다.** 기본값은 이 저장소의 GitHub 릴리스지만, 배포처가 GitHub 가
+   * 아닐 수도 있어서(자체 서버·CDN·S3 등) 그때는 조립할 규칙이 아예 다르다. 값이 들어오면
+   * 손대지 않고 그대로 쓴다.
+   */
+  const downloadUrl =
+    env.VITE_RELEASE_DOWNLOAD_URL ||
+    githubLatestDownloadUrl(repoUrl, env.VITE_RELEASE_ASSET_FILE_NAME || DEFAULT_RELEASE_ASSET);
+
   return {
     /**
      * 루트 배포를 기본으로 둔다. 그래서 dev·preview 주소가 깨끗하고, 로컬에서는 이 값을
@@ -660,9 +684,8 @@ export default defineConfig(({ command, mode }) => {
                 쓸 수 없다. 형태가 어긋나면 랜딩 푸터와 앱 푸터가 다른 값을 적게 되므로,
                 고칠 일이 생기면 두 곳을 함께 본다.
               */
-              sourceUrl:
-                loadEnv(mode, process.cwd(), '').VITE_SOURCE_URL ||
-                'https://github.com/plzhans/telegram-chat-exporter',
+              sourceUrl: repoUrl,
+              downloadUrl,
               copyright: `© ${BUILD_INFO.date.slice(0, 4)} plzhans`,
               version: `v${BUILD_INFO.version} · ${BUILD_INFO.commit} · ${BUILD_INFO.date}`,
               gaId: on.ga,

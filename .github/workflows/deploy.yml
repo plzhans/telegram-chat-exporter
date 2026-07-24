@@ -66,10 +66,19 @@ jobs:
           # 손으로 적지 않고 CI 가 아는 값을 그대로 쓴다. 포크하거나 저장소를 옮겨도 따라간다.
           # (.env.local 은 gitignore 라 CI 체크아웃에 없다. Vite 가 process.env 의 VITE_*
           #  를 읽으므로 이 값이 번들에 박힌다.)
-          VITE_SOURCE_URL: ${{ github.server_url }}/${{ github.repository }}
+          VITE_GITHUB_REPO_URL: ${{ github.server_url }}/${{ github.repository }}
           # 내보낸 문서 하단에 적히는 "이 도구가 돌아가는 곳" 주소. 파일만 건네받은 사람이
           # 따라올 수 있어야 한다. configure-pages 가 준 실제 배포 주소를 그대로 쓴다.
           VITE_SITE_URL: ${{ steps.pages.outputs.base_url }}
+          # 랜딩의 내려받기 버튼이 걸 주소. **둘 다 비워 두는 것이 기본이다** — 그러면
+          # 위 VITE_GITHUB_REPO_URL 의 릴리스에서 코드 기본값 이름으로 조립한다
+          # (src/landing/config.ts). 릴리스 워크플로도 같은 규칙으로 그 이름을 정하므로
+          # 아무것도 안 채우면 양쪽이 저절로 맞는다.
+          #
+          # 배포처가 GitHub 가 아니면(자체 서버·CDN·S3 등) 주소를 통째로 넣는다. 그때는
+          # 조립하지 않고 그 값이 그대로 버튼에 걸린다.
+          VITE_RELEASE_DOWNLOAD_URL: ${{ vars.VITE_RELEASE_DOWNLOAD_URL }}
+          VITE_RELEASE_ASSET_FILE_NAME: ${{ vars.VITE_RELEASE_ASSET_FILE_NAME }}
           # 공용 api_id. 없으면 앱이 "내 api_id 직접 입력"만 보여준다.
           #
           # Variables 든 Secrets 든 넣어 둔 쪽에서 읽는다. **둘 다 있어야 공용 키가 성립하므로**

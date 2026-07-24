@@ -34,7 +34,6 @@ import { Why } from './sections/Why';
 import { Zip } from './sections/Zip';
 import { Steps } from './sections/Steps';
 import { Verify } from './sections/Verify';
-import { Download } from './sections/Download';
 import { Final } from './sections/Final';
 import { Footer } from './sections/Footer';
 
@@ -48,7 +47,6 @@ export function Landing(value: LandingValue) {
         <Zip />
         <Steps />
         <Verify />
-        <Download />
         <Final />
       </main>
       <Footer />

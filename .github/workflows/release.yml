@@ -14,10 +14,6 @@ on:
 permissions:
   contents: write
 
-env:
-  # 버전이 안 붙는 에셋 이름. 사이트가 이 이름으로 고정 주소를 건다(아래 Package 단계 주석).
-  ASSET_LATEST: telegram-exporter.zip
-
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -46,17 +42,23 @@ jobs:
             exit 1
           fi
 
-          # 랜딩이 거는 고정 주소의 파일명과 여기서 올리는 이름이 어긋나면, 빌드도 릴리스도
-          # 통과하는데 내려받기 버튼만 404 가 된다 - 아무도 모르는 채로 깨져 있다.
-          GUARD=src/landing/config.ts
-          if ! grep -q "RELEASE_ASSET = '$ASSET_LATEST'" "$GUARD"; then
-            echo "::error::$GUARD 의 RELEASE_ASSET 이 $ASSET_LATEST 와 다르다. 둘을 맞춰라."
-            exit 1
+          # 버전이 안 붙는 에셋 이름. 사이트의 내려받기 버튼이 이 이름으로 고정 주소를
+          # 건다(아래 Package 단계 주석).
+          #
+          # **이름을 여기 적지 않고 읽어 온다.** 사이트와 릴리스가 서로 다른 이름을 보면
+          # 빌드도 릴리스도 통과하는데 버튼만 404 가 된다 - 아무도 모르는 채로 깨져 있다.
+          # 출처를 하나로 두면 어긋날 수가 없다: 저장소 Variable 이 있으면 그것(사이트
+          # 빌드도 같은 Variable 을 읽는다), 없으면 코드의 기본값.
+          ASSET="${{ vars.VITE_RELEASE_ASSET_FILE_NAME }}"
+          if [ -z "$ASSET" ]; then
+            ASSET=$(node -p "require('fs').readFileSync('src/landing/config.ts','utf8').match(/DEFAULT_RELEASE_ASSET = '([^']+)'/)[1]")
           fi
+          echo "에셋 이름: $ASSET"
 
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "name=telegram-exporter-$VERSION" >> "$GITHUB_OUTPUT"
+          echo "asset=$ASSET" >> "$GITHUB_OUTPUT"
 
       # package.json 의 packageManager 필드에서 pnpm 버전을 읽는다.
       - uses: pnpm/action-setup@v4
@@ -72,7 +74,7 @@ jobs:
         run: pnpm build:standalone
         env:
           # 앱 화면의 "소스 보기" 링크. 받은 파일과 같은 커밋이 올라간 곳을 가리켜야 한다.
-          VITE_SOURCE_URL: ${{ github.server_url }}/${{ github.repository }}
+          VITE_GITHUB_REPO_URL: ${{ github.server_url }}/${{ github.repository }}
           # 내보낸 문서 하단에 적히는 "이 도구가 돌아가는 곳". 웹 배포 주소를 아는 쪽이
           # 저장소 Variables 에 넣어 둔다. 없으면 그 줄이 빠질 뿐이다.
           VITE_SITE_URL: ${{ vars.VITE_SITE_URL }}
@@ -85,25 +87,22 @@ jobs:
       # 압축을 풀었을 때 파일이 흩어지지 않도록 이름 있는 폴더 하나로 감싼다.
       #
       # 같은 zip 을 **이름 두 개로** 올린다. 버전이 붙은 쪽은 받아 둔 사람이 파일만 보고
-      # 어느 버전인지 알기 위한 것이고, 버전이 없는 쪽(`ASSET_LATEST`)은 사이트에서 거는
-      # 고정 주소용이다 -
+      # 어느 버전인지 알기 위한 것이고, 버전이 없는 쪽은 사이트가 거는 고정 주소용이다 -
       #
-      #   https://github.com/<소유자>/<저장소>/releases/latest/download/telegram-exporter.zip
+      #   https://github.com/<소유자>/<저장소>/releases/latest/download/<에셋 이름>
       #
       # 이 주소의 `latest` 는 태그 이름이 아니라 GitHub 가 "Latest 배지가 붙은 릴리스" 로
       # 풀어 주는 예약어다. 뒤쪽 **파일명은 그대로 맞아야** 하므로, 에셋 이름이 릴리스마다
       # 달라지면 사이트에 적어 둘 고정 문자열이 없어진다. 그래서 한 벌 더 올린다.
       #
-      # **이 이름은 `src/landing/config.ts` 의 `RELEASE_ASSET` 과 같아야 한다.**
-      # 한쪽만 고치면 빌드도 릴리스도 성공하는데 랜딩의 내려받기 버튼만 조용히 404 가 된다
-      # — 그래서 위 Resolve version 단계가 릴리스 전에 둘을 대조한다.
+      # 그 이름은 위 Resolve version 단계가 정한다(저장소 Variable 또는 코드의 기본값).
       - name: Package
         run: |
           NAME="${{ steps.version.outputs.name }}"
           mv dist-standalone "$NAME"
           cp .github/release-assets/README.txt "$NAME/README.txt"
           zip -r -q "$NAME.zip" "$NAME"
-          cp "$NAME.zip" "${{ env.ASSET_LATEST }}"
+          cp "$NAME.zip" "${{ steps.version.outputs.asset }}"
           unzip -l "$NAME.zip"
 
       - name: Create release
@@ -112,6 +111,7 @@ jobs:
           NAME: ${{ steps.version.outputs.name }}
           TAG: ${{ steps.version.outputs.tag }}
           VERSION: ${{ steps.version.outputs.version }}
+          ASSET: ${{ steps.version.outputs.asset }}
         run: |
           # 받는 사람이 릴리스 화면에서 바로 읽을 안내. 아래에 커밋 목록이 자동으로 붙는다.
           cat > notes.md <<'EOF'
@@ -132,7 +132,7 @@ jobs:
           **no network destination other than Telegram**, and contains no analytics or ads.
           EOF
 
-          gh release create "$TAG" "$NAME.zip" "$ASSET_LATEST" \
+          gh release create "$TAG" "$NAME.zip" "$ASSET" \
             --title "$VERSION" \
             --notes-file notes.md \
             --generate-notes

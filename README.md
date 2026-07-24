@@ -98,7 +98,9 @@ cp .env.example .env.local   # Vite reads this automatically. It is gitignored.
 | --- | --- | --- |
 | `VITE_TELEGRAM_API_ID` | The first screen offers only "enter my own api_id" | A "start right away" option appears alongside |
 | `VITE_TELEGRAM_API_HASH` | Same as above (the two always go together) | Same as above |
-| `VITE_SOURCE_URL` | This repository's URL is the default | Changes the "view source" link in the header |
+| `VITE_GITHUB_REPO_URL` | This repository's URL is the default | Changes the "view source" link in the header |
+| `VITE_RELEASE_DOWNLOAD_URL` | Composed from the latest release of the repo above | The landing page's "download" button links to this URL verbatim (for hosting outside GitHub) |
+| `VITE_RELEASE_ASSET_FILE_NAME` | `telegram-exporter.zip` | Changes only the asset name used when composing. Unused if you set the URL above |
 
 `VITE_*` values are **baked into the bundle at build time.** They cannot be changed at runtime,
 and they are not hidden. Whether to ship a shared api_id is a policy call, written up separately
@@ -514,7 +516,7 @@ domain, forking, or moving the repository requires no changes.
 | `--base` | `/` | `/<repo-name>/` |
 | `SITE_ORIGIN` | `https://<custom domain>` | `https://<owner>.github.io` |
 
-CI also fills `VITE_SOURCE_URL` with its own repository URL — it has to point at where the same
+CI also fills `VITE_GITHUB_REPO_URL` with its own repository URL — it has to point at where the same
 commit as the deployment lives.
 
 **This repository uses a custom domain.** So the real deployment goes out without `--base` (at the

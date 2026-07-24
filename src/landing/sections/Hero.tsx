@@ -1,5 +1,5 @@
 import { useLanding } from '../context';
-import { SourceButton, StartButton } from '../ui';
+import { DownloadButton, SourceButton, StartButton } from '../ui';
 
 /** 첫 화면. 검색에서 들어온 사람이 처음 읽는 문단이다. */
 export function Hero() {
@@ -20,6 +20,7 @@ export function Hero() {
         <div className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
           <StartButton />
           <SourceButton />
+          <DownloadButton />
         </div>
         <p className="mt-5 text-xs text-slate-400">
           {copy.note.replace('{{languages}}', String(env.languages.length))}

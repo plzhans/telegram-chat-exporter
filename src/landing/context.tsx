@@ -75,6 +75,14 @@ export interface LandingEnv {
   /** 애널리틱스가 켜진 빌드인가. 켜졌으면 "텔레그램 말고는 아무 데도" 가 참이 아니다. */
   analytics: boolean;
   sourceUrl: string;
+  /**
+   * 내려받기 버튼이 걸 주소. **이미 완성된 주소이고, 화면은 조립하지 않는다.**
+   *
+   * 기본값은 이 저장소의 GitHub 릴리스지만 다른 곳일 수도 있다 - 어디인지는
+   * `vite.config.ts` 가 정해서 넘긴다(`config.ts` 주석). `import.meta.env` 로 직접
+   * 읽지 않는 이유도 거기 있다: 랜딩은 빌드 도중 Node 에서 그려져서 그게 없다.
+   */
+  downloadUrl: string;
   copyright: string;
   version: string;
 }

@@ -70,10 +70,7 @@
       "source": "The full source code is public."
     },
     "download": {
-      "title": "Or download it and open it yourself",
-      "body": "This is how you use it without going through this site. Unpack the zip and double-click index.html — no web server, no installation.",
-      "cta": "Download (zip)",
-      "note": "The downloaded copy carries no analytics at all, not even a visitor counter, and cannot reach any destination other than Telegram. It still needs internet access to talk to Telegram."
+      "cta": "Download (zip)"
     },
     "final": {
       "title": "Back up your chats now",

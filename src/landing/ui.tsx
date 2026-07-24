@@ -7,7 +7,7 @@
 
 import type { ReactNode } from 'react';
 import { useLanding } from './context';
-import { ArrowRight, ChevronDown, Github } from './icons';
+import { ArrowRight, ChevronDown, Download, Github } from './icons';
 
 /** 눌러서 시작하는 버튼의 치수. 앱의 `Button` 과 같다. */
 const CTA =
@@ -62,6 +62,22 @@ export function SourceButton() {
     <Cta href={env.sourceUrl} variant="outline" external>
       <Github className="h-5 w-5" />
       {copy.ctaSource}
+    </Cta>
+  );
+}
+
+/**
+ * 배포본을 내려받는 버튼.
+ *
+ * 주소는 이미 완성된 채로 넘어온다 - 이 컴포넌트는 그것이 GitHub 릴리스인지 다른 곳인지
+ * 모른다(`config.ts` 주석).
+ */
+export function DownloadButton() {
+  const { env, copy } = useLanding();
+  return (
+    <Cta href={env.downloadUrl} variant="dark">
+      <Download className="h-5 w-5" />
+      {copy.download.cta}
     </Cta>
   );
 }
