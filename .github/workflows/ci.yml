@@ -1,0 +1,49 @@
+# PR 이 들어오면 빌드가 되는지 확인한다.
+#
+# **의존성 PR 때문에 필요하다.** Dependabot 이 매주 올려 보내는데, 검사가 없으면 이게
+# 안전한지 알 방법이 없어서 아무도 손을 못 대고 쌓인다. 여기서 초록불이 뜨면 그대로 머지하고,
+# 빨간불이면 닫거나 미룬다 - 판단할 근거가 생긴다.
+#
+# 릴리스 워크플로와 달리 배포는 하지 않는다. 타입 검사와 두 빌드가 지나가는지만 본다.
+name: CI
+
+on:
+  pull_request:
+  # main 에 직접 커밋하는 흐름이라, 그쪽도 깨지면 바로 알아야 한다.
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# 같은 PR 에 연달아 푸시하면 앞선 검사는 버린다.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      # 락파일이 package.json 과 안 맞으면 여기서 멈춘다. 의존성 PR 에서는 그 자체가 신호다.
+      - run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm exec tsc -b
+
+      # 웹 배포본. 랜딩이 빌드 때 그려지므로 여기서 랜딩 코드도 함께 검증된다.
+      - name: Build (web)
+        run: pnpm exec vite build
+
+      # 받아서 실행하는 배포본. 웹 빌드와 결과물이 다르므로 따로 확인한다.
+      - name: Build (standalone)
+        run: pnpm build:standalone
