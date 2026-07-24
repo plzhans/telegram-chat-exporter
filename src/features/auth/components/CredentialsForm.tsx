@@ -102,14 +102,24 @@ export function CredentialsForm({
       <h2 className="text-lg font-bold text-slate-900">{t('credentials.title')}</h2>
 
       {modes.length > 1 && (
-        <div className={cn('grid gap-2', modes.length === 3 ? 'mobile:grid-cols-3' : 'mobile:grid-cols-2')}>
+        <div
+          className={cn(
+            'grid gap-2',
+            // 타일 셋을 좁은 폭에서 가로로 늘어놓으면 "바로 시작 (권장)" 라벨이 칸을
+            // 벗어난다. 셋일 때는 모바일에선 세로로 쌓고 sm(640px) 부터 가로로 편다.
+            modes.length === 3 ? 'sm:grid-cols-3' : 'mobile:grid-cols-2',
+          )}
+        >
           {modes.map((value) => (
             <button
               key={value}
               type="button"
               onClick={() => setMode(value)}
               className={cn(
-                'rounded-xl border p-3 text-start transition-colors',
+                // flex-col 로 내용을 위에서부터 쌓는다. 안 그러면 타일이 같은 높이로
+                // 늘어날 때 button 기본 동작이 글자를 세로 가운데로 밀어, hint 줄 수가
+                // 다른 타일끼리 제목 높이가 어긋난다.
+                'flex flex-col rounded-xl border p-3 text-start transition-colors',
                 mode === value
                   ? 'border-primary bg-primary-50'
                   : 'border-slate-200 hover:bg-slate-50',
