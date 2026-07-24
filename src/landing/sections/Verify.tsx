@@ -16,7 +16,7 @@ export function Verify() {
 
   return (
     <section className="bg-slate-900">
-      <div className="mx-auto max-w-3xl px-4 py-12 sm:py-16">
+      <div className="mx-auto max-w-3xl px-4 py-8 sm:py-12">
         <div className="flex gap-3">
           <Shield className="mt-0.5 h-6 w-6 shrink-0 text-primary-400" />
           <div>

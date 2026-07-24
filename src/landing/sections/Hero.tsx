@@ -7,7 +7,7 @@ export function Hero() {
 
   return (
     <section className="border-b border-slate-200 bg-white">
-      <div className="mx-auto max-w-4xl px-4 py-14 text-center sm:py-20">
+      <div className="mx-auto max-w-4xl px-4 py-10 text-center sm:py-14">
         <p className="inline-flex items-center rounded-full bg-primary-50 px-3 py-1 text-xs font-semibold text-primary-700">
           {copy.badge}
         </p>

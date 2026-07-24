@@ -13,7 +13,7 @@ export function Why() {
   const { copy } = useLanding();
 
   return (
-    <section className="mx-auto max-w-5xl px-4 py-12 sm:py-16">
+    <section className="mx-auto max-w-5xl px-4 py-8 sm:py-12">
       <h2 className="text-center text-xl font-bold text-slate-900 sm:text-2xl">{copy.why.title}</h2>
       <div className="mt-8 grid gap-4 sm:grid-cols-3">
         {CARDS.map(({ key, Icon }) => {

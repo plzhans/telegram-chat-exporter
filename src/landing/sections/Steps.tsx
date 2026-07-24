@@ -7,7 +7,7 @@ export function Steps() {
   const { copy } = useLanding();
 
   return (
-    <section className="mx-auto max-w-4xl px-4 py-12 sm:py-16">
+    <section className="mx-auto max-w-4xl px-4 py-8 sm:py-12">
       <h2 className="text-center text-xl font-bold text-slate-900 sm:text-2xl">
         {copy.steps.title}
       </h2>
