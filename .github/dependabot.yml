@@ -26,6 +26,10 @@ updates:
       # 마이너·패치는 묶는다. 매주 PR 이 열 개씩 열리면 아무도 안 본다.
       minor-and-patch:
         update-types: [minor, patch]
+      # 메이저도 묶되 **따로** 둔다. 대개 손볼 것이 있어서(vite 6→8, tailwind 3→4 처럼)
+      # 마이너와 같은 PR 에 넣으면 쉬운 것까지 함께 막힌다.
+      major:
+        update-types: [major]
     ignore:
       # GramJS 는 **올리면 안 된다.** 같은 패키지로 Node 빌드와 브라우저 빌드를 따로
       # 배포하는데 그 경계가 버전마다 달라진다 - DEVELOP.ko.md 의 "telegram 버전을 올리지
