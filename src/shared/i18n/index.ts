@@ -157,24 +157,41 @@ function applyDocumentLanguage(lang: SupportedLanguage): void {
 /**
  * 언어를 바꾼다.
  *
- * 글자만 갈아 끼우지 않고 문서를 다시 연다. 그래야 주소와 `<html lang>`, 그리고 화면이
- * 이미 그려 둔 문구까지 한 언어로 맞는다.
+ * **문서를 다시 열지 않는다.** 예전에는 주소를 새로 열어(`location.assign`) 화면 전체를
+ * 다시 그렸는데, 그러면 **로그인 도중에 언어를 바꾼 사람이 처음으로 돌아갔다.** 전화번호를
+ * 넣고 인증코드를 기다리던 상태는 메모리에만 있고(텔레그램 연결도 그렇다) 새로고침으로는
+ * 되살릴 수 없다 - 코드를 다시 받아야 하는데, 그건 요청 제한에 걸리기 좋은 길이다.
+ *
+ * 그래서 세 가지를 제자리에서 맞춘다.
+ * 1. 문구 - i18next 가 화면을 다시 그린다.
+ * 2. `<html lang>`·`dir` - 글꼴 선택과 아랍어판 좌우 정렬이 여기 달렸다.
+ * 3. 주소 - 새로 고쳐도 같은 언어로 열리도록 언어 조각을 갈아 끼운다.
+ *
+ * 주소를 바꾸므로 라우터의 basename 도 따라와야 한다. 그 일은 `App.tsx` 가 맡는다 -
+ * 여기서 알린 언어 변경을 듣고 라우터를 다시 만든다.
  */
 export function switchLanguage(next: SupportedLanguage): void {
   if (!__STANDALONE__) {
-    window.location.assign(pathForLanguage(next) + window.location.search);
-    return;
+    /*
+      `pushState` 가 아니라 `replaceState` 다. 언어 전환은 다른 화면으로 간 것이 아니라
+      같은 화면을 다른 글로 보는 것이라, 뒤로 가기가 언어만 되돌리는 단계로 채워지면
+      사용자가 원래 오던 길로 못 돌아간다.
+    */
+    window.history.replaceState(null, '', pathForLanguage(next) + window.location.search);
+  } else {
+    /*
+      단일 파일 배포는 주소에 언어를 담을 수 없어서 저장해 둔다. 저장이 막혀 있어도
+      지금 화면은 바꿔 준다 - 다음에 열 때 되돌아갈 뿐이다.
+    */
+    try {
+      localStorage.setItem(LANGUAGE_KEY, next);
+    } catch {
+      // 사생활 보호 모드 등. 이번 화면만 바꾸고 넘어간다.
+    }
   }
 
-  try {
-    localStorage.setItem(LANGUAGE_KEY, next);
-  } catch {
-    // 저장이 막혔으면 다음에 열 때 되돌아가겠지만, 지금 화면만이라도 바꿔 준다.
-    void i18n.changeLanguage(next);
-    applyDocumentLanguage(next);
-    return;
-  }
-  window.location.reload();
+  void i18n.changeLanguage(next);
+  applyDocumentLanguage(next);
 }
 
 const active = activeLanguage();

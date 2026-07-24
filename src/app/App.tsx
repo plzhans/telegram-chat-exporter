@@ -1,4 +1,4 @@
-import { lazy, useEffect } from 'react';
+import { lazy, useEffect, useMemo, useState } from 'react';
 import {
   createBrowserRouter,
   createHashRouter,
@@ -13,7 +13,11 @@ import { ErrorPage } from './ErrorPage';
 import { DialogListSkeleton, MessageListSkeleton } from '@/shared/ui/Skeleton';
 import { useAuth } from '@/shared/auth/useAuth';
 import { touchStoredSession } from '@/shared/telegram/session';
-import { langSegment, languageFromPath } from '@/shared/i18n';
+import i18n, { langSegment, languageFromPath } from '@/shared/i18n';
+import { SUPPORTED_LANGUAGES, type SupportedLanguage } from '@/shared/i18n/languages';
+
+const isLanguage = (v: string): v is SupportedLanguage =>
+  (SUPPORTED_LANGUAGES as readonly string[]).includes(v);
 
 const SignIn = lazy(() => import('@/features/auth/pages/SignIn'));
 const Dialogs = lazy(() => import('@/features/dialogs/pages/Dialogs'));
@@ -77,7 +81,7 @@ const pages: RouteObject[] = [
   * 언어를 라우트 트리가 아니라 basename 에 넣었다. 그래서 화면 코드의 `to="/dialogs"` 를
   * 하나도 안 고쳐도 라우터가 앞에 붙여 준다.
   */
-const basename = import.meta.env.BASE_URL + langSegment(languageFromPath());
+const basenameOf = (lang: SupportedLanguage) => import.meta.env.BASE_URL + langSegment(lang);
 
 /*
   Suspense 는 MainLayout **안**에 있다(레이아웃의 Outlet 을 감싼다).
@@ -119,7 +123,8 @@ const tree = [
  *
  * 웹 배포는 그대로 둔다. 해시는 검색엔진이 별개 주소로 보지 않아서 언어별 색인이 깨진다.
  */
-const router = __STANDALONE__ ? createHashRouter(tree) : createBrowserRouter(tree, { basename });
+const createRouter = (lang: SupportedLanguage) =>
+  __STANDALONE__ ? createHashRouter(tree) : createBrowserRouter(tree, { basename: basenameOf(lang) });
 
 /** 저장된 세션의 유휴 만료 시각을 밀어 주는 주기. TTL 보다 충분히 짧기만 하면 된다. */
 const TOUCH_INTERVAL_MS = 60_000;
@@ -127,6 +132,29 @@ const TOUCH_INTERVAL_MS = 60_000;
 export default function App() {
   const bootstrap = useAuth((s) => s.bootstrap);
   const authorized = useAuth((s) => s.step === 'authorized');
+
+  /**
+   * 라우터는 언어를 따라 다시 만든다.
+   *
+   * 언어 조각이 basename 에 들어 있어서(`basenameOf`), 언어를 바꾸면 basename 도 바뀌어야
+   * 한다. `switchLanguage` 가 주소를 먼저 갈아 끼우고 언어 변경을 알리므로, 여기서 새
+   * 라우터를 만들면 이미 바뀐 주소를 새 basename 으로 읽는다.
+   *
+   * **다시 만들어도 하던 일은 안 날아간다.** 로그인 진행 상태와 텔레그램 연결은 리액트
+   * 바깥(zustand·모듈 전역)에 있어서 화면만 다시 그려진다 - 문서를 새로 열던 예전 방식이
+   * 바로 그걸 날려서 사용자를 처음으로 되돌렸다.
+   */
+  const [lang, setLang] = useState<SupportedLanguage>(languageFromPath);
+  useEffect(() => {
+    const onChanged = (next: string) => {
+      if (isLanguage(next)) setLang(next);
+    };
+    i18n.on('languageChanged', onChanged);
+    return () => {
+      i18n.off('languageChanged', onChanged);
+    };
+  }, []);
+  const router = useMemo(() => createRouter(lang), [lang]);
 
   /**
    * 라우터보다 먼저 한 번만 돈다. StrictMode 가 이 이펙트를 두 번 부르지만, bootstrap 은
@@ -158,5 +186,10 @@ export default function App() {
     };
   }, [authorized]);
 
-  return <RouterProvider router={router} />;
+  /*
+    `key` 가 있어야 한다. RouterProvider 는 router 를 바꿔 끼우는 것을 지원하지 않아서,
+    같은 자리에 다른 인스턴스를 넘기면 화면이 빈 채로 남는다. 키를 주면 통째로 다시
+    마운트되어 새 basename 으로 정상 렌더된다 - 하던 일은 리액트 바깥에 있어 그대로다.
+  */
+  return <RouterProvider key={lang} router={router} />;
 }
