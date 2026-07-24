@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # 빌드가 커밋 해시를 박으므로(vite.config.ts 의 BUILD_INFO) .git 이 필요하다.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # 태그에서 버전을 뽑고, **package.json 과 같은지 확인한다.**
       #
@@ -61,9 +61,9 @@ jobs:
           echo "asset=$ASSET" >> "$GITHUB_OUTPUT"
 
       # package.json 의 packageManager 필드에서 pnpm 버전을 읽는다.
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: pnpm
