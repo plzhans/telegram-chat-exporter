@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "types": ["vite/client", "node"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    /*
+      `vite.config.ts` 가 랜딩 `.tsx` 를 직접 import 해 Node 에서 프리렌더하므로 jsx 설정이
+      여기에도 필요하다. 없으면 esbuild 가 클래식 런타임으로 떨어져 `React is not defined` 로 죽는다.
+    */
+    "jsx": "react-jsx",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true
+  },
+  "include": ["src", "vite.config.ts", "tailwind.config.ts"]
+}

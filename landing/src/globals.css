@@ -1,0 +1,107 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+
+  /*
+    기준 글자 크기. Tailwind 의 text-* 는 전부 rem 이라 여기만 올리면 비율대로 커진다.
+    medifinder-web 과 같은 값으로 맞춰 둔다.
+  */
+  font-size: 17px;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  @apply bg-slate-50 text-slate-900 antialiased;
+}
+
+/*
+  모달 뒷배경. Tailwind 의 backdrop: 변형 대신 여기서 직접 쓴다 —
+  `::backdrop` 은 상속받는 값이 거의 없어서 유틸리티로 조립할 이점이 없다.
+*/
+dialog::backdrop {
+  background-color: rgb(15 23 42 / 0.4);
+}
+
+/*
+  상자 안에서 스크롤되는 영역.
+
+  기본 스크롤바는 상자 테두리에 딱 붙어서 "창 가장자리에 달린 것"처럼 보인다. 여기서는
+  막대를 얇게 만들고 `border` + `background-clip: content-box` 로 좌우를 비워, 막대가
+  **상자 안쪽에 떠 있는** 모양이 되게 한다. 대화 내용과 같은 면 위에 있다는 인상을 준다.
+*/
+.scroll-area {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(203 213 225) transparent;
+  /* 스크롤이 끝에 닿았을 때 바깥(페이지)으로 전파되지 않게 막는다. */
+  overscroll-behavior: contain;
+}
+
+.scroll-area::-webkit-scrollbar {
+  width: 10px;
+}
+
+.scroll-area::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scroll-area::-webkit-scrollbar-thumb {
+  background-color: rgb(203 213 225);
+  border-radius: 9999px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+
+.scroll-area::-webkit-scrollbar-thumb:hover {
+  background-color: rgb(148 163 184);
+}
+
+/*
+  손가락으로 쓰는 기기에서 입력 글자를 16px 아래로 두지 않는다.
+
+  iOS 사파리는 포커스된 입력 요소의 글자가 16px 미만이면 화면을 확대한다. 확대된 뒤
+  포커스가 풀려도 **되돌려 주지 않아서**, 인증코드를 자동 채움으로 받는 순간 화면이 커진 채
+  남는다. 사용자가 손가락으로 직접 줄이기 전까지 레이아웃이 어긋난 것처럼 보인다.
+
+  여기서 16 은 디자인 값이 아니라 사파리가 정한 문턱이라 rem 이 아닌 px 로 적는다. 루트가
+  17px 이므로 `text-sm`(0.875rem)은 14.875px 이 되어 걸린다 - 기본값을 믿을 수 없는 이유다.
+
+  기기 판별은 `shared/lib/device.ts` 와 같은 기준을 쓴다. 화면 폭이 아니라 손가락이 주된
+  입력인가를 본다. 마우스가 있는 기기는 확대되지 않으므로 원래 크기 그대로 둔다.
+
+  선택자 특정도가 `.text-sm` 보다 높아야 유틸리티를 이긴다 - `:not()` 이 그 몫을 한다.
+  체크박스·라디오·슬라이더는 글자를 그리지 않아 확대와 무관하므로 뺀다.
+*/
+@media (pointer: coarse) and (hover: none) {
+  :is(input, select, textarea):not([type='checkbox'], [type='radio'], [type='range']) {
+    font-size: 16px;
+  }
+}
+
+/*
+  좁은 화면에서 화면 끝까지 가는 상자.
+
+  `main` 의 좌우 여백은 로그인 폼처럼 안쪽에 있어야 할 것들 때문에 남겨 두고, 끝까지 가야
+  하는 상자만 여기서 그 여백을 되돌린다. 테두리와 둥근 모서리도 같이 없앤다 - 화면 끝에
+  닿은 선은 테두리로 보이지 않고 잘린 것처럼 보인다. sm 이상에서는 전부 원래대로 돌아온다.
+*/
+.edge-card {
+  margin-inline: -1rem;
+  border-block: 1px solid rgb(226 232 240);
+  border-radius: 0;
+}
+
+@media (min-width: 640px) {
+  .edge-card {
+    margin-inline: 0;
+    border: 1px solid rgb(226 232 240);
+    border-radius: 1rem;
+  }
+}

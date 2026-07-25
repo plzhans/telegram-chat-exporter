@@ -1,0 +1,12 @@
+<!--
+  대화를 내려받는다는 뜻만 담은 표식. 텔레그램 로고는 쓰지 않는다 - 상표이고, 공식 앱으로
+  오해할 여지를 만들 이유가 없다. 말풍선 안으로 내려오는 화살표 하나면 충분하다.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <rect width="64" height="64" rx="14" fill="#2563EB"/>
+  <path d="M14 20a6 6 0 0 1 6-6h24a6 6 0 0 1 6 6v16a6 6 0 0 1-6 6H30l-9 8v-8h-1a6 6 0 0 1-6-6V20z"
+        fill="#fff" opacity=".18"/>
+  <path d="M32 18v18m0 0-8-8m8 8 8-8" fill="none" stroke="#fff" stroke-width="5"
+        stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M20 44h24" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
+</svg>

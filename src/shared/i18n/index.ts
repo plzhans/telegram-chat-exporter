@@ -72,10 +72,9 @@ export function languageFromPath(pathname: string = window.location.pathname): S
 /**
  * 같은 화면의 다른 언어 주소.
  *
- * **끝에 `/` 를 반드시 붙인다.** 이 사이트가 내보내는 실제 파일은 `start/index.html`
- * 처럼 디렉터리 아래에 있어서, 슬래시가 없는 `/en-us/start` 는 그 파일이 아니라 언어판
- * 첫 화면(랜딩)으로 풀린다 - 시작 화면에서 언어를 바꾸면 랜딩으로 튕기던 원인이 이것이다.
- * 랜딩의 언어 메뉴는 처음부터 슬래시를 붙이고 있었으므로, 이제 양쪽이 같은 주소를 만든다.
+ * **끝에 `/` 를 반드시 붙인다.** 이 앱이 내보내는 실제 파일은 `en-us/index.html` 처럼
+ * 디렉터리 아래에 있어서, 슬래시가 없는 `/en-us` 는 그 파일로 곧장 풀리지 않는다. 그래서
+ * 슬래시를 붙여 새로고침해도 같은 언어판이 그대로 열리게 한다.
  */
 export function pathForLanguage(lang: SupportedLanguage, pathname = window.location.pathname) {
   const parts = stripBase(pathname);

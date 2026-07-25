@@ -21,15 +21,15 @@ through.
 
 |  |  |  |
 | :---: | :---: | :---: |
-| <img src="public/landing/en/shot-03.png" width="230" alt="Choosing how to start" /> | <img src="public/landing/en/shot-06.png" width="230" alt="Entering the login code" /> | <img src="public/landing/en/shot-08.png" width="230" alt="Reading a chat with stickers" /> |
-| <img src="public/landing/en/shot-09.png" width="230" alt="Reading a chat, jumping to a date" /> | <img src="public/landing/en/shot-11.png" width="230" alt="Choosing what to export" /> | <img src="public/landing/en/shot-12.png" width="230" alt="Export in progress" /> |
+| <img src="landing/public/en/shot-03.png" width="230" alt="Choosing how to start" /> | <img src="landing/public/en/shot-06.png" width="230" alt="Entering the login code" /> | <img src="landing/public/en/shot-08.png" width="230" alt="Reading a chat with stickers" /> |
+| <img src="landing/public/en/shot-09.png" width="230" alt="Reading a chat, jumping to a date" /> | <img src="landing/public/en/shot-11.png" width="230" alt="Choosing what to export" /> | <img src="landing/public/en/shot-12.png" width="230" alt="Export in progress" /> |
 
 ## What you get
 
 A zip file you can open without this tool, without the internet, and years from now.
 
 <p align="center">
-  <img src="public/landing/en/shot-14.png" width="420" alt="The unzipped folder: files/, stickers/, index.html, messages.jsonl, messages.txt, meta.json" />
+  <img src="landing/public/en/shot-14.png" width="420" alt="The unzipped folder: files/, stickers/, index.html, messages.jsonl, messages.txt, meta.json" />
 </p>
 
 | File | What it is |
@@ -46,7 +46,7 @@ else:
 
 |  |  |
 | :---: | :---: |
-| <img src="public/landing/en/shot-15.png" width="300" alt="index.html opened — the conversation as it was" /> | <img src="public/landing/en/shot-16.png" width="300" alt="The same export, anonymized: names become A, B, C" /> |
+| <img src="landing/public/en/shot-15.png" width="300" alt="index.html opened — the conversation as it was" /> | <img src="landing/public/en/shot-16.png" width="300" alt="The same export, anonymized: names become A, B, C" /> |
 | The export, as it was | The same export, anonymized |
 
 ## Two ways to use it

@@ -1,6 +1,6 @@
 import { useLanding } from '../context';
 import { ChevronLeft, ChevronRight, Pause, Play } from '../icons';
-import type { SupportedLanguage } from '../../shared/i18n/languages';
+import type { SupportedLanguage } from '../i18n/languages';
 
 /**
  * 언어별 스크린샷이 놓이는 폴더.
@@ -9,21 +9,21 @@ import type { SupportedLanguage } from '../../shared/i18n/languages';
  * **여기 적힌 언어만** 제 폴더를 갖고 나머지는 영어판(`en/`)으로 떨어진다 - 열다섯 언어
  * 전부를 새로 찍을 수는 없으니, 있는 것만 두고 없으면 영어로 폴백한다.
  *
- * 기본 언어(`ko-kr`)는 URL 과 같은 규칙으로 접두사 없는 맨 자리(`landing/`)를 쓴다.
- * 폴더를 새로 채우면(`landing/ja/` 처럼) 여기에 한 줄 더한다.
+ * 기본 언어(`ko-kr`)는 URL 과 같은 규칙으로 접두사 없는 맨 자리(`public/` 바로 아래)를 쓴다.
+ * 폴더를 새로 채우면(`ja/` 처럼) 여기에 한 줄 더한다.
  */
 const SHOT_DIR: Partial<Record<SupportedLanguage, string>> = {
-  'ko-kr': 'landing/', // 기본 언어 - 접두사 없는 맨 자리
-  'en-us': 'landing/en/',
+  'ko-kr': '', // 기본 언어 - 접두사 없는 맨 자리(public/shot-XX.png)
+  'en-us': 'en/',
 };
 
 /** 이 언어의 스크린샷 폴더. 제 판이 없으면 영어판을 쓴다. */
 function shotDir(lang: SupportedLanguage): string {
-  return SHOT_DIR[lang] ?? 'landing/en/';
+  return SHOT_DIR[lang] ?? 'en/';
 }
 
 /**
- * `public/landing/` 에 있는 스크린샷 장수.
+ * `public/`(과 `public/en/`)에 있는 스크린샷 장수.
  *
  * 파일 이름은 `shot-01.png` … 로 두 자리를 맞춘다. 사전순 정렬이 곧 화면 순서가 되도록
  * 하기 위해서다(`shot-1`, `shot-10`, `shot-2` 로 섞이지 않는다). 장수를 바꾸면 이 숫자만
