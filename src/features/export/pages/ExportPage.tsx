@@ -1,4 +1,4 @@
-import { Navigate, useParams, useSearchParams } from 'react-router-dom';
+import { Navigate, useParams, useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { PageSkeleton } from '@/shared/ui/Skeleton';
 import {

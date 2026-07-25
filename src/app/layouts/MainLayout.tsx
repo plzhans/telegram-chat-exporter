@@ -1,5 +1,5 @@
 import { Suspense, useState } from 'react';
-import { Link, Outlet, useLocation } from 'react-router-dom';
+import { Link, Outlet, useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import * as Select from '@radix-ui/react-select';
 import { ArrowLeft, Check, ChevronDown, Github, LogOut } from 'lucide-react';

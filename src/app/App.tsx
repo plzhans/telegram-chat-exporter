@@ -7,7 +7,7 @@ import {
   RouterProvider,
   useLocation,
   type RouteObject,
-} from 'react-router-dom';
+} from 'react-router';
 import { MainLayout } from './layouts/MainLayout';
 import { ErrorPage } from './ErrorPage';
 import { DialogListSkeleton, MessageListSkeleton } from '@/shared/ui/Skeleton';

@@ -1,5 +1,5 @@
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Link, Navigate, useParams } from 'react-router-dom';
+import { Link, Navigate, useParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { CalendarDays, ChevronDown, Download } from 'lucide-react';
 import { Alert } from '@/shared/ui/Alert';
