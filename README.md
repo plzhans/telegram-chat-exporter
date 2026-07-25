@@ -28,15 +28,26 @@ through.
 
 A zip file you can open without this tool, without the internet, and years from now.
 
+<p align="center">
+  <img src="public/landing/en/shot-14.png" width="420" alt="The unzipped folder: files/, stickers/, index.html, messages.jsonl, messages.txt, meta.json" />
+</p>
+
 | File | What it is |
 | --- | --- |
 | `index.html` | Reads like the conversation itself. Open this one first. |
 | `messages.jsonl` | One message per line. The raw form, for machines to read again. |
 | `messages.txt` | Human-readable, oldest first. |
 | `meta.json` | Chat info, message count, export timestamp. |
+| `files/` · `stickers/` · `attachments.jsonl` | Photos, attachments and stickers, when you choose to include them. |
 
-Photos and stickers can be included. You can also **anonymize participants** — names become
-A, B, C and IDs become 1, 2, 3, so you can hand the file to someone else.
+Open `index.html` and it reads just like the original chat. And you can **anonymize
+participants** — names become A, B, C and IDs become 1, 2, 3 — so the very same export is safe to
+hand to someone else:
+
+|  |  |
+| :---: | :---: |
+| <img src="public/landing/en/shot-15.png" width="300" alt="index.html opened — the conversation as it was" /> | <img src="public/landing/en/shot-16.png" width="300" alt="The same export, anonymized: names become A, B, C" /> |
+| The export, as it was | The same export, anonymized |
 
 ## Two ways to use it
 

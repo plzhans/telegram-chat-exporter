@@ -27,15 +27,26 @@ English: [README.md](README.md)
 
 이 도구 없이도, 인터넷 없이도, 몇 년 뒤에도 열리는 zip 파일입니다.
 
+<p align="center">
+  <img src="public/landing/shot-14.png" width="420" alt="압축을 푼 폴더: files/, stickers/, index.html, messages.jsonl, messages.txt, meta.json" />
+</p>
+
 | 파일 | 무엇인가 |
 | --- | --- |
 | `index.html` | 대화 모양 그대로 읽히는 문서. 압축을 풀면 이걸 먼저 엽니다. |
 | `messages.jsonl` | 한 줄에 메시지 하나. 다시 기계로 읽기 위한 원본. |
 | `messages.txt` | 사람이 읽는 형태, 오래된 것부터. |
 | `meta.json` | 대화방 정보, 메시지 수, 내보낸 시각. |
+| `files/` · `stickers/` · `attachments.jsonl` | 함께 담기로 하면 사진·첨부·스티커가 여기 들어갑니다. |
 
-사진과 스티커도 함께 담을 수 있습니다. **참여자 익명 처리**도 됩니다 — 이름은 A·B·C로,
-회원번호는 1·2·3으로 바뀌어서 다른 사람에게 건네줄 수 있습니다.
+`index.html`을 열면 원래 대화 그대로 읽힙니다. 게다가 **참여자를 익명 처리**할 수 있어서
+이름은 A·B·C로 회원번호는 1·2·3으로 바뀝니다. 똑같은 내보내기를 그대로 다른 사람에게 건네도
+안전합니다.
+
+|  |  |
+| :---: | :---: |
+| <img src="public/landing/shot-15.png" width="300" alt="index.html 를 연 모습 — 원래 대화 그대로" /> | <img src="public/landing/shot-16.png" width="300" alt="같은 내보내기를 익명 처리한 모습 — 이름이 A·B·C 로" /> |
+| 내보낸 그대로 | 같은 내보내기, 익명 처리 |
 
 ## 두 가지 방법
 
