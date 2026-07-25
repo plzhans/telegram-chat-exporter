@@ -113,7 +113,13 @@ export function Screenshots() {
                     loading={i === 0 ? 'eager' : 'lazy'}
                     decoding="async"
                     alt={`${copy.screenshots.title} ${i + 1}`}
-                    className="block w-56 rounded-[1.4rem] sm:w-64"
+                    /*
+                      데스크톱에서 이미지를 마우스로 눌러 끌면 브라우저가 "이미지 드래그"(고스트)를
+                      시작해 캐러셀 드래그를 가로챈다. 기본 드래그를 꺼서 마우스 조작이 Embla 로
+                      가게 한다. 터치에는 이 기본 동작이 없어 원래도 잘 넘어갔다.
+                    */
+                    draggable={false}
+                    className="block w-56 select-none rounded-[1.4rem] sm:w-64"
                   />
                 </div>
               </div>
