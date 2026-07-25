@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/plzhans/telegram-chat-exporter/compare/release/v1.3.0...release/v1.3.1) (2026-07-25)
+
+
+### 버그 수정
+
+* **deps:** react-router v8 로 옮겨 high 취약점을 없앤다 ([f7bb277](https://github.com/plzhans/telegram-chat-exporter/commit/f7bb27758cf6c44ffb24af55fa59e530ae7369a7))
+
 ## [1.3.0](https://github.com/plzhans/telegram-chat-exporter/compare/release/v1.2.5...release/v1.3.0) (2026-07-25)
 
 
