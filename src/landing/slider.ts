@@ -150,7 +150,9 @@ function start(root: HTMLElement): void {
   const embla = EmblaCarousel(
     viewport,
     {
-      align: 'center',
+      // 첫 장이 맨 앞(왼쪽)에 서도록 시작 정렬. 가운데 정렬이면 첫 화면에서 마지막 장이
+      // 왼쪽에 걸쳐 보여, 첫 이미지가 맨 앞에 오지 않는다.
+      align: 'start',
       // 끝에 닿으면 처음으로 돌아간다. 자동으로 도는 동안 마지막 장에서 멈춰 서면 안 된다.
       loop: true,
       dragFree: false,

@@ -70,8 +70,10 @@ export function Screenshots() {
       </p>
 
       {/*
-        `snap-x snap-mandatory` 로 한 장씩 걸리게 한다. 좌우 여백을 스크롤 패딩으로 함께
-        줘야 첫 장과 마지막 장도 가운데에 선다.
+        `snap-x snap-mandatory` 로 한 장씩 걸리게 한다. 장 사이 간격은 flex `gap` 이 아니라
+        각 장의 뒤쪽 여백(`pe-*`)으로 준다 - Embla 루프는 마지막 장 뒤에 첫 장을 바로 잇는데,
+        flex `gap` 은 이 이음매에만 간격을 안 넣어 두 장이 붙어 버린다. 여백을 장이 직접 안고
+        있으면 그 이음매에도 똑같이 간격이 남는다.
       */}
       {/*
         `data-embla` 안쪽을 `slider.ts` 가 찾아 붙는다. 스크립트가 없거나 늦게 와도
@@ -86,30 +88,34 @@ export function Screenshots() {
           data-embla-viewport
           className="overflow-x-auto [scrollbar-width:none] [&.is-embla]:overflow-hidden [&::-webkit-scrollbar]:hidden"
         >
-          <div className="flex snap-x snap-mandatory gap-5 pb-4 sm:gap-8">
+          <div className="flex snap-x snap-mandatory pb-4">
             {shots.map((n, i) => (
               /*
-                휴대전화 테두리를 둘러 준다. 스크린샷이 흰 화면이라 맨몸으로 두면 그냥 흰
-                네모가 되어 어디까지가 그림인지 흐려진다. 검은 베젤을 두르면 한눈에
-                "휴대전화 화면"으로 읽히고, 흰 배경 위에서 경계도 또렷해진다.
+                간격을 안는 바깥 래퍼. 장 사이 간격은 flex `gap` 이 아니라 이 래퍼의 뒤쪽
+                여백(`pe-*`)으로 준다 - 위 컨테이너 주석 참고. 베젤에 배경색이 있어 여백을
+                베젤에 직접 주면 검은 띠가 생기므로, 래퍼가 간격을 안고 베젤은 안쪽에 둔다.
               */
-              <div
-                key={n}
-                className="shrink-0 snap-center rounded-[1.75rem] bg-slate-900 p-1.5 shadow-lg ring-1 ring-slate-900/5"
-              >
-                <img
-                  src={`${env.assetBase}${dir}shot-${n}.png`}
-                  width={WIDTH}
-                  height={HEIGHT}
-                  /*
-                    첫 장만 곧바로 받는다. 나머지는 다가올 때 받게 두지 않으면 이 한 섹션이
-                    수 MB 를 끌고 와서, 정작 첫 화면이 늦게 뜬다.
-                  */
-                  loading={i === 0 ? 'eager' : 'lazy'}
-                  decoding="async"
-                  alt={`${copy.screenshots.title} ${i + 1}`}
-                  className="block w-56 rounded-[1.4rem] sm:w-64"
-                />
+              <div key={n} className="shrink-0 snap-start pe-5 sm:pe-8">
+                {/*
+                  휴대전화 테두리를 둘러 준다. 스크린샷이 흰 화면이라 맨몸으로 두면 그냥 흰
+                  네모가 되어 어디까지가 그림인지 흐려진다. 검은 베젤을 두르면 한눈에
+                  "휴대전화 화면"으로 읽히고, 흰 배경 위에서 경계도 또렷해진다.
+                */}
+                <div className="rounded-[1.75rem] bg-slate-900 p-1.5 shadow-lg ring-1 ring-slate-900/5">
+                  <img
+                    src={`${env.assetBase}${dir}shot-${n}.png`}
+                    width={WIDTH}
+                    height={HEIGHT}
+                    /*
+                      첫 장만 곧바로 받는다. 나머지는 다가올 때 받게 두지 않으면 이 한 섹션이
+                      수 MB 를 끌고 와서, 정작 첫 화면이 늦게 뜬다.
+                    */
+                    loading={i === 0 ? 'eager' : 'lazy'}
+                    decoding="async"
+                    alt={`${copy.screenshots.title} ${i + 1}`}
+                    className="block w-56 rounded-[1.4rem] sm:w-64"
+                  />
+                </div>
               </div>
             ))}
           </div>
