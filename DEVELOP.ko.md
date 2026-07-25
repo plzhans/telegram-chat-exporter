@@ -321,7 +321,7 @@ addEventListener('securitypolicyviolation', (e) =>
 
 아랍어(`ar-eg`)가 들어오면서 `<html dir>` 이 필요해졌다. `languages.ts` 의 `dirOf()` 가
 언어의 기본 부분을 보고 정하고, 빌드는 그 값을 언어별 `index.html` 에 박아 넣는다
-(`localizedPages`). 실행 시점에도 앱이 다시 맞춘다 — 404 폴백으로 다른 언어의 셸이 올 수
+(`appShells`). 실행 시점에도 앱이 다시 맞춘다 — 404 폴백으로 다른 언어의 셸이 올 수
 있기 때문이다.
 
 화면 쪽은 Tailwind 의 **논리 속성**으로 적어 둔다. `ml-`·`pr-`·`left-`·`text-left`·
@@ -331,52 +331,53 @@ addEventListener('securitypolicyviolation', (e) =>
 
 ### 언어별로 진짜 HTML 파일이 나온다
 
+exporter 빌드가 언어마다 앱 셸을 하나씩 찍는다(`vite.config.ts` 의 `appShells`).
+
 ```
-dist/index.html               첫 화면 (정적)   <html lang="ko-KR">  canonical → /
-dist/en-us/index.html         첫 화면 (정적)   <html lang="en-US">  canonical → /en-us/
-dist/start/index.html         앱 셸
-dist/en-us/start/index.html   앱 셸
-dist/404.html                 앱 셸 (SPA 폴백)
-dist/en-us/404.html           앱 셸 (SPA 폴백)
+dist/index.html          앱 셸  <html lang="ko-KR">
+dist/en-us/index.html    앱 셸  <html lang="en-US">
+dist/404.html            앱 셸 (SPA 폴백)
+dist/en-us/404.html      앱 셸 (SPA 폴백)
 ```
 
-SPA 폴백(`404.html`)으로 때울 수도 있지만 그 주소는 **응답 코드가 404** 라 검색엔진이
-색인하지 않는다. 언어별 주소를 만드는 목적이 색인이므로 실제 파일이 있어야 한다.
-`vite.config.ts` 의 `localizedPages` 플러그인이 여섯 가지를 전부 만든다.
+`/en-us/` 로 바로 들어와도 200 으로 응답하도록 언어별 `index.html` 을 둔다(폴백에 맡기면
+404 다). 로그인 뒤 경로(`/en-us/dialogs`)는 실제 파일이 없어 그 언어의 `404.html`(=앱 셸)로
+뜨고, 라우터가 주소를 읽어 정상 렌더한다. 그 경우에도 `<html lang>` 이 틀리지 않도록 앱이
+실행 시점에 문서 언어를 실제 언어로 맞춘다.
 
-로그인 뒤 경로(`/en-us/dialogs`)는 실제 파일이 없어 404 폴백으로 뜬다. 어차피 색인 대상이
-아니라 문제되지 않지만, 그 경우에도 `<html lang>` 이 틀리지 않도록 앱이 실행 시점에
-문서의 언어를 실제 언어로 맞춘다.
+이 앱은 **색인 대상이 아니다** — SEO·홍보는 아래 랜딩이 맡는다. 그래서 앱 셸은 `noindex` 이고
+sitemap·og·canonical 을 만들지 않는다. 언어별 셸이 하는 일은 딱 "그 언어로 뜨는 것"뿐이다.
 
-### 첫 화면은 React 가 아니라 정적 HTML 이다
+### 홍보 랜딩은 별개 프로젝트다 (`landing/`)
 
-색인되는 주소는 `/` 와 `/<언어>/` 뿐이다. 즉 **크롤러가 실제로 읽는 문서가 그것들**이라,
-거기에 빈 `<div id="root">` 만 있으면 곤란하다. 구글은 JS 를 실행하긴 하지만 크롤과 렌더가
-다른 큐라 며칠씩 밀리고, 네이버·다음·GPTBot 은 사실상 못 읽는다.
+랜딩은 이 exporter 와 **코드·빌드·i18n 어느 것도 공유하지 않는 독립 프로젝트**다. `landing/`
+안에 자기 `package.json`·lockfile·`vite.config.ts`·`src`·로케일 사본을 갖고, 자기 install·build 를
+한다.
 
-무게도 이유다. 앱 번들에는 MTProto 라이브러리가 들어 있어 gzip 530KB 인데, 홍보 한 장
-보여주려고 그걸 받게 하면 LCP·INP 가 나빠진다 — 둘 다 검색 순위에 직접 들어가는 신호다.
+- 루트에서 `pnpm dev`/`build`/`preview` 는 **exporter 만** 돈다 — 랜딩은 딸려 오지 않는다.
+  루트 `pnpm install` 도 랜딩 의존성(embla 등)을 받지 않는다.
+- 랜딩을 손보려면 `cd landing && pnpm install && pnpm build` 한다.
+- 랜딩은 빌드 때 React 를 Node 에서 한 번 그려 **정적 HTML 로 프리렌더**한다. 색인되는 주소가
+  `/` 와 `/<언어>/` 뿐이라 크롤러가 실제로 읽는 문서가 그것들이고, 앱 번들(gzip 530KB)과 달리
+  JS 가 1KB 도 안 된다. 문구는 랜딩 자기 로케일 사본(`landing/locales/*.json`)의 `landing`·`seo`
+  블록이다. 자세한 근거는 `landing/src/Landing.tsx` 주석 참고.
+- "시작하기" 는 exporter 진입 주소(`VITE_APP_URL`, 기본 `/run/`)로 **진짜 페이지 이동**한다 —
+  랜딩에는 앱 코드가 한 줄도 없다.
 
-| | 첫 화면 (`/`) | 앱 (`/start/`) |
-| --- | --- | --- |
-| HTML | 26KB (본문 포함) | 6KB |
-| CSS | 28KB | 28KB |
-| JS | **0.5KB**(애널리틱스만) | 1.76MB |
+배포(`.github/workflows/deploy.yml`)는 두 산출물을 한 아티팩트로 합친다 — 도메인 루트 `/` 는
+랜딩(sitemap·robots 포함), `/run/` 는 exporter. 최종 URL(서브패스·서브도메인·루트 중 무엇으로
+할지)은 배포의 `--base` 와 `VITE_APP_URL` 로 정하므로 소스는 그대로다.
 
-`build/landing.ts` 가 문자열만 다룬다. React 컴포넌트로 두고 `renderToStaticMarkup` 하는
-방법도 있지만, 그러면 i18n·라우터·zustand 를 Node 에서 돌릴 준비를 해야 한다 — 얻는 것에
-비해 딸려 오는 게 너무 많다.
+**개발은 SPA(일반 React)로, 프로덕션은 SSG(정적 프리렌더)로 — 한 플래그로 가른다.**
 
-**문구는 로케일 JSON 의 `landing` 블록이다.** 앱 화면과 같은 파일, 같은 키를 쓴다.
-없는 언어는 **한국어가 아니라 영어**로 떨어진다 — 일본어 주소에 한국어 홍보문이 뜨는 건
-영어가 뜨는 것보다 나쁘다. 블록을 채우는 순간 저절로 그 언어를 쓰므로 코드는 안 고쳐도 된다.
-
-화면에 적히는 `connect-src` 한 줄은 **방금 심은 CSP 에서 뽑아 온다.** 손으로 적으면
-애널리틱스를 켜고 끌 때마다 어긋나는데, 하필 그 문장이 이 앱의 신뢰 근거다.
-
-**개발 모드에서는 이 화면을 볼 수 없다.** 정적 랜딩은 빌드 때만 찍히고, dev 에서는 CSS 도
-JS 가 주입하므로 스크립트 없는 문서는 아예 스타일이 없다. `pnpm build && pnpm preview` 로
-확인한다 — CSP 와 같은 이유다.
+- `cd landing && pnpm dev` → `<Landing>` 이 클라이언트로 렌더된다(HMR·devtools). 매번
+  빌드하지 않고 바로 보며 만든다. props(`text`·`env`)의 브라우저 짝은 `src/clientProps.ts`
+  가, 마운트는 `src/main.ts`(→ 동적 import `mount.tsx`)가 맡는다.
+- `pnpm build` → **기본이 SSG**(프리렌더 정적 HTML). CI·클론엔 플래그가 없어 **프로덕션은
+  늘 SSG** 다 — 빈 `#root` 를 배포하는 사고가 원천 차단된다.
+- `.env.local` 에 `LANDING_SPA=1`(또는 `pnpm build:spa`) → SPA 로 빌드해 `preview` 로도
+  SPA 를 확인한다. `vite.config.ts` 가 `spa` 면 프리렌더 플러그인을 끄고, `main.ts` 의
+  `if (__LANDING_SPA__)` 블록은 SSG 에서 통째로 트리셰이킹된다(React 가 정적본에 안 들어간다).
 
 ---
 
@@ -537,16 +538,17 @@ major 버전 신호로 읽는다.
 canonical 은 `https://telegram-exporter.plzhans.com/` 을 가리킨다.
 
 **SPA 폴백(`404.html`)은 워크플로가 아니라 빌드가 만든다.** Pages 에는 리라이트 규칙이
-없어서 `/dialogs` 로 새로고침하면 없는 파일이 되고, 그때 Pages 가 `404.html` 을 내준다.
+없어서 `/run/dialogs` 로 새로고침하면 없는 파일이 되고, 그때 Pages 가 `404.html` 을 내준다.
 그 내용이 앱 셸이면 라우터가 경로를 읽고 정상 렌더한다. (응답 코드는 404 로 남지만 화면은
-정상이다.)
-
-예전에는 이 자리에서 `cp dist/index.html dist/404.html` 로 만들었다. 지금은 `index.html`
-이 **스크립트가 없는 정적 첫 화면**이라 그 복사가 성립하지 않는다 — 앱이 아예 안 뜨는
-폴백이 된다. 어느 문서가 앱 셸인지는 빌드만 아는 사실이라 `localizedPages` 가 함께 찍는다.
+정상이다.) exporter 의 `index.html` 자체가 앱 셸이라, `vite.config.ts` 의 `appShells` 가
+그것을 `404.html` 로도 찍는다.
 
 **언어별 디렉터리도 각자 자기 `404.html` 을 갖는다.** 루트 것 하나로 때우면
-`/en-us/dialogs` 새로고침에서 한국어판 셸이 떠서 언어가 조용히 리셋된다.
+`/run/en-us/dialogs` 새로고침에서 한국어판 셸이 떠서 언어가 조용히 리셋된다.
+
+**배포는 exporter(`/run/`)와 랜딩(`/`)을 각각 빌드해 한 아티팩트로 합친다.** 워크플로가
+루트에서 exporter 를(`--base=/run/`), `landing/` 에서 랜딩을(`--base=/`) 따로 빌드한 뒤
+`out/` 에 랜딩을, `out/run/` 에 exporter 를 놓고 올린다.
 
 공용 api_id 를 쓸 거라면 **Settings → Secrets and variables → Actions → Variables** 에
 `VITE_TELEGRAM_API_ID` / `VITE_TELEGRAM_API_HASH` 를 넣는다. Secrets 가 아니라 Variables 인

@@ -7,7 +7,7 @@
  */
 
 import { createContext, useContext, type ReactNode } from 'react';
-import type { SupportedLanguage } from '../shared/i18n/languages';
+import type { SupportedLanguage } from './i18n/languages';
 
 /**
  * 로케일 JSON 의 `landing` 블록. **여기 적힌 모양이 곧 번역이 채워야 할 모양이다.**

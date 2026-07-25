@@ -41,29 +41,20 @@ function RequireAuth() {
   const step = useAuth((s) => s.step);
   const booted = useAuth((s) => s.booted);
   if (!booted) return <BootSkeleton />;
-  // 랜딩이 아니라 로그인 화면으로 보낸다. 여기 온 사람은 홍보 문구가 아니라 로그인이 필요하다.
-  if (step !== 'authorized') return <Navigate to="/start" replace />;
+  // 진입점(로그인 화면)으로 보낸다. 홍보 랜딩은 이 앱과 별개로 배포되므로 여기서 갈 곳이 아니다.
+  if (step !== 'authorized') return <Navigate to="/" replace />;
   return <Outlet />;
 }
 
 const pages: RouteObject[] = [
   /*
-    첫 화면은 랜딩이고 앱은 `/start` 부터다.
+    첫 화면이 곧 로그인(방식 고르기) 화면이다.
 
-    검색엔진이 색인하는 주소가 `/` 와 `/<언어>/` 뿐이라, 그 자리에 무엇을 두느냐가 곧
-    검색결과에서 보이는 화면이 된다. 로그인 폼을 거기 두면 "이게 무엇을 해 주는지"를
-    알기 전에 전화번호부터 요구받는 셈이다.
-
-    **웹 배포에서 `/` 는 이 라우터에 오지 않는다.** 빌드가 그 자리에 스크립트 없는 정적
-    HTML 을 찍어 두기 때문이다(`src/landing/`). 그래서 여기 남은 index 라우트는
-    앱 안에서 `/` 로 이동했을 때만 걸리는 안전망이고, 그때는 앱 진입점으로 보낸다.
-
-    **단일 파일 배포는 예외다.** zip 을 내려받아 압축까지 푼 사람은 이미 쓸지 말지를
-    정했고, 같이 들어 있는 README.txt 가 홍보 문구 몫을 한다. 그 앞에 랜딩을 한 장 더
-    세우면 클릭만 하나 늘어난다. 애초에 정적 랜딩을 안 찍으므로 여기가 첫 화면이다.
+    홍보 랜딩은 이 앱과 **별개로 배포되는 독립 프로젝트**(`landing/`)라, 여기서 신경 쓸
+    것이 없다. 웹 배포든 단일 파일 배포든 이 라우터의 첫 화면은 언제나 `SignIn` 이다 —
+    랜딩에서 "시작하기" 를 누르면 진짜 페이지 이동으로 이 앱 진입점에 도착한다.
   */
-  { index: true, element: __STANDALONE__ ? <SignIn /> : <Navigate to="/start" replace /> },
-  { path: 'start', element: <SignIn /> },
+  { index: true, element: <SignIn /> },
   {
     element: <RequireAuth />,
     children: [

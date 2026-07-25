@@ -375,7 +375,7 @@ language's name can't find it in the list.
 
 Adding Arabic (`ar-eg`) made `<html dir>` necessary. `dirOf()` in `languages.ts` decides it from
 the language's base part, and the build bakes that value into each language's `index.html`
-(`localizedPages`). The app re-applies it at runtime too, since a 404 fallback can serve another
+(`appShells`). The app re-applies it at runtime too, since a 404 fallback can serve another
 language's shell.
 
 The UI is written with Tailwind's **logical properties**. Instead of `ml-`, `pr-`, `left-`,
@@ -385,54 +385,54 @@ themselves based on `dir`. Icons whose direction carries meaning (previous/next,
 
 ### Real HTML files per language
 
+The exporter build emits one app shell per language (`appShells` in `vite.config.ts`).
+
 ```
-dist/index.html               landing (static)   <html lang="ko-KR">  canonical → /
-dist/en-us/index.html         landing (static)   <html lang="en-US">  canonical → /en-us/
-dist/start/index.html         app shell
-dist/en-us/start/index.html   app shell
-dist/404.html                 app shell (SPA fallback)
-dist/en-us/404.html           app shell (SPA fallback)
+dist/index.html          app shell  <html lang="ko-KR">
+dist/en-us/index.html    app shell  <html lang="en-US">
+dist/404.html            app shell (SPA fallback)
+dist/en-us/404.html      app shell (SPA fallback)
 ```
 
-This could be papered over with the SPA fallback (`404.html`), but those URLs **respond with 404**
-and search engines don't index them. Since indexing is the whole point of per-language URLs, real
-files have to exist. The `localizedPages` plugin in `vite.config.ts` creates all six kinds.
+The per-language `index.html` exists so `/en-us/` responds with 200 when opened directly (leaving
+it to the fallback would 404). Post-login paths (`/en-us/dialogs`) have no real file and are served
+through that language's `404.html` (the app shell); the router reads the URL and renders normally.
+Even then the app fixes the document's language at runtime so `<html lang>` is never wrong.
 
-Post-login paths (`/en-us/dialogs`) have no real file and are served through the 404 fallback.
-They aren't indexing targets anyway, so that's fine — but even then the app fixes the document's
-language at runtime so `<html lang>` is never wrong.
+This app is **not an indexing target** — SEO and marketing are the landing's job (below). So the app
+shells are `noindex` and carry no sitemap/og/canonical; the only thing a per-language shell does is
+"come up in that language."
 
-### The landing page is static HTML, not React
+### The marketing landing is a separate project (`landing/`)
 
-The only indexed URLs are `/` and `/<lang>/`. Those are **the documents crawlers actually read**,
-so an empty `<div id="root">` there won't do. Google does execute JS, but crawling and rendering
-are separate queues that can run days apart, and Naver, Daum and GPTBot effectively can't read it
-at all.
+The landing shares **no code, build, or i18n** with this exporter. It lives in `landing/` with its
+own `package.json`, lockfile, `vite.config.ts`, `src`, and copied locales, and runs its own
+install/build.
 
-Weight is the other reason. The app bundle carries the MTProto library, so it's 530KB gzipped —
-making someone download that to see one marketing page hurts LCP and INP, both of which feed
-directly into ranking.
+- At the repo root, `pnpm dev`/`build`/`preview` run the **exporter only** — the landing doesn't
+  tag along, and root `pnpm install` doesn't pull the landing's deps (embla, etc.).
+- To work on the landing: `cd landing && pnpm install && pnpm build`.
+- The landing **prerenders to static HTML** at build time (React rendered once under Node). The
+  only indexed URLs are `/` and `/<lang>/`, so those are the documents crawlers actually read, and
+  unlike the app bundle (530KB gzipped) its JS is under 1KB. Copy comes from the landing's own
+  locale copies (`landing/locales/*.json`), blocks `landing`/`seo`. See `landing/src/Landing.tsx`.
+- "Get started" does a **real page navigation** to the exporter's entry URL (`VITE_APP_URL`,
+  default `/run/`) — the landing ships no app code.
 
-| | Landing (`/`) | App (`/start/`) |
-| --- | --- | --- |
-| HTML | 26KB (content included) | 6KB |
-| CSS | 28KB | 28KB |
-| JS | **0.5KB** (analytics only) | 1.76MB |
+Deployment (`.github/workflows/deploy.yml`) composes the two outputs into one artifact — the domain
+root `/` is the landing (sitemap/robots included), `/run/` is the exporter. The final URL (subpath,
+subdomain, or root) is chosen by the deploy's `--base` and `VITE_APP_URL`, so the source stays put.
 
-`build/landing.ts` deals only in strings. Keeping it as a React component and calling
-`renderToStaticMarkup` was an option, but that means getting i18n, the router and zustand to run
-under Node — too much baggage for what it buys.
+**Dev runs as an SPA (plain React), production as SSG (static prerender) — one flag switches it.**
 
-**The copy lives in the locale JSON under `landing`.** Same files, same keys as the app screens.
-Languages without that block fall back to **English, not Korean** — a Korean pitch on a Japanese
-URL is worse than an English one. Filling the block in is all it takes; no code changes.
-
-The `connect-src` line shown on screen is **extracted from the CSP that was just injected**.
-Writing it by hand would drift every time analytics is toggled — and that sentence is precisely
-this app's basis for trust.
-
-**You can't see this screen in dev mode.** The static landing is only emitted at build time, and
-in dev even the CSS is injected by JS, so a script-less document would have no styling at all.
+- `cd landing && pnpm dev` → `<Landing>` renders client-side (HMR, devtools), so you build it
+  interactively instead of rebuilding each time. The browser twin of the props (`text`/`env`) lives
+  in `src/clientProps.ts`; the mount is `src/main.ts` (→ dynamic-imported `mount.tsx`).
+- `pnpm build` → **SSG by default** (prerendered static HTML). CI and clones have no flag, so
+  **production is always SSG** — shipping an empty `#root` is impossible.
+- `LANDING_SPA=1` in `.env.local` (or `pnpm build:spa`) → builds the SPA so `preview` shows it too.
+  When `spa`, `vite.config.ts` drops the prerender plugin, and the `if (__LANDING_SPA__)` block in
+  `main.ts` is entirely tree-shaken out of the SSG build (no React in the static output).
 Check it with `pnpm build && pnpm preview` — the same reason CSP changes need preview.
 
 ---
@@ -557,21 +557,23 @@ domain, forking, or moving the repository requires no changes.
 CI also fills `VITE_GITHUB_REPO_URL` with its own repository URL — it has to point at where the same
 commit as the deployment lives.
 
-**This repository uses a custom domain.** So the real deployment goes out without `--base` (at the
-root) and canonical points at `https://telegram-exporter.plzhans.com/`.
+**This repository uses a custom domain.** So the landing goes out without `--base` (at the root),
+the exporter goes out under `--base=/run/`, and the landing's canonical points at
+`https://telegram-exporter.plzhans.com/`.
 
 **The SPA fallback (`404.html`) is produced by the build, not the workflow.** Pages has no rewrite
-rules, so reloading `/dialogs` hits a nonexistent file and Pages serves `404.html`. As long as
+rules, so reloading `/run/dialogs` hits a nonexistent file and Pages serves `404.html`. As long as
 that file is the app shell, the router reads the path and renders normally. (The response code
-stays 404, but the screen is correct.)
-
-This step used to be `cp dist/index.html dist/404.html` here in the workflow. That no longer
-works: `index.html` is now the **script-less static landing**, so copying it produces a fallback
-where the app never boots. Which document is the shell is a fact only the build knows, so
-`localizedPages` emits it.
+stays 404, but the screen is correct.) The exporter's `index.html` *is* the app shell, so
+`appShells` in `vite.config.ts` emits it as `404.html` too.
 
 **Each language directory gets its own `404.html` too.** Making do with the root one alone would
-show the Korean shell on an `/en-us/dialogs` reload, silently resetting the language.
+show the Korean shell on an `/run/en-us/dialogs` reload, silently resetting the language.
+
+**Deployment builds the exporter (`/run/`) and the landing (`/`) separately and composes them into
+one artifact.** The workflow builds the exporter from the root (`--base=/run/`) and the landing from
+`landing/` (`--base=/`), then places the landing at `out/` and the exporter at `out/run/` before
+uploading.
 
 If you're going to use a shared api_id, put `VITE_TELEGRAM_API_ID` / `VITE_TELEGRAM_API_HASH` in
 **Settings → Secrets and variables → Actions → Variables**. Variables rather than Secrets, because

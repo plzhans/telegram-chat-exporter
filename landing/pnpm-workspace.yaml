@@ -1,0 +1,5 @@
+# 루트 exporter 와 별개인 독립 pnpm 프로젝트다. 루트 `pnpm install` 은 이 폴더를 건드리지
+# 않고, 여기서 작업할 때만 `cd landing && pnpm install` 로 자체 설치한다.
+# pnpm 11 에서 빌드 스크립트(postinstall) 실행 허용 여부를 지정한다.
+allowBuilds:
+  esbuild: true

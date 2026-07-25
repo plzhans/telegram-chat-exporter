@@ -20,15 +20,15 @@ English: [README.md](README.md)
 
 |  |  |  |
 | :---: | :---: | :---: |
-| <img src="public/landing/shot-03.png" width="230" alt="시작 방법 고르기" /> | <img src="public/landing/shot-06.png" width="230" alt="인증코드 입력" /> | <img src="public/landing/shot-08.png" width="230" alt="스티커까지 그대로 보이는 대화 보기" /> |
-| <img src="public/landing/shot-09.png" width="230" alt="대화 보기, 날짜로 이동" /> | <img src="public/landing/shot-11.png" width="230" alt="무엇을 내보낼지 고르기" /> | <img src="public/landing/shot-12.png" width="230" alt="내보내는 중" /> |
+| <img src="landing/public/shot-03.png" width="230" alt="시작 방법 고르기" /> | <img src="landing/public/shot-06.png" width="230" alt="인증코드 입력" /> | <img src="landing/public/shot-08.png" width="230" alt="스티커까지 그대로 보이는 대화 보기" /> |
+| <img src="landing/public/shot-09.png" width="230" alt="대화 보기, 날짜로 이동" /> | <img src="landing/public/shot-11.png" width="230" alt="무엇을 내보낼지 고르기" /> | <img src="landing/public/shot-12.png" width="230" alt="내보내는 중" /> |
 
 ## 무엇을 받게 되나
 
 이 도구 없이도, 인터넷 없이도, 몇 년 뒤에도 열리는 zip 파일입니다.
 
 <p align="center">
-  <img src="public/landing/shot-14.png" width="420" alt="압축을 푼 폴더: files/, stickers/, index.html, messages.jsonl, messages.txt, meta.json" />
+  <img src="landing/public/shot-14.png" width="420" alt="압축을 푼 폴더: files/, stickers/, index.html, messages.jsonl, messages.txt, meta.json" />
 </p>
 
 | 파일 | 무엇인가 |
@@ -45,7 +45,7 @@ A·B·C로 회원번호는 1·2·3으로 바뀝니다. 이렇게 내보내면 �
 
 |  |  |
 | :---: | :---: |
-| <img src="public/landing/shot-15.png" width="300" alt="index.html 를 연 모습 — 원래 대화 그대로" /> | <img src="public/landing/shot-16.png" width="300" alt="같은 내보내기를 익명 처리한 모습 — 이름이 A·B·C 로" /> |
+| <img src="landing/public/shot-15.png" width="300" alt="index.html 를 연 모습 — 원래 대화 그대로" /> | <img src="landing/public/shot-16.png" width="300" alt="같은 내보내기를 익명 처리한 모습 — 이름이 A·B·C 로" /> |
 | 내보낸 그대로 | 같은 내보내기, 익명 처리 |
 
 ## 두 가지 방법
