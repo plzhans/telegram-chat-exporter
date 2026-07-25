@@ -40,9 +40,9 @@ A zip file you can open without this tool, without the internet, and years from 
 | `meta.json` | Chat info, message count, export timestamp. |
 | `files/` · `stickers/` · `attachments.jsonl` | Photos, attachments and stickers, when you choose to include them. |
 
-Open `index.html` and it reads just like the original chat. And you can **anonymize
-participants** — names become A, B, C and IDs become 1, 2, 3 — so the very same export is safe to
-hand to someone else:
+Open `index.html` and it reads just like the original chat. If you want, you can also **export it
+anonymized** — names become A, B, C and IDs become 1, 2, 3 — so it's safe to hand to someone
+else:
 
 |  |  |
 | :---: | :---: |
