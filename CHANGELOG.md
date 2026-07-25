@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.4.0](https://github.com/plzhans/telegram-chat-exporter/compare/release/v1.3.1...release/v1.4.0) (2026-07-25)
+
+
+### 기능
+
+* 홍보 랜딩을 독립 프로젝트로 분리하고 앱을 /run/ 으로 옮긴다 ([#16](https://github.com/plzhans/telegram-chat-exporter/issues/16)) ([d62e8c7](https://github.com/plzhans/telegram-chat-exporter/commit/d62e8c7e8ec8c40f5ac3bcb89bda55da5987d08e))
+
+
+### 문서
+
+* **readme:** 내보낸 파일 구조·index.html 미리보기·익명화 예시 이미지를 넣는다 ([3f1c16e](https://github.com/plzhans/telegram-chat-exporter/commit/3f1c16ec6fa75f747a6c57ee1872635534cd00a7))
+* **readme:** 스크린샷 경로를 영어판 en 폴더로 맞춘다 ([17cffdd](https://github.com/plzhans/telegram-chat-exporter/commit/17cffdde7c76db5dd485b81522b87863a2f76ec1))
+* **readme:** 익명 처리가 선택 옵션임을 드러내게 문장을 고친다 ([58f8e9a](https://github.com/plzhans/telegram-chat-exporter/commit/58f8e9a80636a166aa1ff76bf13074da40477b1d))
+
 ## [1.3.1](https://github.com/plzhans/telegram-chat-exporter/compare/release/v1.3.0...release/v1.3.1) (2026-07-25)
 
 
