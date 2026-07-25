@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.3.0](https://github.com/plzhans/telegram-chat-exporter/compare/release/v1.2.5...release/v1.3.0) (2026-07-25)
+
+
+### 기능
+
+* **landing:** 스크린샷 한국어판을 실제 한국어 화면으로 교체한다 ([40406f6](https://github.com/plzhans/telegram-chat-exporter/commit/40406f6cdbd873357482ebfa92cd646c31e5b5a7))
+* **landing:** 스크린샷을 언어별 폴더로 두고 영어판을 추가한다 ([84f703e](https://github.com/plzhans/telegram-chat-exporter/commit/84f703e707f63a243f11ff11803e162af0823a68))
+
+
+### 버그 수정
+
+* **landing:** 데스크톱에서 마우스로도 슬라이더를 끌 수 있게 이미지 기본 드래그를 끈다 ([83db71d](https://github.com/plzhans/telegram-chat-exporter/commit/83db71d365748b9473833a78819bcc5ded48b2fe))
+* **landing:** 스크린샷 슬라이더 루프 이음매 간격과 첫 장 정렬을 고친다 ([3c4946f](https://github.com/plzhans/telegram-chat-exporter/commit/3c4946f9532c7ddcb20f964933df6feb159b4a34))
+
 ## [1.2.5](https://github.com/plzhans/telegram-chat-exporter/compare/release/v1.2.4...release/v1.2.5) (2026-07-24)
 
 
