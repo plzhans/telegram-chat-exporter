@@ -352,7 +352,6 @@ function localizedPages(opts: {
   /** 내려받기 버튼이 걸 주소. 이미 완성된 형태다. `src/shared/config/release.ts` 참고. */
   downloadUrl: string;
   copyright: string;
-  version: string;
   /** 구글 애널리틱스 측정 ID. 비어 있으면 랜딩에 스크립트가 한 줄도 안 들어간다. */
   gaId: string;
 }): Plugin {
@@ -382,6 +381,38 @@ function localizedPages(opts: {
       ),
       `<link rel="alternate" hreflang="x-default" href="${canonicalOf(DEFAULT_LANGUAGE)}" />`,
     ].join('\n    ');
+
+  /**
+   * sitemap.xml. 색인 대상은 랜딩뿐이라(`/` 와 `/<언어>/`) 앱 주소(`start/`·`404.html`)는
+   * 넣지 않는다 — 그쪽은 JS 로 붙는 인증 화면이라 색인 가치가 없다.
+   *
+   * 각 URL 에 hreflang 대안을 `xhtml:link` 로 함께 적는다. 페이지의 `<link hreflang>`
+   * 과 같은 목록을 여기서도 들고 있어야 구글이 언어판을 짝지어 준다. 목록이 `alternates()`
+   * 와 같은 출처(`seoOf().hreflang`·`canonicalOf`)에서 나오므로 어긋날 수 없다.
+   *
+   * **절대 주소가 없으면(로컬 빌드) 만들지 않는다.** 사이트맵은 상대 경로를 허용하지
+   * 않아서 `SITE_ORIGIN` 이 비면 유효한 문서가 될 수 없다.
+   */
+  const sitemap = () => {
+    const alt = [
+      ...SUPPORTED_LANGUAGES.flatMap((l) =>
+        seoOf(l).hreflang.map(
+          (tag) => `    <xhtml:link rel="alternate" hreflang="${tag}" href="${canonicalOf(l)}" />`,
+        ),
+      ),
+      `    <xhtml:link rel="alternate" hreflang="x-default" href="${canonicalOf(DEFAULT_LANGUAGE)}" />`,
+    ].join('\n');
+    const urls = SUPPORTED_LANGUAGES.map((lang) =>
+      ['  <url>', `    <loc>${canonicalOf(lang)}</loc>`, alt, '  </url>'].join('\n'),
+    );
+    return [
+      '<?xml version="1.0" encoding="UTF-8"?>',
+      '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">',
+      ...urls,
+      '</urlset>',
+      '',
+    ].join('\n');
+  };
 
   const attr = (v: string) => v.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
 
@@ -537,6 +568,19 @@ function localizedPages(opts: {
           source: landingDoc(applySeo(shell, lang), lang),
         });
       }
+
+      /**
+       * sitemap 과 robots 는 절대 주소가 있을 때(게시 빌드)만 찍는다. 로컬 빌드는
+       * 정식 주소가 없어(`SITE_ORIGIN` 이 빔) 유효한 사이트맵을 만들 수 없다.
+       */
+      if (SITE_ORIGIN) {
+        this.emitFile({ type: 'asset', fileName: 'sitemap.xml', source: sitemap() });
+        this.emitFile({
+          type: 'asset',
+          fileName: 'robots.txt',
+          source: `User-agent: *\nAllow: /\nSitemap: ${SITE_ORIGIN}${base}sitemap.xml\n`,
+        });
+      }
     },
   };
 
@@ -585,7 +629,6 @@ function localizedPages(opts: {
           sourceUrl: opts.sourceUrl,
           downloadUrl: opts.downloadUrl,
           copyright: opts.copyright,
-          version: opts.version,
         },
       }),
     );
@@ -749,7 +792,6 @@ export default defineConfig(({ command, mode }) => {
               sourceUrl: repoUrl,
               downloadUrl,
               copyright: `© ${BUILD_INFO.date.slice(0, 4)} plzhans`,
-              version: `v${BUILD_INFO.version} · ${BUILD_INFO.commit} · ${BUILD_INFO.date}`,
               gaId: on.ga,
             }),
             localizedPreview(),

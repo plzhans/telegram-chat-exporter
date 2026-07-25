@@ -99,7 +99,6 @@ export interface LandingEnv {
    */
   downloadUrl: string;
   copyright: string;
-  version: string;
 }
 
 export interface LandingValue {
