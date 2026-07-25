@@ -1,5 +1,26 @@
 import { useLanding } from '../context';
 import { ChevronLeft, ChevronRight, Pause, Play } from '../icons';
+import type { SupportedLanguage } from '../../shared/i18n/languages';
+
+/**
+ * 언어별 스크린샷이 놓이는 폴더.
+ *
+ * 스크린샷은 앱 UI 가 찍혀 있어서 화면 안 글자가 언어를 탄다. 그래서 판마다 한 벌씩 두되,
+ * **여기 적힌 언어만** 제 폴더를 갖고 나머지는 영어판(`en/`)으로 떨어진다 - 열다섯 언어
+ * 전부를 새로 찍을 수는 없으니, 있는 것만 두고 없으면 영어로 폴백한다.
+ *
+ * 기본 언어(`ko-kr`)는 URL 과 같은 규칙으로 접두사 없는 맨 자리(`landing/`)를 쓴다.
+ * 폴더를 새로 채우면(`landing/ja/` 처럼) 여기에 한 줄 더한다.
+ */
+const SHOT_DIR: Partial<Record<SupportedLanguage, string>> = {
+  'ko-kr': 'landing/', // 기본 언어 - 접두사 없는 맨 자리
+  'en-us': 'landing/en/',
+};
+
+/** 이 언어의 스크린샷 폴더. 제 판이 없으면 영어판을 쓴다. */
+function shotDir(lang: SupportedLanguage): string {
+  return SHOT_DIR[lang] ?? 'landing/en/';
+}
 
 /**
  * `public/landing/` 에 있는 스크린샷 장수.
@@ -31,11 +52,12 @@ const HEIGHT = 1690;
  * 슬라이드 폭을 화면보다 좁게 잡아 **다음 장이 옆에 걸쳐 보이게** 한다. 이게 "옆으로 넘길
  * 수 있다"는 유일한 신호다 - 점이나 화살표를 못 쓰는 대신이다.
  *
- * 캡션은 달지 않는다. 스크린샷은 언어와 무관하게 한 벌만 두는데, 캡션을 달면 15장 × 언어
- * 수만큼 번역이 따라붙는다. 화면 자체가 이미 무엇을 하는지 보여 준다.
+ * 캡션은 달지 않는다. 스크린샷 그림 자체는 판마다 갈리지만(앱 UI 가 언어를 탄다) 캡션까지
+ * 달면 16장 × 언어 수만큼 번역이 따라붙는다. 화면 자체가 이미 무엇을 하는지 보여 준다.
  */
 export function Screenshots() {
   const { env, copy } = useLanding();
+  const dir = shotDir(env.lang);
   const shots = Array.from({ length: COUNT }, (_, i) => String(i + 1).padStart(2, '0'));
 
   return (
@@ -76,7 +98,7 @@ export function Screenshots() {
                 className="shrink-0 snap-center rounded-[1.75rem] bg-slate-900 p-1.5 shadow-lg ring-1 ring-slate-900/5"
               >
                 <img
-                  src={`${env.assetBase}landing/shot-${n}.png`}
+                  src={`${env.assetBase}${dir}shot-${n}.png`}
                   width={WIDTH}
                   height={HEIGHT}
                   /*

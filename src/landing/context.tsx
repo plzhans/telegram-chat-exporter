@@ -27,8 +27,9 @@ export interface LandingCopy {
   /**
    * 실제 화면 스크린샷 캐러셀.
    *
-   * 이미지는 언어와 무관하게 한 벌만 둔다. 그래서 번역이 필요한 것은 제목·설명과, 자동
-   * 넘김 버튼의 이름(화면에는 안 보이고 화면 읽기 프로그램이 읽는다)뿐이다.
+   * 이미지 파일 자체는 언어별 폴더로 갈린다(`Screenshots.tsx` 의 `SHOT_DIR`). 여기 이
+   * 블록이 담는 것은 그림이 아니라 문구 - 제목·설명과, 자동 넘김 버튼의 이름(화면에는
+   * 안 보이고 화면 읽기 프로그램이 읽는다)뿐이다.
    */
   screenshots: { title: string; body: string; pause: string; play: string };
   why: { title: string } & Record<'install' | 'server' | 'output', Card>;
