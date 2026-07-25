@@ -3,5 +3,6 @@ dist
 dist-standalone
 .DS_Store
 *.local
+.env
 .env.local
 config/telegram/*.pem
