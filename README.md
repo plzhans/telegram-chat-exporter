@@ -21,8 +21,8 @@ through.
 
 |  |  |  |
 | :---: | :---: | :---: |
-| <img src="public/landing/shot-03.png" width="230" alt="Choosing how to start" /> | <img src="public/landing/shot-06.png" width="230" alt="Entering the login code" /> | <img src="public/landing/shot-08.png" width="230" alt="Reading a chat with stickers" /> |
-| <img src="public/landing/shot-09.png" width="230" alt="Reading a chat, jumping to a date" /> | <img src="public/landing/shot-11.png" width="230" alt="Choosing what to export" /> | <img src="public/landing/shot-12.png" width="230" alt="Export in progress" /> |
+| <img src="public/landing/en/shot-03.png" width="230" alt="Choosing how to start" /> | <img src="public/landing/en/shot-06.png" width="230" alt="Entering the login code" /> | <img src="public/landing/en/shot-08.png" width="230" alt="Reading a chat with stickers" /> |
+| <img src="public/landing/en/shot-09.png" width="230" alt="Reading a chat, jumping to a date" /> | <img src="public/landing/en/shot-11.png" width="230" alt="Choosing what to export" /> | <img src="public/landing/en/shot-12.png" width="230" alt="Export in progress" /> |
 
 ## What you get
 
