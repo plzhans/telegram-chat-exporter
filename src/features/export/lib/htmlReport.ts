@@ -152,6 +152,21 @@ export interface HtmlReportMeta {
 }
 
 /**
+ * 여러 쪽으로 나뉜 문서의 쪽 사이 이동 정보.
+ *
+ * 분할 내보내기일 때만 넘어온다 — `exportChat` 이 파일명을 정하므로 여기서 받아 네비를 그린다.
+ * 없으면(통으로) 네비 자체가 안 그려진다.
+ */
+export interface PageNav {
+  /** 이 쪽 번호(1부터). 총 쪽수는 스트리밍이라 미리 모르므로 싣지 않는다. */
+  page: number;
+  /** 더 과거(이전) 쪽 파일명. 첫 쪽이면 없다. */
+  prev?: string;
+  /** 더 최신(다음) 쪽 파일명. 마지막 쪽이면 없다. */
+  next?: string;
+}
+
+/**
  * 스타일.
  *
  * 앱 화면의 규칙을 그대로 옮겼다 — 내가 보낸 말은 오른쪽 파란 말풍선, 받은 말은 왼쪽 흰
@@ -240,7 +255,8 @@ body{margin:0;background:#fff;color:#0F172A;
 .head .body{min-width:0;flex:1}
 .head .icon{width:44px;height:44px;border-radius:999px;flex:0 0 44px;color:#fff;
   font-size:18px;font-weight:700;display:flex;align-items:center;justify-content:center;
-  background-size:contain;background-repeat:no-repeat;background-position:center}
+  background-size:contain;background-repeat:no-repeat;background-position:center;
+  overflow:hidden;position:relative}
 .head summary{cursor:pointer;list-style:none;margin-top:6px;font-size:13px;color:#64748B}
 .head summary::-webkit-details-marker{display:none}
 .head summary::before{content:"\\25B8\\A0"}
@@ -270,8 +286,17 @@ body{margin:0;background:#fff;color:#0F172A;
 /* avatar: contain, never crop */
 .av{width:1.75rem;height:1.75rem;border-radius:999px;flex:0 0 1.75rem;color:#fff;
   font-size:0.7rem;font-weight:600;display:flex;align-items:center;justify-content:center;
-  background-size:contain;background-repeat:no-repeat;background-position:center;overflow:hidden}
+  background-size:contain;background-repeat:no-repeat;background-position:center;overflow:hidden;
+  position:relative}
 .av.hole{background:none}
+/*
+  The photo sits in an overlay on top of the initial letter, not as the element's own
+  background. If neither the sharp nor the blurry file loads, the overlay stays transparent
+  and the letter underneath shows - a floor that needs no file to exist. Layered background
+  images give sharp-then-blurry fallback; a broken/missing layer reveals the one below.
+*/
+.pic{position:absolute;inset:0;border-radius:inherit;
+  background-size:contain;background-repeat:no-repeat;background-position:center}
 .who{font-size:0.75rem;font-weight:600;color:#64748B;padding:0 0.25rem}
 /* sender name: first line inside the bubble */
 /* max-content keeps a name longer than the message from wrapping inside a narrow bubble. */
@@ -320,7 +345,9 @@ body{margin:0;background:#fff;color:#0F172A;
 /* the enlarged portraits stay hidden until their anchor is targeted */
 .zoom.face-view{display:none}
 .zoom.face-view:target{display:block}
-.face-view img{max-width:min(320px,90vw);max-height:90vh;border-radius:16px;display:block}
+/* the enlarged avatar is a background box (not an <img>) so the sharp/blurry fallback works */
+.bigav{position:relative;display:block;width:min(320px,90vw);height:min(320px,90vw);
+  border-radius:16px;overflow:hidden;background:#E2E8F0}
 .cl{display:none}
 .zoom:target{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
   z-index:99;max-width:96vw;max-height:96vh;cursor:default}
@@ -337,6 +364,10 @@ body{margin:0;background:#fff;color:#0F172A;
 .foot{margin:24px 0 8px;text-align:center;color:#94A3B8;font-size:12px;line-height:1.8}
 .foot a{color:#2563EB}
 .ver{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;color:#CBD5E1}
+/* page navigation, only present when the export is split across files */
+.pg{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:12px 0;font-size:13px}
+.pg a{color:#2563EB;text-decoration:none;font-weight:600}
+.pg>span{color:#64748B}
 /* The mark is drawn inline - this file must open with no network. */
 .ico{display:inline-flex;vertical-align:-3px;margin-right:2px}
 .ico svg{width:14px;height:14px;fill:currentColor}
@@ -421,42 +452,66 @@ function avatarClass(id: string): string {
   return `av-${id.replace(/[^A-Za-z0-9_-]/g, '_')}`;
 }
 
+/**
+ * zip 안의 프로필 사진 경로.
+ *
+ * 사람마다 선명본 `avatars/{id}.jpg` 과 흐림본 `avatars/{id}.b.jpg` 이 있을 수 있다. HTML 은
+ * 둘을 CSS 배경으로 겹쳐(`url(선명), url(흐림)`) 선명 우선·흐림 폴백을 하고, 둘 다 없으면
+ * 이니셜로 떨어진다. **`exportChat` 이 파일을 담을 때 이 함수로 같은 경로를 쓴다** — 규칙과
+ * 파일이 어긋나면 안 된다. id 는 파일명에 안전한 글자만 남긴다(클래스 이름과 같은 규칙).
+ */
+export function avatarFile(id: string, sharp: boolean): string {
+  // 대시까지 밑줄로 바꾼다 — 채널·그룹 id 는 음수라, 두면 `-100…jpg` 처럼 대시로 시작하는
+  // 파일명이 되어 압축을 푼 뒤 쉘에서 플래그로 오인된다.
+  return `avatars/${id.replace(/[^A-Za-z0-9_]/g, '_')}.${sharp ? 'jpg' : 'b.jpg'}`;
+}
+
 export class HtmlReport {
   private lastDayKey?: string;
   private lastSenderId?: string;
   private album: Album | null = null;
   /**
-   * 발신자 id → 프로필 사진(data URL).
+   * **사진이 있는 사람들.** (id → 미리보기 data URL, 그런데 지금은 **키만** 쓴다.)
    *
-   * **같은 그림을 메시지마다 되풀이해 넣으면 안 된다.** 한 장이 1KB 남짓이라도 24만 건이면
-   * 문서가 몇백 MB 로 부푼다. 사람마다 한 번씩만 모아 뒀다가, 문서 끝에서 CSS 규칙으로
-   * 한 번만 내보낸다 — 그러면 같은 사람의 아바타 백 개가 그림 한 장을 나눠 쓴다.
+   * 예전엔 이 data URL 을 문서 끝 CSS 에 base64 로 박았는데, 분할하면 쪽마다 그 데이터가
+   * 되풀이돼 부풀었다. 이제 그림은 `avatars/{id}.jpg`·`.b.jpg` **파일**로 담고(exportChat),
+   * 문서는 경로만 가리킨다. 그래서 여기 필요한 건 "누가 사진을 가졌나" 뿐 — 그 키로 어떤
+   * 사람에게 아바타 규칙(`.pic` 배경)과 확대 판을 낼지 정한다. 값(data URL)은 안 쓴다.
    */
   private readonly senderPhotos = new Map<string, string>();
-  /**
-   * 아바타가 필요한 사람들.
-   *
-   * 메시지에 딸려 온 그림은 **몇십 px 짜리 미리보기**라 아무리 키워도 뿌옇다. 원본을 따로
-   * 받아야 선명해지는데, 그건 사람 하나당 요청 하나다. 여기 모아 뒀다가 훑기가 끝난 뒤에
-   * 한 번씩만 받는다 — 참여자 수만큼이라 대화가 길어도 요청이 늘지 않는다.
-   */
-  readonly avatarIds = new Set<string>();
 
   constructor(private readonly meta: HtmlReportMeta) {}
 
   /**
-   * 선명한 원본으로 갈아 끼운다.
+   * 쪽 사이 이동 막대. 분할 내보내기의 각 쪽 위·아래에 붙는다.
    *
-   * 미리보기가 이미 들어가 있어도 덮어쓴다. 같은 사람의 같은 얼굴이고, 이쪽이 훨씬 낫다.
+   * 첫 쪽엔 이전이, 마지막 쪽엔 다음이 없다. 빈 자리는 빈 span 으로 채워 `space-between`
+   * 이 무너지지 않게 한다(이전=왼쪽, 쪽번호=가운데, 다음=오른쪽).
+   *
+   * 글자는 이 문서의 다른 곳과 같이 영어로 고정한다(head 주석 참고). index.html 이 가장
+   * 과거라 "다음" 이 더 최신이다 — Older/Newer 로 그 방향을 말해 준다.
    */
-  setAvatar(id: string, dataUrl: string): void {
-    this.senderPhotos.set(id, dataUrl);
+  private navBar(nav: PageNav): string {
+    const prev = nav.prev
+      ? `<a href="${escapeHtml(nav.prev)}">&larr; Older</a>`
+      : '<span></span>';
+    const next = nav.next
+      ? `<a href="${escapeHtml(nav.next)}">Newer &rarr;</a>`
+      : '<span></span>';
+    return `<nav class="pg">${prev}<span>Page ${nav.page}</span>${next}</nav>`;
   }
 
   /** 문서의 머리. 무엇을 언제 누가 받은 백업인지 먼저 밝힌다. */
-  head(): string {
+  head(nav?: PageNav): string {
     const m = this.meta;
-    this.avatarIds.add(m.dialogId);
+    /*
+      분할이면 쪽마다 첫 줄에 날짜 구분선과 발신자 이름·아바타가 **다시** 나와야 한다.
+      어느 쪽을 열든 문맥이 잡히게. 그래서 쪽이 열릴 때 두 상태를 비운다.
+    */
+    if (nav) {
+      this.lastDayKey = undefined;
+      this.lastSenderId = undefined;
+    }
     if (m.dialogPhoto) this.senderPhotos.set(m.dialogId, m.dialogPhoto);
     /*
       **화면 글자는 영어만 쓴다.**
@@ -507,7 +562,9 @@ export class HtmlReport {
       m.dialogId,
     )}"><div class="icon ${avatarClass(m.dialogId)}" style="background-color:${colorOf(
       m.dialogId,
-    )}">${escapeHtml(initialOf(m.dialogTitle))}</div></a>
+    )}">${escapeHtml(initialOf(m.dialogTitle))}${
+      m.dialogPhoto ? '<span class="pic"></span>' : ''
+    }</div></a>
 <div class="body"><h1>${escapeHtml(m.dialogTitle)}</h1>
 <details><summary>Details</summary><dl>${rows
       .map(([k, v]) => {
@@ -520,7 +577,7 @@ export class HtmlReport {
         return `<dt>${escapeHtml(k)}</dt><dd>${value}</dd>`;
       })
       .join('')}</dl></details></div></div>
-<div class="chat">
+${nav ? this.navBar(nav) : ''}<div class="chat">
 `;
   }
 
@@ -549,8 +606,8 @@ export class HtmlReport {
     return out + this.renderOne(message);
   }
 
-  /** 마지막에 남은 앨범을 비우고 문서를 닫는다. */
-  foot(): string {
+  /** 마지막에 남은 앨범을 비우고 문서를 닫는다. 분할이면 아래쪽 이동 막대도 붙인다. */
+  foot(nav?: PageNav): string {
     /*
       아바타 그림은 **문서 끝에서** 한 번만 정의한다.
 
@@ -566,17 +623,27 @@ export class HtmlReport {
 
       대화방 아이콘은 `.head .icon` 이 두 겹이라 더 셈이 세다. 같은 세기로 맞춰 줘야 이긴다.
     */
-    const photoRules = [...this.senderPhotos]
-      .map(([id, url]) => {
+    /*
+      아바타 그림은 base64 로 박지 않고 **파일 경로**로 가리킨다(첨부 사진과 같다). 분할이면
+      쪽마다 이 규칙이 되풀이되는데, 경로는 짧아서(수십 바이트) 예전 base64(장당 수십 KB)처럼
+      쪽마다 부풀지 않는다.
+
+      `.pic` 오버레이에 **선명본, 흐림본 순으로 겹친다.** 선명본이 있으면 그것이, 없으면 흐림본이,
+      둘 다 없으면(로드 실패·파일 없음) 오버레이가 비어 밑의 이니셜 글자가 드러난다 — 3단 방어.
+      배경을 `.pic`(자식)에 두므로 대화방 아이콘도 `.head .icon` 의 셈과 다툴 일이 없다.
+    */
+    const photoRules = [...this.senderPhotos.keys()]
+      .map((id) => {
         const cls = avatarClass(id);
-        const rule = `{background-image:url(${url});color:transparent}`;
-        const paint = id === this.meta.dialogId ? `.head .icon.${cls}${rule}` : `.${cls}${rule}`;
+        const rule = `.${cls} .pic{background-image:url(${avatarFile(id, true)}),url(${avatarFile(
+          id,
+          false,
+        )})}`;
         /*
-          **사진이 있는 사람만 눌러 볼 수 있다.** 그릴 때는 사진이 올지 알 수 없어서
-          마크업으로는 가릴 수 없다 - 여기서 손가락 모양을 되살려 준다. 사진이 없는
-          아바타는 기본 커서라 누를 것이 아님이 드러난다.
+          **사진이 있는 사람만 눌러 볼 수 있다.** 사진이 없는 아바타는 기본 커서라 누를 것이
+          아님이 드러난다.
         */
-        return `${paint}a.face[href="#u${id}"]{cursor:zoom-in}`;
+        return `${rule}a.face[href="#u${id}"]{cursor:zoom-in}`;
       })
       .join('');
 
@@ -586,16 +653,17 @@ export class HtmlReport {
       문서 끝에 모아 두는 이유는 **한 사람당 한 벌**로 끝내기 위해서다. 메시지마다 두면
       같은 그림이 대화 길이만큼 늘어난다.
     */
-    const faceViews = [...this.senderPhotos]
+    const faceViews = [...this.senderPhotos.keys()]
       .map(
-        ([id, url]) =>
+        (id) =>
           `<a class="zoom face-view" id="u${escapeHtml(id)}" href="#u${escapeHtml(
             id,
-          )}"><img src="${url}" alt=""></a><a class="cl" href="#_">&times;</a>`,
+          )}"><span class="bigav ${avatarClass(id)}"><span class="pic"></span></span></a>` +
+          `<a class="cl" href="#_">&times;</a>`,
       )
       .join('');
 
-    return `${this.flushAlbum()}</div>${faceViews}${
+    return `${this.flushAlbum()}</div>${nav ? this.navBar(nav) : ''}${faceViews}${
       photoRules ? `<style>${photoRules}</style>` : ''
     }<p class="foot">${footLinks()}
 <br><span class="ver">${escapeHtml(VERSION_LABEL)}</span></p>
@@ -664,17 +732,16 @@ export class HtmlReport {
       out += '<div class="av hole"></div>';
     } else {
       const id = message.senderId;
-      if (id) {
-        this.avatarIds.add(id);
-        // 미리보기는 **자리를 채워 두는 용도**다. 선명한 원본이 오면 그때 덮어쓴다.
-        if (message.senderPhoto && !this.senderPhotos.has(id)) {
-          this.senderPhotos.set(id, message.senderPhoto);
-        }
+      // 사진이 있는 사람만 기록해 둔다 — 문서 끝에서 이 목록으로 아바타 규칙·확대 판을 낸다.
+      if (id && message.senderPhoto && !this.senderPhotos.has(id)) {
+        this.senderPhotos.set(id, message.senderPhoto);
       }
       const classes = ['av', id ? avatarClass(id) : ''].filter(Boolean);
+      // 사진이 있는 사람만 오버레이를 둔다. 없으면 이니셜 글자만 남는다.
+      const pic = id && message.senderPhoto ? '<span class="pic"></span>' : '';
       const face = `<div class="${classes.join(' ')}" style="background-color:${colorOf(
         id,
-      )}">${escapeHtml(initialOf(message.senderName))}</div>`;
+      )}">${escapeHtml(initialOf(message.senderName))}${pic}</div>`;
 
       /*
         아바타도 눌러서 크게 본다. 사진과 같은 방식(:target)이다.

@@ -88,6 +88,23 @@ export function shiftDateKey(key: DateKey, days: number): DateKey {
   return toDateKey(date);
 }
 
+/**
+ * 날짜 키를 몇 **달** 앞뒤로 민다. "30일"이 아니라 **달력의 같은 날짜**다 — 7/27 의 한 달
+ * 전은 6/27 이지, 며칠인지 세지 않는다(달마다 길이가 다르니 30일은 애매하다). 년은 `months`
+ * 를 12 로 준다.
+ *
+ * 대상 달에 그 날짜가 없으면(1/31 의 한 달 전 = 없는 2/31) 그 달의 **마지막 날**로 맞춘다.
+ * `setMonth` 는 넘친 날짜를 다음 달로 넘겨 버리므로(2/31 → 3/3), 날짜가 바뀌었으면 그게
+ * 넘어갔다는 뜻이라 `setDate(0)` 로 앞 달 마지막 날로 되돌린다.
+ */
+export function shiftDateKeyByMonths(key: DateKey, months: number): DateKey {
+  const date = startOfDay(key);
+  const day = date.getDate();
+  date.setMonth(date.getMonth() + months);
+  if (date.getDate() !== day) date.setDate(0);
+  return toDateKey(date);
+}
+
 /** 오늘(로컬). 달력에서 미래를 막을 때 쓴다. */
 export function todayKey(): DateKey {
   return toDateKey(new Date());

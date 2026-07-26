@@ -484,7 +484,23 @@ function describeMedia(
   return { kind: shortTypeName(media, 'MessageMedia') ?? raw, raw };
 }
 
-export function toMessageSummary(message: Api.Message): MessageSummary {
+/**
+ * TL 메시지를 화면·내보내기가 함께 쓰는 요약으로 눕힌다.
+ *
+ * `withPreview` 는 **화면용 부가 정보**를 만들지 정한다. 켜면(기본) 초저해상도 미리보기
+ * (`mediaThumb`)를 재구성하고 원본 메시지를 `mediaMessageCache` 에 넣어 둔다 — 대화 뷰어가
+ * 선명한 썸네일을 받을 때 그 캐시를 연다.
+ *
+ * **내보내기는 이걸 끈다(`withPreview: false`).** 내보내기는 `mediaThumb` 도 캐시도 읽지
+ * 않는데, 켜 두면 미디어 메시지마다 `strippedPhotoToJpg`+base64 를 돌려 버리고(순수 CPU
+ * 낭비), 더 심각하게는 24만 건짜리 대화방의 **full TL 메시지가 모듈 캐시에 그대로 쌓여**
+ * 탭이 죽는다. `mediaWidth/Height` 는 HTML 리포트가 이미지 비율을 잡는 데 쓰므로 끄든 켜든
+ * 늘 채운다.
+ */
+export function toMessageSummary(
+  message: Api.Message,
+  { withPreview = true }: { withPreview?: boolean } = {},
+): MessageSummary {
   const sender = message.sender;
   let senderName: string | undefined;
   let senderKind: MessageSummary['senderKind'] = 'user';
@@ -534,13 +550,23 @@ export function toMessageSummary(message: Api.Message): MessageSummary {
         : undefined;
 
   if (file) {
-    mediaThumb = extractStrippedPhoto(file);
+    // 크기는 리포트가 이미지 비율을 잡는 데 쓰므로 내보내기에서도 늘 채운다.
     const size = pickThumbSize(file);
     if (size) {
       mediaWidth = size.w;
       mediaHeight = size.h;
-      mediaKey = `${message.chatId?.toString() ?? '0'}:${message.id}`;
-      mediaMessageCache.set(mediaKey, message);
+    }
+    /*
+      미리보기 재구성과 원본 캐시는 **화면 전용**이다. 내보내기(`withPreview: false`)는 둘 다
+      읽지 않는데, 켜 두면 미디어 메시지마다 strippedPhotoToJpg+base64 를 돌리고(낭비) full TL
+      메시지를 모듈 캐시에 쌓아(대형 대화방 OOM) 버린다.
+    */
+    if (withPreview) {
+      mediaThumb = extractStrippedPhoto(file);
+      if (size) {
+        mediaKey = `${message.chatId?.toString() ?? '0'}:${message.id}`;
+        mediaMessageCache.set(mediaKey, message);
+      }
     }
   }
 
@@ -657,7 +683,9 @@ export function useMessagesQuery(dialogId: string, anchor: MessageAnchor) {
         }
 
         // 요청 방향에 따라 오는 순서가 다르다. 여기서 한 번에 시간순으로 눕힌다.
-        const messages = raw.map(toMessageSummary).sort((a, b) => a.id - b.id);
+        const messages = raw
+          .map((message) => toMessageSummary(message))
+          .sort((a, b) => a.id - b.id);
         return {
           messages,
           minId: messages[0]?.id,

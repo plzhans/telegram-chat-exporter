@@ -140,6 +140,8 @@ let handoffConsumed = false;
 export default function App() {
   const bootstrap = useAuth((s) => s.bootstrap);
   const authorized = useAuth((s) => s.step === 'authorized');
+  // 로그인 유지를 껐는가. 껐으면 새로고침·닫기에 세션이 날아가므로 떠나기 전 한 번 되묻는다.
+  const remember = useAuth((s) => s.remember);
 
   /**
    * 라우터는 언어를 따라 다시 만든다.
@@ -210,6 +212,27 @@ export default function App() {
       document.removeEventListener('visibilitychange', onVisible);
     };
   }, [authorized]);
+
+  /**
+   * 로그인 유지를 **끈 채** 로그인돼 있으면, 새로고침·탭 닫기 전에 한 번 되묻는다.
+   *
+   * 유지를 끄면 세션을 저장하지 않아, 실수로 새로고침·닫기만 해도 전화번호·코드부터 다시다.
+   * 브라우저는 새로고침·닫기·이동을 구별해 주지 않으니 셋 다 걸리고, 문구도 브라우저가 정한
+   * 일반 문장이다 — `beforeunload` 로 할 수 있는 건 "되묻기" 하나뿐이다(ExportPanel 주석 참고).
+   *
+   * 유지를 켠 경우엔 새로고침해도 세션이 되살아나므로 걸지 않는다 — 잃을 게 없는데 물으면
+   * 성가시기만 하다. 내보내는 중의 되묻기는 ExportPanel 이 따로 맡는다(그건 유지 여부와
+   * 무관하게 **진행 중인 다운로드**를 지키는 것이라 겹쳐도 무해하다).
+   */
+  useEffect(() => {
+    if (!authorized || remember) return;
+    const confirmLeave = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = '';
+    };
+    window.addEventListener('beforeunload', confirmLeave);
+    return () => window.removeEventListener('beforeunload', confirmLeave);
+  }, [authorized, remember]);
 
   /*
     `key` 가 있어야 한다. RouterProvider 는 router 를 바꿔 끼우는 것을 지원하지 않아서,

@@ -19,7 +19,7 @@ import {
 } from '@/features/dialogs/api';
 import { loadProfilePhoto } from '@/features/dialogs/lib/profilePhoto';
 import { createAnonymizer } from './anonymize';
-import { HtmlReport } from './htmlReport';
+import { HtmlReport, avatarFile } from './htmlReport';
 import type { ZipSink } from './zipWriter';
 import { ZipWriter } from './zipWriter';
 
@@ -73,6 +73,21 @@ export interface ExportRange {
   to?: string;
 }
 
+/**
+ * `index.html` 을 여러 파일로 나누는 방식.
+ *
+ * 큰 대화방은 한 문서에 다 담으면 파일이 수백 MB 가 되어 **브라우저에서 안 열린다.** 그래서
+ * 나눌 기준을 고른다.
+ *
+ * - `none`  : 안 나눔. 무조건 한 파일(`index.html`). 통째로 grep 하거나 단일 문서로 쓸 때.
+ * - `count` : 메시지 N건마다. 파일 크기가 일정해 "안 열림" 을 확실히 막는다. **기본값.**
+ * - `year` / `month` / `day` : 날짜가 바뀌면. 날짜로 훑기 좋지만 활발한 구간은 한 파일이 클 수 있다.
+ *
+ * 나뉜 파일 이름엔 그 파일 **첫(맨 위·가장 과거) 메시지 날짜**가 들어간다(`index-002-20240115.html`).
+ * 시작일이 쪽마다 커지므로 파일 목록만 훑어 원하는 날짜로 바로 갈 수 있다.
+ */
+export type SplitMode = 'none' | 'count' | 'year' | 'month' | 'day';
+
 export interface ExportOptions {
   dialog: DialogSummary;
   /**
@@ -105,6 +120,10 @@ export interface ExportOptions {
    * 자세한 규칙은 `anonymize.ts` 참고.
    */
   anonymize?: boolean;
+  /**
+   * `index.html` 을 나누는 방식. 없으면 `count`(기본) — 작은 대화방은 어차피 한 파일이다.
+   */
+  split?: SplitMode;
   onProgress: (progress: ExportProgress) => void;
   signal: AbortSignal;
 }
@@ -116,6 +135,14 @@ export interface ExportOptions {
  * 이벤트 루프에 제어를 넘겨서 진행률이 갱신되고 취소 버튼이 눌리게 한다.
  */
 const BATCH_SIZE = 200;
+
+/**
+ * `split: 'count'` 일 때 한 쪽에 담는 메시지 수.
+ *
+ * 이보다 크면 문서 한 장이 브라우저에서 버거워지고, 너무 작으면 파일만 많아진다. 앨범은
+ * 쪼개지 않으므로 실제 쪽은 이 값을 조금 넘길 수 있다.
+ */
+const PAGE_SIZE = 5000;
 
 /**
  * 내보내는 동안 GramJS 가 알아서 자고 넘어갈 FLOOD_WAIT 상한(초).
@@ -364,6 +391,26 @@ async function sha256(bytes: Uint8Array): Promise<string | null> {
  */
 const FILE_CONCURRENCY = 3;
 
+/**
+ * `data:...;base64,XXX` data URL 을 바이트로 되돈다.
+ *
+ * 프로필 사진(선명본·흐림본)은 data URL 로 손에 들어오는데, 파일로 담으려면 바이트가 필요하다.
+ * 모양이 이상하거나 base64 가 깨졌으면 null 을 준다 — 그러면 그 파일을 안 써서(빈 파일 방지)
+ * 참조가 다음 폴백 단으로 넘어간다.
+ */
+function dataUrlToBytes(dataUrl: string): Uint8Array | null {
+  const comma = dataUrl.indexOf(',');
+  if (comma < 0) return null;
+  try {
+    const binary = atob(dataUrl.slice(comma + 1));
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i += 1) bytes[i] = binary.charCodeAt(i);
+    return bytes;
+  } catch {
+    return null;
+  }
+}
+
 /** 브라우저가 `<img>` 로 바로 그릴 수 있는 형식. */
 const DRAWABLE = /\.(jpe?g|png|gif|webp|bmp|avif)$/i;
 
@@ -492,6 +539,7 @@ export async function exportChat({
   include,
   layout,
   anonymize,
+  split,
   onProgress,
   signal,
 }: ExportOptions): Promise<void> {
@@ -524,7 +572,8 @@ export async function exportChat({
    * 이름을 `index.html` 로 두는 이유는, 압축을 푼 사람이 **무엇을 먼저 열어야 하는지**
    * 고민하지 않게 하기 위해서다.
    */
-  const pushHtml = zip.startFile('index.html');
+  // 분할이면 이 핸들이 쪽마다 새 파일로 갈아 끼워진다(아래 breakPage). 첫 쪽은 index.html.
+  let currentHtmlPush = zip.startFile('index.html');
   const report = new HtmlReport({
     dialogTitle: identity.title,
     dialogId: identity.id,
@@ -573,17 +622,83 @@ export async function exportChat({
   let jsonlBuffer = '';
   let textBuffer = '';
   let attachmentBuffer = '';
+  // 첫 쪽(index.html)은 진입점이라 네비 없이 시작한다 — 첫 쪽엔 "이전" 이 없다.
   let htmlBuffer = report.head();
+
+  /*
+    --- HTML 파일 나누기(분할) ---
+
+    큰 대화방은 index.html 한 장이 브라우저에서 안 열린다. 그래서 기준에 따라 여러 파일로
+    쪼갠다. jsonl·txt·attachments 는 한 파일 그대로고, HTML 만 나뉜다.
+
+    나뉜 파일 이름엔 그 파일 첫(가장 과거) 메시지 날짜가 들어간다 — 시작일이 쪽마다 커지므로
+    파일 목록만 봐도 원하는 날짜로 바로 갈 수 있다.
+  */
+  const splitMode: SplitMode = split ?? 'count';
+  const bucketOf = (unix: number): string => {
+    const key = dateKeyOf(unix); // yyyy-mm-dd (로컬)
+    if (splitMode === 'day') return key;
+    if (splitMode === 'month') return key.slice(0, 7);
+    if (splitMode === 'year') return key.slice(0, 4);
+    return '';
+  };
+  const pageFileName = (num: number, firstUnix: number): string =>
+    num === 1
+      ? 'index.html'
+      : `index-${String(num).padStart(3, '0')}-${dateKeyOf(firstUnix).replace(/-/g, '')}.html`;
+
+  let pageNum = 1;
+  let pageName = 'index.html';
+  let prevPageName: string | undefined;
+  let pageMsgCount = 0; // 이 쪽에 담긴 메시지 수. 건수 분할의 기준.
+  let pageBucket: string | undefined; // 이 쪽의 날짜 버킷. 날짜 분할의 기준.
+  let prevGroupedId: string | undefined; // 앨범이 쪽 경계에서 안 쪼개지게 직전 묶음 id 를 본다.
+
+  /*
+    --- 프로필 사진은 파일로 담는다(첨부와 같은 방식) ---
+
+    아바타를 HTML 에 base64 로 박으면 분할 시 **쪽마다 그 데이터가 되풀이돼** 수십 MB 로 분다.
+    대신 사람마다 `avatars/{id}.jpg`(선명본)·`avatars/{id}.b.jpg`(흐림본) 파일로 담고, HTML 은
+    경로만 가리킨다(중복 0, 봉합 중 대기 없음, 전 쪽 적용).
+
+    여기서는 **흐림본 데이터만 모은다.** 흐림본은 메시지에 공짜로 딸려 오므로(요청 없음) 확정이라
+    폴백으로 늘 담긴다. 선명본은 훑기가 끝난 뒤 따로 받아, 성공한 것만 덮어쓰기 파일로 담는다.
+
+    익명화면 `record.senderPhoto`·`identity.photo` 가 undefined 라 여기 아무것도 안 쌓여, 아바타
+    파일이 안 생기고 얼굴이 남지 않는다.
+  */
+  const blurryById = new Map<string, string>();
+  if (identity.photo) blurryById.set(identity.id, identity.photo);
 
   const flush = (last = false) => {
     pushJsonl(jsonlBuffer, last);
     pushText(textBuffer, last);
     pushAttachments(attachmentBuffer, last);
-    pushHtml(htmlBuffer, last);
+    currentHtmlPush(htmlBuffer, last);
     jsonlBuffer = '';
     textBuffer = '';
     attachmentBuffer = '';
     htmlBuffer = '';
+  };
+
+  /*
+    분할 경계에서 현재 쪽을 닫고 다음 쪽을 연다.
+
+    앨범은 `report.foot()` 안의 flushAlbum 이 **닫는 쪽에** 마저 그리므로 경계를 넘어
+    쪼개지지 않는다. 닫는 쪽 아래 네비엔 다음 쪽을, 여는 쪽 위 네비엔 이전 쪽을 실어 준다.
+  */
+  const breakPage = (nextFirstUnix: number) => {
+    const nextNum = pageNum + 1;
+    const nextName = pageFileName(nextNum, nextFirstUnix);
+    htmlBuffer += report.foot({ page: pageNum, prev: prevPageName, next: nextName });
+    currentHtmlPush(htmlBuffer, true);
+    htmlBuffer = '';
+    prevPageName = pageName;
+    pageName = nextName;
+    pageNum = nextNum;
+    currentHtmlPush = zip.startFile(pageName);
+    htmlBuffer = report.head({ page: pageNum, prev: prevPageName });
+    pageMsgCount = 0;
   };
 
   // 끝 날짜는 그 날 전체를 포함해야 하므로 23:59:59 까지 잡는다.
@@ -671,7 +786,8 @@ export async function exportChat({
     })) {
       if (signal.aborted) throw new Error('EXPORT_CANCELLED');
 
-      const summary = toMessageSummary(message as Api.Message);
+      // 내보내기는 mediaThumb·원본 캐시를 안 쓴다. 켜 두면 CPU 낭비 + 대형 방 메모리 누수.
+      const summary = toMessageSummary(message as Api.Message, { withPreview: false });
 
       // 끝 경계를 넘었다. 시간순으로 오고 있으므로 여기서 멈추면 된다.
       if (toSeconds !== undefined && summary.date > toSeconds) break;
@@ -734,9 +850,37 @@ export async function exportChat({
       */
       const record = anon.message(summary);
 
+      /*
+        분할 경계. 이 메시지가 새 쪽을 시작해야 하면 지금 쪽을 닫고 연다. 앨범 연속(직전과
+        같은 묶음 id)일 때는 끊지 않는다 — 앨범은 한 쪽에 통째로 있어야 한다. 첫 메시지
+        (pageMsgCount === 0)는 그 쪽의 버킷을 정할 뿐 끊지 않는다.
+      */
+      if (splitMode !== 'none') {
+        const albumCont = Boolean(summary.groupedId) && summary.groupedId === prevGroupedId;
+        if (pageMsgCount === 0) {
+          pageBucket = bucketOf(summary.date);
+        } else if (!albumCont) {
+          const over =
+            splitMode === 'count'
+              ? pageMsgCount >= PAGE_SIZE
+              : bucketOf(summary.date) !== pageBucket;
+          if (over) {
+            breakPage(summary.date);
+            pageBucket = bucketOf(summary.date);
+          }
+        }
+      }
+
       jsonlBuffer += `${JSON.stringify(toExportRecord(record))}\n`;
       textBuffer += toReadableLine(record);
       htmlBuffer += report.push(record);
+      pageMsgCount += 1;
+      prevGroupedId = summary.groupedId;
+      // 흐림본은 공짜로 딸려 온다. 사람마다 한 번만 모아 둔다(폴백·선명본 파일의 바탕). anon 이면
+      // record.senderPhoto 가 undefined 라 안 쌓인다 → 아바타 파일 자체가 안 생긴다.
+      if (record.senderId && record.senderPhoto && !blurryById.has(record.senderId)) {
+        blurryById.set(record.senderId, record.senderPhoto);
+      }
       if (summary.mediaType) {
         attachmentBuffer += `${JSON.stringify({
           messageId: summary.id,
@@ -762,28 +906,16 @@ export async function exportChat({
       }
     }
 
-    /**
-     * 선명한 프로필 사진을 받아 온다.
-     *
-     * 메시지에 딸려 오는 그림은 몇십 px 짜리 미리보기라 아바타 크기로 줄여도 뿌옇다.
-     * 원본은 따로 받아야 하는데 **사람 하나당 요청 하나**다 — 대화가 24만 건이든 참여자가
-     * 열 명이면 요청도 열 번이다. 그래서 훑기가 끝난 지금 한 번에 처리한다.
-     *
-     * `loadProfilePhoto` 는 자체 대기열로 동시 요청을 제한하고, 실패한 사람은 null 로
-     * 굳혀 다시 시도하지 않는다. 사진이 없는 계정은 이름 첫 글자 아바타로 남는다.
-     */
-    await Promise.all(
-      [...report.avatarIds].map(async (id) => {
-        if (signal.aborted) return;
-        const sharp = await loadProfilePhoto(id);
-        if (sharp) report.setAvatar(id, sharp);
-      }),
-    );
-
     /*
       HTML 은 닫는 태그가 있어야 문서가 된다. 마지막 배치를 내보내기 **전에** 채워 넣는다.
+
+      아바타는 여기서 안 받는다. HTML 은 `avatars/{id}.jpg` **경로만** 가리키고, 실제 파일은
+      아래 별도 단계에서 담는다(첨부 사진과 같은 흐름). 그래서 이 시점에 파일이 없어도 된다.
+
+      쪽이 하나뿐이면(분할을 안 했거나, 나눌 만큼 크지 않았거나) 네비를 안 준다 — "Page 1"
+      막대만 덩그러니 있으면 잡음이다. 마지막 쪽엔 다음이 없으므로 next 도 없다.
     */
-    htmlBuffer += report.foot();
+    htmlBuffer += report.foot(pageNum > 1 ? { page: pageNum, prev: prevPageName } : undefined);
     flush(true);
 
     /**
@@ -804,6 +936,37 @@ export async function exportChat({
       error?: string;
     }[] = [];
 
+    /**
+     * 한 첨부를 받아 오고, **받은 김에 해시까지 낸다.**
+     *
+     * 해시를 여기서 내는 이유는 겹쳐 돌리기 위해서다 — 예전에는 쓰기 루프에서 `await sha256`
+     * 을 직렬로 기다렸는데, 그동안 다음 다운로드가 놀았다. 이제 형제 다운로드와 나란히 돈다.
+     */
+    type Downloaded =
+      | { task: PhotoTask; bytes: Uint8Array; sha256: string | null }
+      | { task: PhotoTask; error: string };
+
+    const downloadOne = async (task: PhotoTask): Promise<Downloaded> => {
+      try {
+        const buffer = task.thumb
+          ? await client.downloadMedia(task.media, { thumb: pickThumbSize(fileOfMedia(task.media)) })
+          : await client.downloadMedia(task.media);
+        if (!buffer || typeof buffer === 'string' || buffer.length === 0) {
+          return { task, error: 'EMPTY' };
+        }
+        const bytes = new Uint8Array(buffer);
+        /*
+          미리보기 자리에 그림이 아닌 것이 오면 **담지 않는다.** 담아 두면 문서가 그걸 그림으로
+          가리키고, 열어 본 사람은 파일이 깨졌다고 여긴다. 없는 편이 낫다 - 원본은 어차피 따로
+          담겨 있고, 목록에 왜 빠졌는지도 남는다.
+        */
+        if (task.thumb && !looksLikeImage(bytes)) return { task, error: 'NOT_AN_IMAGE' };
+        return { task, bytes, sha256: await sha256(bytes) };
+      } catch (err) {
+        return { task, error: describeError(err).code };
+      }
+    };
+
     if (photoTasks.length > 0) {
       emitProgress({
         count,
@@ -815,70 +978,78 @@ export async function exportChat({
         totalFiles: photoTasks.length,
       });
 
-      for (let index = 0; index < photoTasks.length; index += FILE_CONCURRENCY) {
+      /**
+       * **연속 롤링 윈도우.** 예전에는 FILE_CONCURRENCY 개씩 끊어 `Promise.all` 로 받았는데,
+       * 그러면 한 배치가 그 안에서 제일 느린 파일이 끝나야 다음 배치를 시작했다 — 큰 동영상
+       * 하나에 작은 사진 둘이 노는 식이다. 대신 **늘 FILE_CONCURRENCY 개를 받는 중**으로 두고,
+       * 하나가 끝나면 곧바로 다음 하나를 띄운다.
+       *
+       * 그래도 **넣는 것은 순서대로**다(`nextToWrite`). 받아 둔 버퍼가 쓰기 위치보다
+       * FILE_CONCURRENCY 이상 앞서지 못하게 막으므로, 메모리에 떠 있는 파일 수는 예전과 똑같이
+       * 이 개수를 넘지 않는다.
+       */
+      const results = new Array<Downloaded | undefined>(photoTasks.length);
+      const inFlight = new Map<number, Promise<void>>();
+      let nextToStart = 0;
+      let nextToWrite = 0;
+      let sinceReport = 0;
+
+      const fill = () => {
+        while (nextToStart < photoTasks.length && nextToStart - nextToWrite < FILE_CONCURRENCY) {
+          const index = nextToStart++;
+          const promise = downloadOne(photoTasks[index]).then((result) => {
+            results[index] = result;
+            inFlight.delete(index);
+          });
+          inFlight.set(index, promise);
+        }
+      };
+
+      while (nextToWrite < photoTasks.length) {
         if (signal.aborted) throw new Error('EXPORT_CANCELLED');
-        const batch = photoTasks.slice(index, index + FILE_CONCURRENCY);
+        fill();
+        // 다음 차례가 아직 안 왔으면 받는 중인 것 하나가 끝날 때까지 기다린다.
+        while (results[nextToWrite] === undefined) {
+          await Promise.race(inFlight.values());
+        }
+        const item = results[nextToWrite]!;
+        results[nextToWrite] = undefined; // 버퍼 참조를 놓아 준다.
+        nextToWrite += 1;
 
-        // 받는 것은 동시에, 넣는 것은 순서대로. 그래야 메모리에 뜨는 파일 수가 고정된다.
-        const downloaded = await Promise.all(
-          batch.map(async (task) => {
-            try {
-              const buffer = task.thumb
-                ? await client.downloadMedia(task.media, {
-                    thumb: pickThumbSize(fileOfMedia(task.media)),
-                  })
-                : await client.downloadMedia(task.media);
-              if (!buffer || typeof buffer === 'string' || buffer.length === 0) {
-                return { task, error: 'EMPTY' };
-              }
-              const bytes = new Uint8Array(buffer);
-              /*
-                미리보기 자리에 그림이 아닌 것이 오면 **담지 않는다.** 담아 두면 문서가 그걸
-                그림으로 가리키고, 열어 본 사람은 파일이 깨졌다고 여긴다. 없는 편이 낫다 -
-                원본은 어차피 따로 담겨 있고, 목록에 왜 빠졌는지도 남는다.
-              */
-              if (task.thumb && !looksLikeImage(bytes)) {
-                return { task, error: 'NOT_AN_IMAGE' };
-              }
-              return { task, bytes };
-            } catch (err) {
-              return { task, error: describeError(err).code };
-            }
-          }),
-        );
-
-        for (const item of downloaded) {
-          if (!item.bytes) {
-            saved.push({
-              messageId: item.task.messageId,
-              path: item.task.path,
-              bytes: 0,
-              sha256: null,
-              error: item.error,
-            });
-            continue;
-          }
+        if ('error' in item) {
+          saved.push({
+            messageId: item.task.messageId,
+            path: item.task.path,
+            bytes: 0,
+            sha256: null,
+            error: item.error,
+          });
+        } else {
           zip.writeBinary(item.task.path, item.bytes);
           saved.push({
             messageId: item.task.messageId,
             path: item.task.path,
             bytes: item.bytes.length,
-            sha256: await sha256(item.bytes),
+            sha256: item.sha256,
           });
         }
 
-        await zip.drain();
-        savedFiles = saved.length;
-        emitProgress({
-          count,
-          bytes: zip.bytesWritten,
-          lastDate,
-          totalCount,
-          phase: 'files',
-          files: savedFiles,
-          totalFiles: photoTasks.length,
-        });
-        await yieldToUi();
+        // 한 파일마다 비우고 그리면 잦으니, 예전 배치와 같은 간격으로 흘려보낸다.
+        if (++sinceReport >= FILE_CONCURRENCY || nextToWrite === photoTasks.length) {
+          await zip.drain();
+          savedFiles = saved.length;
+          emitProgress({
+            count,
+            bytes: zip.bytesWritten,
+            lastDate,
+            totalCount,
+            phase: 'files',
+            files: savedFiles,
+            totalFiles: photoTasks.length,
+          });
+          await yieldToUi();
+          sinceReport = 0;
+        }
       }
 
       /**
@@ -888,6 +1059,36 @@ export async function exportChat({
        * 둘은 다르다 — 받기로 하지 않은 것, 받으려다 실패한 것이 그 차이에 있다.
        */
       zip.writeFile('files/index.jsonl', saved.map((item) => JSON.stringify(item)).join('\n') + '\n');
+    }
+
+    /*
+      --- 프로필 사진 파일 ---
+
+      사람마다 흐림본(`{id}.b.jpg`)은 **항상**, 선명본(`{id}.jpg`)은 받아지면 담는다. HTML 은
+      둘을 CSS 로 겹쳐(`url(선명), url(흐림)`) 선명 우선·흐림 폴백을 하고, 둘 다 없으면 이니셜
+      아이콘으로 떨어진다 — 3단 방어.
+
+      **빈 파일을 만들지 않는다.** 디코드 실패·다운로드 실패·빈 응답이면 그 파일을 아예 안 써서,
+      참조가 404 로 다음 단으로 깔끔히 넘어가게 둔다. 흐림본은 로컬 디코드라 사실상 실패가 없어
+      폴백의 바닥이 된다.
+    */
+    if (blurryById.size > 0) {
+      const ids = [...blurryById.keys()];
+      for (const id of ids) {
+        const bytes = dataUrlToBytes(blurryById.get(id)!);
+        if (bytes && bytes.length > 0) zip.writeBinary(avatarFile(id, false), bytes);
+      }
+      await zip.drain();
+      // 선명본은 사람당 요청 하나. loadProfilePhoto 가 동시 요청 수를 스스로 3 으로 제한한다.
+      const sharps = await Promise.all(
+        ids.map(async (id) => ({ id, url: await loadProfilePhoto(id).catch(() => null) })),
+      );
+      for (const { id, url } of sharps) {
+        if (signal.aborted) throw new Error('EXPORT_CANCELLED');
+        const bytes = url ? dataUrlToBytes(url) : null;
+        if (bytes && bytes.length > 0) zip.writeBinary(avatarFile(id, true), bytes);
+      }
+      await zip.drain();
     }
 
     const failed = saved.filter((item) => item.error).length;
@@ -911,6 +1112,18 @@ export async function exportChat({
            */
           /** index.html 의 배치. 문서 모양이 왜 그런지 나중에 설명할 근거다. */
           layout: layout ?? 'chat',
+          /**
+           * index.html 을 어떻게 나눴는가.
+           *
+           * 파일이 index.html 하나가 아니라 index-002-… 로 여러 개인 이유를, 이 백업만 보는
+           * 사람이 알 수 있어야 한다. `pages` 는 실제로 나온 쪽 수, `pageSize` 는 건수 분할일
+           * 때만 의미가 있다(날짜 분할이면 null).
+           */
+          htmlSplit: {
+            mode: splitMode,
+            pages: pageNum,
+            pageSize: splitMode === 'count' ? PAGE_SIZE : null,
+          },
           /**
            * 참여자 신원을 가린 백업인가.
            *

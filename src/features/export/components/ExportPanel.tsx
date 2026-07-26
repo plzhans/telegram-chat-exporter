@@ -11,11 +11,11 @@ import { useCountdown, useDuration } from '@/shared/lib/duration';
 import { Field } from '@/shared/ui/Field';
 import { Input } from '@/shared/ui/Input';
 import type { TelegramErrorInfo } from '@/shared/telegram/errors';
-import { dateKeyOf, shiftDateKey, todayKey } from '@/shared/lib/date';
+import { dateKeyOf, shiftDateKey, shiftDateKeyByMonths, todayKey } from '@/shared/lib/date';
 import { useAuth } from '@/shared/auth/useAuth';
 import { getCachedPeer, useChatStatsQuery, type DialogSummary } from '@/features/dialogs/api';
 import { createFileSink, createMemorySink } from '../lib/zipWriter';
-import { exportChat, exportFilename, type ExportProgress } from '../lib/exportChat';
+import { exportChat, exportFilename, type ExportProgress, type SplitMode } from '../lib/exportChat';
 
 type Phase = 'idle' | 'running' | 'done';
 
@@ -106,6 +106,13 @@ export function ExportPanel({ dialog, defaultFrom, defaultTo }: ExportPanelProps
    * 읽기 어렵다. 제3자에게 내밀 때만 켠다 - 이름·회원번호·프로필이 가려진다.
    */
   const [anonymize, setAnonymize] = useState(false);
+  /**
+   * `index.html` 을 여러 파일로 나누는 방식.
+   *
+   * 기본은 건수(5,000)다. 큰 대화방은 한 문서에 다 담으면 브라우저에서 안 열린다. 작은
+   * 대화방은 어차피 한 파일(`index.html`)이라 대부분 사용자는 이걸 신경 쓸 일이 없다.
+   */
+  const [splitMode, setSplitMode] = useState<SplitMode>('count');
   /** 어디에 저장했는지. 완료 안내에 파일 이름을 적어 주려고 들고 있는다. */
   const [saved, setSaved] = useState<{ name: string; kind: 'picked' | 'download' } | null>(null);
   /**
@@ -132,6 +139,29 @@ export function ExportPanel({ dialog, defaultFrom, defaultTo }: ExportPanelProps
    * 요청이 계속 나가서 FLOOD_WAIT 만 쌓인다.
    */
   useEffect(() => () => abortRef.current?.abort(), []);
+
+  /**
+   * 내보내는 **동안에만** 새로고침·탭 닫기·창 닫기를 한 번 붙잡는다.
+   *
+   * 세션을 저장하지 않아, 실수로 새로고침하면 여태 받은 것이 통째로 날아가고 처음부터다.
+   * `beforeunload` 는 브라우저가 자기 확인창("이 사이트에서 나가시겠습니까?")을 띄우게 하는
+   * 유일한 표준 통로다 — **문구는 우리가 못 바꾸고**(브라우저가 정한 일반 문장이다), 막지도
+   * 못한다(사용자가 그래도 나가겠다면 나간다). 실수를 한 번 되묻는 것까지가 할 수 있는 전부다.
+   *
+   * 끝났거나(idle·done) 시작 전에는 걸지 않는다 — 잃을 것이 없는데 나갈 때마다 물으면
+   * 성가시기만 하다. SPA 안에서 다른 화면으로 가는 건 이 이벤트가 아니라 위 언마운트가
+   * 맡는다(진행 중이면 그때 중단된다).
+   */
+  useEffect(() => {
+    if (phase !== 'running') return;
+    const confirmLeave = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      // 일부 오래된 브라우저는 returnValue 가 채워져 있어야 확인창을 띄운다.
+      event.returnValue = '';
+    };
+    window.addEventListener('beforeunload', confirmLeave);
+    return () => window.removeEventListener('beforeunload', confirmLeave);
+  }, [phase]);
 
   /**
    * 되돌릴 수 없는 동작 앞에 한 번 더 묻는 자리.
@@ -171,9 +201,11 @@ export function ExportPanel({ dialog, defaultFrom, defaultTo }: ExportPanelProps
    * 작년이면 "오늘"은 그 날짜로 내려앉는다.
    */
   const applyPreset = useCallback(
-    (back: number) => {
+    (shift: { days: number } | { months: number }) => {
       const end = lastKey && lastKey < todayKey() ? lastKey : todayKey();
-      const begin = shiftDateKey(end, -back);
+      // 주(7일)는 일수로, 달·년은 달력으로 뒤로 민다 — "30일" 대신 "한 달 전 같은 날짜".
+      const begin =
+        'months' in shift ? shiftDateKeyByMonths(end, -shift.months) : shiftDateKey(end, -shift.days);
       setFrom(firstKey && begin < firstKey ? firstKey : begin);
       setTo(end);
     },
@@ -229,6 +261,7 @@ export function ExportPanel({ dialog, defaultFrom, defaultTo }: ExportPanelProps
         include: { photos: includePhotos, stickers: includeStickers },
         layout,
         anonymize,
+        split: splitMode,
         signal: controller.signal,
         onProgress: (next) => {
           lastTickRef.current = Date.now();
@@ -247,7 +280,18 @@ export function ExportPanel({ dialog, defaultFrom, defaultTo }: ExportPanelProps
     } finally {
       abortRef.current = null;
     }
-  }, [dialog, from, to, wholeHistory, includePhotos, includeStickers, layout, anonymize, me]);
+  }, [
+    dialog,
+    from,
+    to,
+    wholeHistory,
+    includePhotos,
+    includeStickers,
+    layout,
+    anonymize,
+    splitMode,
+    me,
+  ]);
 
   /**
    * 시작 버튼이 부르는 자리.
@@ -390,16 +434,17 @@ export function ExportPanel({ dialog, defaultFrom, defaultTo }: ExportPanelProps
                   <span className="text-xs text-slate-500">{t('export.presets')}</span>
                   {(
                     [
-                      ['export.presetToday', 0],
-                      ['export.presetWeek', 6],
-                      ['export.presetMonth', 29],
-                    ] as const
-                  ).map(([label, back]) => (
+                      ['export.presetToday', { days: 0 }],
+                      ['export.presetWeek', { days: 6 }],
+                      ['export.presetMonth', { months: 1 }],
+                      ['export.presetYear', { months: 12 }],
+                    ] as [string, { days: number } | { months: number }][]
+                  ).map(([label, shift]) => (
                     <button
                       key={label}
                       type="button"
                       className="rounded-full border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-600 transition-colors hover:border-primary hover:text-primary"
-                      onClick={() => applyPreset(back)}
+                      onClick={() => applyPreset(shift)}
                     >
                       {t(label)}
                     </button>
@@ -525,6 +570,32 @@ export function ExportPanel({ dialog, defaultFrom, defaultTo }: ExportPanelProps
             <p className="mt-1.5 text-xs leading-relaxed text-slate-500">
               {t('export.layoutHint')}
             </p>
+          </div>
+
+          {/*
+            index.html 을 여러 파일로 나눌지.
+
+            큰 대화방은 한 문서에 다 담으면 브라우저가 못 연다. 기본(건수)이면 작은 대화방은
+            어차피 한 파일이라, 대부분은 이 칸을 그냥 지나가면 된다. 다섯 갈래라 라디오 대신
+            셀렉트로 둔다 — 세로로 깔면 화면만 길어진다.
+          */}
+          <div className="rounded-xl bg-slate-50 p-3">
+            <label htmlFor="export-split" className="text-xs font-semibold text-slate-900">
+              {t('export.splitTitle')}
+            </label>
+            <select
+              id="export-split"
+              value={splitMode}
+              onChange={(e) => setSplitMode(e.target.value as SplitMode)}
+              className="mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-2.5 py-2 text-xs text-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1"
+            >
+              <option value="count">{t('export.splitCount')}</option>
+              <option value="none">{t('export.splitNone')}</option>
+              <option value="year">{t('export.splitYear')}</option>
+              <option value="month">{t('export.splitMonth')}</option>
+              <option value="day">{t('export.splitDay')}</option>
+            </select>
+            <p className="mt-1.5 text-xs leading-relaxed text-slate-500">{t('export.splitHint')}</p>
           </div>
 
           {/*
