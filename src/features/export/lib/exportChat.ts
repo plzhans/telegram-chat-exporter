@@ -73,6 +73,21 @@ export interface ExportRange {
   to?: string;
 }
 
+/**
+ * `index.html` 을 여러 파일로 나누는 방식.
+ *
+ * 큰 대화방은 한 문서에 다 담으면 파일이 수백 MB 가 되어 **브라우저에서 안 열린다.** 그래서
+ * 나눌 기준을 고른다.
+ *
+ * - `none`  : 안 나눔. 무조건 한 파일(`index.html`). 통째로 grep 하거나 단일 문서로 쓸 때.
+ * - `count` : 메시지 N건마다. 파일 크기가 일정해 "안 열림" 을 확실히 막는다. **기본값.**
+ * - `year` / `month` / `day` : 날짜가 바뀌면. 날짜로 훑기 좋지만 활발한 구간은 한 파일이 클 수 있다.
+ *
+ * 나뉜 파일 이름엔 그 파일 **첫(맨 위·가장 과거) 메시지 날짜**가 들어간다(`index-002-20240115.html`).
+ * 시작일이 쪽마다 커지므로 파일 목록만 훑어 원하는 날짜로 바로 갈 수 있다.
+ */
+export type SplitMode = 'none' | 'count' | 'year' | 'month' | 'day';
+
 export interface ExportOptions {
   dialog: DialogSummary;
   /**
@@ -105,6 +120,10 @@ export interface ExportOptions {
    * 자세한 규칙은 `anonymize.ts` 참고.
    */
   anonymize?: boolean;
+  /**
+   * `index.html` 을 나누는 방식. 없으면 `count`(기본) — 작은 대화방은 어차피 한 파일이다.
+   */
+  split?: SplitMode;
   onProgress: (progress: ExportProgress) => void;
   signal: AbortSignal;
 }
@@ -116,6 +135,14 @@ export interface ExportOptions {
  * 이벤트 루프에 제어를 넘겨서 진행률이 갱신되고 취소 버튼이 눌리게 한다.
  */
 const BATCH_SIZE = 200;
+
+/**
+ * `split: 'count'` 일 때 한 쪽에 담는 메시지 수.
+ *
+ * 이보다 크면 문서 한 장이 브라우저에서 버거워지고, 너무 작으면 파일만 많아진다. 앨범은
+ * 쪼개지 않으므로 실제 쪽은 이 값을 조금 넘길 수 있다.
+ */
+const PAGE_SIZE = 5000;
 
 /**
  * 내보내는 동안 GramJS 가 알아서 자고 넘어갈 FLOOD_WAIT 상한(초).
@@ -492,6 +519,7 @@ export async function exportChat({
   include,
   layout,
   anonymize,
+  split,
   onProgress,
   signal,
 }: ExportOptions): Promise<void> {
@@ -524,7 +552,8 @@ export async function exportChat({
    * 이름을 `index.html` 로 두는 이유는, 압축을 푼 사람이 **무엇을 먼저 열어야 하는지**
    * 고민하지 않게 하기 위해서다.
    */
-  const pushHtml = zip.startFile('index.html');
+  // 분할이면 이 핸들이 쪽마다 새 파일로 갈아 끼워진다(아래 breakPage). 첫 쪽은 index.html.
+  let currentHtmlPush = zip.startFile('index.html');
   const report = new HtmlReport({
     dialogTitle: identity.title,
     dialogId: identity.id,
@@ -573,17 +602,67 @@ export async function exportChat({
   let jsonlBuffer = '';
   let textBuffer = '';
   let attachmentBuffer = '';
+  // 첫 쪽(index.html)은 진입점이라 네비 없이 시작한다 — 첫 쪽엔 "이전" 이 없다.
   let htmlBuffer = report.head();
+
+  /*
+    --- HTML 파일 나누기(분할) ---
+
+    큰 대화방은 index.html 한 장이 브라우저에서 안 열린다. 그래서 기준에 따라 여러 파일로
+    쪼갠다. jsonl·txt·attachments 는 한 파일 그대로고, HTML 만 나뉜다.
+
+    나뉜 파일 이름엔 그 파일 첫(가장 과거) 메시지 날짜가 들어간다 — 시작일이 쪽마다 커지므로
+    파일 목록만 봐도 원하는 날짜로 바로 갈 수 있다.
+  */
+  const splitMode: SplitMode = split ?? 'count';
+  const bucketOf = (unix: number): string => {
+    const key = dateKeyOf(unix); // yyyy-mm-dd (로컬)
+    if (splitMode === 'day') return key;
+    if (splitMode === 'month') return key.slice(0, 7);
+    if (splitMode === 'year') return key.slice(0, 4);
+    return '';
+  };
+  const pageFileName = (num: number, firstUnix: number): string =>
+    num === 1
+      ? 'index.html'
+      : `index-${String(num).padStart(3, '0')}-${dateKeyOf(firstUnix).replace(/-/g, '')}.html`;
+
+  let pageNum = 1;
+  let pageName = 'index.html';
+  let prevPageName: string | undefined;
+  let pageMsgCount = 0; // 이 쪽에 담긴 메시지 수. 건수 분할의 기준.
+  let pageBucket: string | undefined; // 이 쪽의 날짜 버킷. 날짜 분할의 기준.
+  let prevGroupedId: string | undefined; // 앨범이 쪽 경계에서 안 쪼개지게 직전 묶음 id 를 본다.
 
   const flush = (last = false) => {
     pushJsonl(jsonlBuffer, last);
     pushText(textBuffer, last);
     pushAttachments(attachmentBuffer, last);
-    pushHtml(htmlBuffer, last);
+    currentHtmlPush(htmlBuffer, last);
     jsonlBuffer = '';
     textBuffer = '';
     attachmentBuffer = '';
     htmlBuffer = '';
+  };
+
+  /*
+    분할 경계에서 현재 쪽을 닫고 다음 쪽을 연다.
+
+    앨범은 `report.foot()` 안의 flushAlbum 이 **닫는 쪽에** 마저 그리므로 경계를 넘어
+    쪼개지지 않는다. 닫는 쪽 아래 네비엔 다음 쪽을, 여는 쪽 위 네비엔 이전 쪽을 실어 준다.
+  */
+  const breakPage = (nextFirstUnix: number) => {
+    const nextNum = pageNum + 1;
+    const nextName = pageFileName(nextNum, nextFirstUnix);
+    htmlBuffer += report.foot({ page: pageNum, prev: prevPageName, next: nextName });
+    currentHtmlPush(htmlBuffer, true);
+    htmlBuffer = '';
+    prevPageName = pageName;
+    pageName = nextName;
+    pageNum = nextNum;
+    currentHtmlPush = zip.startFile(pageName);
+    htmlBuffer = report.head({ page: pageNum, prev: prevPageName });
+    pageMsgCount = 0;
   };
 
   // 끝 날짜는 그 날 전체를 포함해야 하므로 23:59:59 까지 잡는다.
@@ -735,9 +814,32 @@ export async function exportChat({
       */
       const record = anon.message(summary);
 
+      /*
+        분할 경계. 이 메시지가 새 쪽을 시작해야 하면 지금 쪽을 닫고 연다. 앨범 연속(직전과
+        같은 묶음 id)일 때는 끊지 않는다 — 앨범은 한 쪽에 통째로 있어야 한다. 첫 메시지
+        (pageMsgCount === 0)는 그 쪽의 버킷을 정할 뿐 끊지 않는다.
+      */
+      if (splitMode !== 'none') {
+        const albumCont = Boolean(summary.groupedId) && summary.groupedId === prevGroupedId;
+        if (pageMsgCount === 0) {
+          pageBucket = bucketOf(summary.date);
+        } else if (!albumCont) {
+          const over =
+            splitMode === 'count'
+              ? pageMsgCount >= PAGE_SIZE
+              : bucketOf(summary.date) !== pageBucket;
+          if (over) {
+            breakPage(summary.date);
+            pageBucket = bucketOf(summary.date);
+          }
+        }
+      }
+
       jsonlBuffer += `${JSON.stringify(toExportRecord(record))}\n`;
       textBuffer += toReadableLine(record);
       htmlBuffer += report.push(record);
+      pageMsgCount += 1;
+      prevGroupedId = summary.groupedId;
       if (summary.mediaType) {
         attachmentBuffer += `${JSON.stringify({
           messageId: summary.id,
@@ -783,8 +885,11 @@ export async function exportChat({
 
     /*
       HTML 은 닫는 태그가 있어야 문서가 된다. 마지막 배치를 내보내기 **전에** 채워 넣는다.
+
+      쪽이 하나뿐이면(분할을 안 했거나, 나눌 만큼 크지 않았거나) 네비를 안 준다 — "Page 1"
+      막대만 덩그러니 있으면 잡음이다. 마지막 쪽엔 다음이 없으므로 next 도 없다.
     */
-    htmlBuffer += report.foot();
+    htmlBuffer += report.foot(pageNum > 1 ? { page: pageNum, prev: prevPageName } : undefined);
     flush(true);
 
     /**
@@ -951,6 +1056,18 @@ export async function exportChat({
            */
           /** index.html 의 배치. 문서 모양이 왜 그런지 나중에 설명할 근거다. */
           layout: layout ?? 'chat',
+          /**
+           * index.html 을 어떻게 나눴는가.
+           *
+           * 파일이 index.html 하나가 아니라 index-002-… 로 여러 개인 이유를, 이 백업만 보는
+           * 사람이 알 수 있어야 한다. `pages` 는 실제로 나온 쪽 수, `pageSize` 는 건수 분할일
+           * 때만 의미가 있다(날짜 분할이면 null).
+           */
+          htmlSplit: {
+            mode: splitMode,
+            pages: pageNum,
+            pageSize: splitMode === 'count' ? PAGE_SIZE : null,
+          },
           /**
            * 참여자 신원을 가린 백업인가.
            *

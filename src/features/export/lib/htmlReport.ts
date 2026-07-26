@@ -152,6 +152,21 @@ export interface HtmlReportMeta {
 }
 
 /**
+ * 여러 쪽으로 나뉜 문서의 쪽 사이 이동 정보.
+ *
+ * 분할 내보내기일 때만 넘어온다 — `exportChat` 이 파일명을 정하므로 여기서 받아 네비를 그린다.
+ * 없으면(통으로) 네비 자체가 안 그려진다.
+ */
+export interface PageNav {
+  /** 이 쪽 번호(1부터). 총 쪽수는 스트리밍이라 미리 모르므로 싣지 않는다. */
+  page: number;
+  /** 더 과거(이전) 쪽 파일명. 첫 쪽이면 없다. */
+  prev?: string;
+  /** 더 최신(다음) 쪽 파일명. 마지막 쪽이면 없다. */
+  next?: string;
+}
+
+/**
  * 스타일.
  *
  * 앱 화면의 규칙을 그대로 옮겼다 — 내가 보낸 말은 오른쪽 파란 말풍선, 받은 말은 왼쪽 흰
@@ -337,6 +352,10 @@ body{margin:0;background:#fff;color:#0F172A;
 .foot{margin:24px 0 8px;text-align:center;color:#94A3B8;font-size:12px;line-height:1.8}
 .foot a{color:#2563EB}
 .ver{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;color:#CBD5E1}
+/* page navigation, only present when the export is split across files */
+.pg{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:12px 0;font-size:13px}
+.pg a{color:#2563EB;text-decoration:none;font-weight:600}
+.pg>span{color:#64748B}
 /* The mark is drawn inline - this file must open with no network. */
 .ico{display:inline-flex;vertical-align:-3px;margin-right:2px}
 .ico svg{width:14px;height:14px;fill:currentColor}
@@ -453,9 +472,36 @@ export class HtmlReport {
     this.senderPhotos.set(id, dataUrl);
   }
 
+  /**
+   * 쪽 사이 이동 막대. 분할 내보내기의 각 쪽 위·아래에 붙는다.
+   *
+   * 첫 쪽엔 이전이, 마지막 쪽엔 다음이 없다. 빈 자리는 빈 span 으로 채워 `space-between`
+   * 이 무너지지 않게 한다(이전=왼쪽, 쪽번호=가운데, 다음=오른쪽).
+   *
+   * 글자는 이 문서의 다른 곳과 같이 영어로 고정한다(head 주석 참고). index.html 이 가장
+   * 과거라 "다음" 이 더 최신이다 — Older/Newer 로 그 방향을 말해 준다.
+   */
+  private navBar(nav: PageNav): string {
+    const prev = nav.prev
+      ? `<a href="${escapeHtml(nav.prev)}">&larr; Older</a>`
+      : '<span></span>';
+    const next = nav.next
+      ? `<a href="${escapeHtml(nav.next)}">Newer &rarr;</a>`
+      : '<span></span>';
+    return `<nav class="pg">${prev}<span>Page ${nav.page}</span>${next}</nav>`;
+  }
+
   /** 문서의 머리. 무엇을 언제 누가 받은 백업인지 먼저 밝힌다. */
-  head(): string {
+  head(nav?: PageNav): string {
     const m = this.meta;
+    /*
+      분할이면 쪽마다 첫 줄에 날짜 구분선과 발신자 이름·아바타가 **다시** 나와야 한다.
+      어느 쪽을 열든 문맥이 잡히게. 그래서 쪽이 열릴 때 두 상태를 비운다.
+    */
+    if (nav) {
+      this.lastDayKey = undefined;
+      this.lastSenderId = undefined;
+    }
     this.avatarIds.add(m.dialogId);
     if (m.dialogPhoto) this.senderPhotos.set(m.dialogId, m.dialogPhoto);
     /*
@@ -520,7 +566,7 @@ export class HtmlReport {
         return `<dt>${escapeHtml(k)}</dt><dd>${value}</dd>`;
       })
       .join('')}</dl></details></div></div>
-<div class="chat">
+${nav ? this.navBar(nav) : ''}<div class="chat">
 `;
   }
 
@@ -549,8 +595,8 @@ export class HtmlReport {
     return out + this.renderOne(message);
   }
 
-  /** 마지막에 남은 앨범을 비우고 문서를 닫는다. */
-  foot(): string {
+  /** 마지막에 남은 앨범을 비우고 문서를 닫는다. 분할이면 아래쪽 이동 막대도 붙인다. */
+  foot(nav?: PageNav): string {
     /*
       아바타 그림은 **문서 끝에서** 한 번만 정의한다.
 
@@ -595,7 +641,7 @@ export class HtmlReport {
       )
       .join('');
 
-    return `${this.flushAlbum()}</div>${faceViews}${
+    return `${this.flushAlbum()}</div>${nav ? this.navBar(nav) : ''}${faceViews}${
       photoRules ? `<style>${photoRules}</style>` : ''
     }<p class="foot">${footLinks()}
 <br><span class="ver">${escapeHtml(VERSION_LABEL)}</span></p>

@@ -15,7 +15,7 @@ import { dateKeyOf, shiftDateKey, todayKey } from '@/shared/lib/date';
 import { useAuth } from '@/shared/auth/useAuth';
 import { getCachedPeer, useChatStatsQuery, type DialogSummary } from '@/features/dialogs/api';
 import { createFileSink, createMemorySink } from '../lib/zipWriter';
-import { exportChat, exportFilename, type ExportProgress } from '../lib/exportChat';
+import { exportChat, exportFilename, type ExportProgress, type SplitMode } from '../lib/exportChat';
 
 type Phase = 'idle' | 'running' | 'done';
 
@@ -106,6 +106,13 @@ export function ExportPanel({ dialog, defaultFrom, defaultTo }: ExportPanelProps
    * 읽기 어렵다. 제3자에게 내밀 때만 켠다 - 이름·회원번호·프로필이 가려진다.
    */
   const [anonymize, setAnonymize] = useState(false);
+  /**
+   * `index.html` 을 여러 파일로 나누는 방식.
+   *
+   * 기본은 건수(5,000)다. 큰 대화방은 한 문서에 다 담으면 브라우저에서 안 열린다. 작은
+   * 대화방은 어차피 한 파일(`index.html`)이라 대부분 사용자는 이걸 신경 쓸 일이 없다.
+   */
+  const [splitMode, setSplitMode] = useState<SplitMode>('count');
   /** 어디에 저장했는지. 완료 안내에 파일 이름을 적어 주려고 들고 있는다. */
   const [saved, setSaved] = useState<{ name: string; kind: 'picked' | 'download' } | null>(null);
   /**
@@ -229,6 +236,7 @@ export function ExportPanel({ dialog, defaultFrom, defaultTo }: ExportPanelProps
         include: { photos: includePhotos, stickers: includeStickers },
         layout,
         anonymize,
+        split: splitMode,
         signal: controller.signal,
         onProgress: (next) => {
           lastTickRef.current = Date.now();
@@ -247,7 +255,18 @@ export function ExportPanel({ dialog, defaultFrom, defaultTo }: ExportPanelProps
     } finally {
       abortRef.current = null;
     }
-  }, [dialog, from, to, wholeHistory, includePhotos, includeStickers, layout, anonymize, me]);
+  }, [
+    dialog,
+    from,
+    to,
+    wholeHistory,
+    includePhotos,
+    includeStickers,
+    layout,
+    anonymize,
+    splitMode,
+    me,
+  ]);
 
   /**
    * 시작 버튼이 부르는 자리.
@@ -525,6 +544,32 @@ export function ExportPanel({ dialog, defaultFrom, defaultTo }: ExportPanelProps
             <p className="mt-1.5 text-xs leading-relaxed text-slate-500">
               {t('export.layoutHint')}
             </p>
+          </div>
+
+          {/*
+            index.html 을 여러 파일로 나눌지.
+
+            큰 대화방은 한 문서에 다 담으면 브라우저가 못 연다. 기본(건수)이면 작은 대화방은
+            어차피 한 파일이라, 대부분은 이 칸을 그냥 지나가면 된다. 다섯 갈래라 라디오 대신
+            셀렉트로 둔다 — 세로로 깔면 화면만 길어진다.
+          */}
+          <div className="rounded-xl bg-slate-50 p-3">
+            <label htmlFor="export-split" className="text-xs font-semibold text-slate-900">
+              {t('export.splitTitle')}
+            </label>
+            <select
+              id="export-split"
+              value={splitMode}
+              onChange={(e) => setSplitMode(e.target.value as SplitMode)}
+              className="mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-2.5 py-2 text-xs text-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1"
+            >
+              <option value="count">{t('export.splitCount')}</option>
+              <option value="none">{t('export.splitNone')}</option>
+              <option value="year">{t('export.splitYear')}</option>
+              <option value="month">{t('export.splitMonth')}</option>
+              <option value="day">{t('export.splitDay')}</option>
+            </select>
+            <p className="mt-1.5 text-xs leading-relaxed text-slate-500">{t('export.splitHint')}</p>
           </div>
 
           {/*
