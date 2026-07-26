@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/plzhans/telegram-chat-exporter/compare/release/v1.4.0...release/v1.5.0) (2026-07-26)
+
+
+### 기능
+
+* exporter를 방식 고르기/텔레그램 두 구역으로 나눠 GA를 격리하고, standalone 로케일을 외부화한다 ([#17](https://github.com/plzhans/telegram-chat-exporter/issues/17)) ([d38bef0](https://github.com/plzhans/telegram-chat-exporter/commit/d38bef05f745c33772b3b600ace32916ad47c843))
+
 ## [1.4.0](https://github.com/plzhans/telegram-chat-exporter/compare/release/v1.3.1...release/v1.4.0) (2026-07-25)
 
 
