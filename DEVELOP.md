@@ -383,25 +383,45 @@ The UI is written with Tailwind's **logical properties**. Instead of `ml-`, `pr-
 themselves based on `dir`. Icons whose direction carries meaning (previous/next, back arrow) get
 `rtl:rotate-180`. **Icons whose direction is not meaning, like a play triangle, are not flipped.**
 
-### Real HTML files per language
+### The exporter is split into two documents — method / session
 
-The exporter build emits one app shell per language (`appShells` in `vite.config.ts`).
+The exporter build emits **two documents whose CSP and GA differ** (two entries + `appShells` in
+`vite.config.ts`).
 
 ```
-dist/index.html          app shell  <html lang="ko-KR">
-dist/en-us/index.html    app shell  <html lang="en-US">
-dist/404.html            app shell (SPA fallback)
-dist/en-us/404.html      app shell (SPA fallback)
+dist/index.html               method (/run/)            CSP google-open, GA on
+dist/en-us/index.html         method (per language)
+dist/session/index.html       telegram work (/run/session/)  CSP telegram-only, no GA
+dist/en-us/session/index.html telegram work (per language)
+dist/404.html · en-us/session/404.html …   SPA fallback per zone/language
 ```
 
-The per-language `index.html` exists so `/en-us/` responds with 200 when opened directly (leaving
-it to the fallback would 404). Post-login paths (`/en-us/dialogs`) have no real file and are served
-through that language's `404.html` (the app shell); the router reads the URL and renders normally.
-Even then the app fixes the document's language at runtime so `<html lang>` is never wrong.
+**Why two documents.** CSP is per-document — you can't tighten it mid-SPA. The method screen
+(CredentialsForm) runs GA to measure "how many reach the app", so it needs Google open; the telegram
+work (phone·code·chats·export) touches the phone number and login code, so it must **reach nothing
+but Telegram**. So they're split into separate documents joined by a **real page navigation**.
 
-This app is **not an indexing target** — SEO and marketing are the landing's job (below). So the app
-shells are `noindex` and carry no sitemap/og/canonical; the only thing a per-language shell does is
-"come up in that language."
+- method (`method.html`) → dist root `index.html` (=/run/). `src/method/main.tsx` calls the GA loader
+  (`src/shared/analytics/init.ts`) — **the GA network code lives only in this document's bundle.**
+- telegram (`index.html` = App) → `session/` (=/run/session/). `src/main.tsx` never calls GA, and the
+  gtag loader is never bundled there (only the on/off booleans stay in `gtag.ts`, kept separate).
+- The language segment comes **before** `session` (`/run/<lang>/session/`) — default is `/run/session/`.
+  The first segment being the language lets the i18n path helpers work unchanged.
+
+**Credential handoff.** Picking a method hands api_id/api_hash over via **sessionStorage** (key
+`tce.hs`, XOR+base64 obfuscated) and navigates to `/run/session/`, which **reads-then-clears it on
+boot** (one-shot) and starts connecting (`src/shared/auth/handoff.ts`). It never touches the URL or
+history, and since sessionStorage is local it works even under the telegram-only CSP — which is the
+whole point. The obfuscation is **not encryption** (same-origin JS reverses it) — just to keep it out
+of a casual devtools glance; api_hash isn't an account secret anyway.
+
+Per-language shells respond 200 on direct entry; deep routes (`session/dialogs`) fall back to that
+zone/language's `404.html` and the router renders normally. This app is not an indexing target (SEO
+and marketing are the landing's job), so shells are `noindex` with no sitemap/og; only `<html lang>`
+/`dir` are set.
+
+**The single-file build (standalone) stays one document** — `file://` can't do page navigation, so
+method selection stays in `SignIn`'s idle branch, and it has no GA to isolate in the first place.
 
 ### The marketing landing is a separate project (`landing/`)
 

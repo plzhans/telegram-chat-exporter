@@ -6,6 +6,7 @@ import { execSync } from 'node:child_process';
 import { readFileSync, rmSync } from 'node:fs';
 import {
   PREFIXED_LANGUAGES,
+  SUPPORTED_LANGUAGES,
   dirOf,
   langSegment,
   type SeoMeta,
@@ -157,29 +158,38 @@ function standaloneConnectSrc(): string {
  * 헤더를 붙여 줄 서버도 없다 — `fileProtocolPage()` 가 자기 몫을 따로 심는다.
  */
 function contentSecurityPolicy(isBuild: boolean, on: { ga: string; ads: string }): Plugin {
-  const policy = policyOf(on, "'self'");
+  /**
+   * **문서마다 CSP가 갈린다.**
+   *
+   * - 방식 고르기(`method.html` → `/run/`): GA가 돌아 구글 호스트를 연다(`policyOf(on)`).
+   * - 텔레그램(`index.html` → `/run/session/`): 전화번호·인증코드를 만지는 자리라 **텔레그램
+   *   외엔 아무 데도 안 연다**(`policyOf({ga:'',ads:''})`). 이 앱의 핵심 약속이 여기서 강제된다.
+   */
+  const methodPolicy = policyOf(on, "'self'");
+  const appPolicy = policyOf({ ga: '', ads: '' }, "'self'");
 
   return {
     name: 'telegram-chat-exporter:csp',
-    transformIndexHtml(html) {
+    transformIndexHtml(html, ctx) {
       if (!isBuild) return html;
+      const policy = ctx.path.endsWith('method.html') ? methodPolicy : appPolicy;
       return html.replace(
         '<head>',
         `<head>\n    <meta http-equiv="Content-Security-Policy" content="${policy}" />`,
       );
     },
     /**
-     * Cloudflare Pages·Netlify 용 응답 헤더를 **같은 정책에서 만든다.**
+     * `_headers` 에는 **CSP를 넣지 않는다.**
      *
-     * 예전에는 `public/_headers` 에 정책을 손으로 한 벌 더 적어 뒀는데, 그러면 한쪽만
-     * 고쳤을 때 조용히 어긋난다. meta 는 열려 있는데 헤더는 막혀 있으면 배포처에 따라
-     * 되기도 하고 안 되기도 한다.
+     * 실제 배포는 GitHub Pages 라 이 파일을 무시하고, 실효 CSP는 문서별 `<meta>` 가 맡는다
+     * (두 구역이 정책이 다르다). 여기에 `/*` 로 CSP를 한 벌 더 적으면 Cloudflare/Netlify 로
+     * 옮겼을 때 방식 문서가 앱 정책과 겹쳐 두 CSP의 교집합이 걸려 구글이 조용히 막힌다.
+     * 그래서 하드닝 헤더만 남긴다.
      */
     generateBundle() {
       if (!isBuild) return;
       const headers = [
         '/*',
-        `  Content-Security-Policy: ${policy}`,
         '  X-Content-Type-Options: nosniff',
         '  Referrer-Policy: no-referrer',
         '  Cross-Origin-Opener-Policy: same-origin',
@@ -259,41 +269,100 @@ function fileProtocolPage(on: { ga: string; ads: string }): Plugin {
 }
 
 /**
- * 앱 셸을 언어마다 하나씩 찍는다. `/en-us/` 면 `dist/en-us/index.html`.
+ * 로케일을 앱 번들에서 떼어 `i18n/<코드>.js` 로 따로 내보내고, `index.html` 이 앱보다
+ * 먼저 불러오게 한다.
  *
- * 이 앱은 SPA 라 색인 대상이 아니다(홍보·SEO 는 별도로 배포되는 랜딩이 맡는다). 그래서
- * 랜딩 시절의 프리렌더·og·sitemap 은 없고, 언어별 셸이 하는 일은 딱 둘이다.
+ * `file://` 은 `fetch` 를 CORS 로 막지만 `<script src>` 로딩은 막지 않는다. 그래서
+ * 로케일을 JSON 이 아니라 **자기를 전역에 등록하는 스크립트**로 내보낸다 — 받은 사람이
+ * 리빌드 없이 `i18n/ko-kr.js` 한 파일만 고쳐 번역을 손볼 수 있다. 앱은 이 전역에서
+ * 리소스를 읽는다(`resources.standalone.ts`).
  *
- * - `<언어>/index.html` — `/en-us/` 로 바로 들어와도 200 으로 응답한다(폴백에 맡기면 404).
- * - `404.html`·`<언어>/404.html` — SPA 폴백. `/dialogs` 로 새로고침하면 Pages 가 이걸
- *   내주고, 라우터가 주소를 읽어 정상 렌더한다. `<html lang>`/`dir` 만 그 언어로 맞춘다.
+ * 스크립트 태그는 `head-prepend` 로 앱 스크립트보다 앞에 둔다. 로케일과 앱 모두 `defer`
+ * (`fileProtocolPage` 가 `type="module"` 을 `defer` 로 바꾼다)라 문서 순서대로 실행되므로,
+ * 앞에 두면 앱이 `window.__I18N__` 을 읽을 때 이미 채워져 있다.
+ */
+function standaloneLocales(): Plugin {
+  return {
+    name: 'telegram-chat-exporter:standalone-locales',
+    apply: 'build',
+    generateBundle() {
+      for (const lang of SUPPORTED_LANGUAGES) {
+        /*
+          별도 `.js` 파일이라 HTML 안이 아니고, 그래서 `</script>` 이스케이프는 필요 없다.
+          `||{}` 로 어느 파일이 먼저 실행돼도 같은 전역에 얹힌다.
+        */
+        const source = `window.__I18N__=window.__I18N__||{};window.__I18N__[${JSON.stringify(
+          lang,
+        )}]=${JSON.stringify(localeOf(lang))};\n`;
+        this.emitFile({ type: 'asset', fileName: `i18n/${lang}.js`, source });
+      }
+    },
+    transformIndexHtml() {
+      return SUPPORTED_LANGUAGES.map((lang) => ({
+        tag: 'script',
+        attrs: { defer: true, src: `./i18n/${lang}.js` },
+        injectTo: 'head-prepend' as const,
+      }));
+    },
+  };
+}
+
+/**
+ * exporter의 두 문서를 언어마다 찍어 자리에 배치한다.
+ *
+ * exporter는 CSP·GA가 갈리는 **두 문서**로 나뉜다(`contentSecurityPolicy` 주석):
+ * - **방식 고르기**(`method.html`) → dist 루트 `index.html`(=`/run/`). GA·구글 open.
+ * - **텔레그램 동작**(`index.html`, App) → `session/`(=`/run/session/`). 텔레그램 전용, GA 없음.
+ *
+ * 색인 대상이 아니라(SEO는 별도 랜딩) og·sitemap은 없고, 각 언어 셸이 하는 일은 둘이다 —
+ * `<언어>/index.html`(직접 들어와도 200)과 `404.html`(SPA 폴백). `<html lang>`/`dir`만 맞춘다.
  */
 function appShells(): Plugin {
   return {
     name: 'telegram-chat-exporter:app-shells',
     apply: 'build',
     /*
-      `post` 여야 한다. `index.html` 을 번들에 넣는 건 Vite 코어의 `vite:build-html` 이고
-      일반 플러그인의 `generateBundle` 은 그보다 먼저 돌아서, 복사할 원본이 아직 없다.
+      `post` 여야 한다. html 을 번들에 넣는 건 Vite 코어의 `vite:build-html` 이고 일반 플러그인의
+      `generateBundle` 은 그보다 먼저 돌아서, 복사할 원본이 아직 없다.
     */
     enforce: 'post',
     generateBundle(_options, bundle) {
-      const index = bundle['index.html'];
+      const index = bundle['index.html']; // App = 텔레그램 문서
+      const method = bundle['method.html']; // 방식 고르기 문서
       if (!index || index.type !== 'asset') return;
-      const shell = String(index.source);
+
+      const sessionShell = String(index.source);
+      // 방식 문서가 없으면(있을 리 없지만 방어) 세션 셸로 대체해 빌드는 죽지 않게 둔다.
+      const methodShell = method && method.type === 'asset' ? String(method.source) : sessionShell;
 
       /** `<html ...>` 여는 태그를 그 언어의 태그·방향으로 다시 쓴다. */
-      const forLang = (lang: SupportedLanguage) =>
+      const forLang = (shell: string, lang: SupportedLanguage) =>
         shell.replace(/<html[^>]*>/, `<html lang="${seoOf(lang).tag}" dir="${dirOf(lang)}">`);
 
-      // 기본 언어(`index.html`)의 SPA 폴백.
-      this.emitFile({ type: 'asset', fileName: '404.html', source: shell });
-
+      // 방식 고르기 → 루트 `index.html`(=/run/) + 언어별 + 404 폴백.
+      index.source = methodShell;
+      this.emitFile({ type: 'asset', fileName: '404.html', source: methodShell });
       for (const lang of PREFIXED_LANGUAGES) {
-        const html = forLang(lang);
+        const html = forLang(methodShell, lang);
         this.emitFile({ type: 'asset', fileName: `${langSegment(lang)}/index.html`, source: html });
         this.emitFile({ type: 'asset', fileName: `${langSegment(lang)}/404.html`, source: html });
       }
+
+      /*
+        텔레그램 동작 → `session/`. **언어 조각을 `session` 앞에 둔다**(`/run/<언어>/session/`).
+        그래야 기본 언어는 `/run/session/`(사용자가 정한 이름)이고, 언어판은 첫 세그먼트가 언어라
+        i18n 경로 헬퍼(`languageFromPath`·`pathForLanguage`)가 수정 없이 그대로 맞는다.
+      */
+      this.emitFile({ type: 'asset', fileName: 'session/index.html', source: sessionShell });
+      this.emitFile({ type: 'asset', fileName: 'session/404.html', source: sessionShell });
+      for (const lang of PREFIXED_LANGUAGES) {
+        const html = forLang(sessionShell, lang);
+        this.emitFile({ type: 'asset', fileName: `${langSegment(lang)}/session/index.html`, source: html });
+        this.emitFile({ type: 'asset', fileName: `${langSegment(lang)}/session/404.html`, source: html });
+      }
+
+      // 원본 `method.html` 은 루트에 남기지 않는다 — 방식 문서는 이제 `index.html` 이다.
+      if (method) delete bundle['method.html'];
     },
   };
 }
@@ -324,13 +393,17 @@ function localizedPreview(): Plugin {
           ? pathname.slice(base.length)
           : pathname.replace(/^\//, '');
         const parts = rest.split('/').filter(Boolean);
+
+        // **언어를 먼저, 그다음 `session` 구역을 벗긴다** — 배치가 `/run/<언어>/session/…` 라서다.
+        // 각 구역·언어가 자기 `404.html` 로 폴백해야 deep route 새로고침에서 맞는 문서가 나온다.
         const lang = parts[0] && segments.includes(parts[0]) ? parts.shift() : '';
-        const dir = lang ? `${base}${lang}/` : base;
+        const zone = parts[0] === 'session' ? (parts.shift(), 'session/') : '';
+        const dir = `${base}${lang ? `${lang}/` : ''}${zone}`;
 
         /*
-          앱 진입(빈 경로, `/` 또는 `/<언어>/`)은 실제 파일(`index.html`)이라 그대로 둔다.
-          나머지 앱 라우트(`/dialogs` 등)는 배포본과 똑같이 **그 언어의 `404.html`** 로 돌린다 —
-          라우터가 주소를 읽어 정상 렌더한다.
+          구역 진입(빈 경로: `/run/`·`/run/<언어>/`·`/run/session/`·`/run/<언어>/session/`)은
+          실제 파일(`index.html`)이라 그대로 둔다. 나머지 라우트(`session/dialogs` 등)는
+          배포본과 똑같이 **그 언어·구역의 `404.html`** 로 돌린다 — 라우터가 주소를 읽어 렌더한다.
         */
         if (parts.length === 0) return next();
         req.url = `${dir}404.html`;
@@ -390,7 +463,7 @@ export default defineConfig(({ command, mode }) => {
        * (`src/shared/i18n/index.ts`).
        */
       ...(standalone
-        ? [fileProtocolPage(on)]
+        ? [fileProtocolPage(on), standaloneLocales()]
         : [contentSecurityPolicy(command === 'build', on), appShells(), localizedPreview()]),
     ],
     resolve: {
@@ -401,6 +474,20 @@ export default defineConfig(({ command, mode }) => {
          * GramJS 브라우저 빌드(2.26.21)가 `fs`·`os`·`path`·`net`·`socks`·`crypto` 를
          * 이미 자기 껍데기로 바꿔서 배포한다. package.json 의 버전 고정 주석 참고.
          */
+        /**
+         * 로케일 리소스의 출처를 빌드 형태에 맞춰 갈아끼운다.
+         *
+         * 웹은 번들에 인라인하고(`resources.ts`), 단일 파일 배포는 `i18n/<코드>.js` 로 따로
+         * 나간 값을 전역에서 읽는다(`resources.standalone.ts`). 소비하는 쪽(`shared/i18n/index.ts`)은
+         * 어느 쪽인지 몰라도 되도록 별칭 하나로 가린다. 인라인 사본이 배포본에 섞여 들어가면
+         * 떼어낸 `i18n/*.js` 편집이 먹히지 않으므로, 아예 다른 모듈로 스왑한다.
+         */
+        '@i18n-resources': path.resolve(
+          __dirname,
+          standalone
+            ? './src/shared/i18n/resources.standalone.ts'
+            : './src/shared/i18n/resources.ts',
+        ),
       },
     },
     server: {
@@ -470,7 +557,19 @@ export default defineConfig(({ command, mode }) => {
               inlineDynamicImports: true,
             },
           }
-        : undefined,
+        : {
+            /**
+             * 웹은 두 진입점이다 — `index.html`(App = 텔레그램 문서)과 `method.html`(방식 고르기).
+             *
+             * 방식 화면을 별도 문서로 두어야 **문서별 CSP**가 성립한다(방식=구글 open, 텔레그램=
+             * 텔레그램 전용). `appShells` 가 이 둘을 각각 `/run/`·`/run/session/` 아래로 재배치한다.
+             * 방식 번들은 GramJS·라우터를 안 끌어와 가볍다.
+             */
+            input: {
+              main: path.resolve(__dirname, 'index.html'),
+              method: path.resolve(__dirname, 'method.html'),
+            },
+          },
     },
   };
 });

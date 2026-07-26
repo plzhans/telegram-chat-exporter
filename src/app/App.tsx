@@ -12,6 +12,7 @@ import { MainLayout } from './layouts/MainLayout';
 import { ErrorPage } from './ErrorPage';
 import { DialogListSkeleton, MessageListSkeleton } from '@/shared/ui/Skeleton';
 import { useAuth } from '@/shared/auth/useAuth';
+import { clearHandoff, readHandoff } from '@/shared/auth/handoff';
 import { touchStoredSession } from '@/shared/telegram/session';
 import i18n, { langSegment, languageFromPath } from '@/shared/i18n';
 import { SUPPORTED_LANGUAGES, type SupportedLanguage } from '@/shared/i18n/languages';
@@ -67,12 +68,21 @@ const pages: RouteObject[] = [
 ];
 
 /**
-  * `base`(배포 위치) + 언어 조각. 기본 언어는 조각이 비어 있다.
+  * 텔레그램 문서의 basename.
   *
-  * 언어를 라우트 트리가 아니라 basename 에 넣었다. 그래서 화면 코드의 `to="/dialogs"` 를
-  * 하나도 안 고쳐도 라우터가 앞에 붙여 준다.
+  * 빌드/배포에서 이 App(=텔레그램 동작)은 `/run/session/`(기본)·`/run/<언어>/session/`(언어판)에
+  * 뜬다 — 방식 고르기(`/run/`)는 별개 문서라 여기 라우터에 없다. 언어를 라우트 트리가 아니라
+  * basename 에 넣어, 화면 코드의 `to="/dialogs"` 를 안 고쳐도 라우터가 앞에 붙여 준다.
+  *
+  * **dev 는 예외다.** `pnpm dev` 는 두 문서 재배치(빌드 전용)가 없어 `/` 에서 index.html(App)을
+  * 그대로 서빙하므로, basename 에 `session` 을 붙이면 App 이 안 뜬다. 그래서 dev 에서는 App 을
+  * 루트에 두고 방식 고르기도 이 문서 안(SignIn idle)에서 보여 준다 — 단일 문서처럼 개발한다.
+  * 두 구역·핸드오프·문서별 CSP 는 빌드 산출물에서 확인한다. (standalone 은 해시 라우터라 무관.)
   */
-const basenameOf = (lang: SupportedLanguage) => import.meta.env.BASE_URL + langSegment(lang);
+const basenameOf = (lang: SupportedLanguage) =>
+  import.meta.env.DEV
+    ? `${import.meta.env.BASE_URL}${langSegment(lang)}`
+    : `${import.meta.env.BASE_URL}${langSegment(lang) ? `${langSegment(lang)}/` : ''}session`;
 
 /*
   Suspense 는 MainLayout **안**에 있다(레이아웃의 Outlet 을 감싼다).
@@ -120,6 +130,13 @@ const createRouter = (lang: SupportedLanguage) =>
 /** 저장된 세션의 유휴 만료 시각을 밀어 주는 주기. TTL 보다 충분히 짧기만 하면 된다. */
 const TOUCH_INTERVAL_MS = 60_000;
 
+/**
+ * 핸드오프를 이미 소진했는가. **모듈 전역**이라 StrictMode 가 부팅 이펙트를 두 번 불러도
+ * 자격증명으로 `start()` 를 두 번 시작하지 않는다(소진 즉시 `clearHandoff` 하지만, 두 비동기
+ * 흐름이 읽기 전에 겹칠 여지를 이 플래그가 마저 막는다).
+ */
+let handoffConsumed = false;
+
 export default function App() {
   const bootstrap = useAuth((s) => s.bootstrap);
   const authorized = useAuth((s) => s.step === 'authorized');
@@ -151,9 +168,26 @@ export default function App() {
    * 라우터보다 먼저 한 번만 돈다. StrictMode 가 이 이펙트를 두 번 부르지만, bootstrap 은
    * 저장본이 없으면 즉시 끝나고 있으면 createClient 가 이전 클라이언트를 정리하고 다시
    * 만들기 때문에 두 번 돌아도 결과가 같다.
+   *
+   * **부팅 핸드오프(웹):** 이 문서는 텔레그램 동작(`/run/session/`)이라 방식 고르기가 없다.
+   * 방식 문서(`/run/`)에서 고른 자격증명을 sessionStorage 로 받아(`readHandoff`) 곧장 연결을
+   * 시작한다. 세션 복원이 먼저 성공하면 그대로 두고, 핸드오프도 없으면 `SignIn` 의 웹 idle
+   * 분기가 방식 화면으로 되돌린다. **소진 즉시 지운다**(1회성) — 새로고침에 안 남는다.
+   * `handoffConsumed` 로 StrictMode 이중 실행에서 두 번 시작하는 것을 막는다.
    */
   useEffect(() => {
-    void bootstrap();
+    void (async () => {
+      await bootstrap();
+      // standalone·dev 는 방식 고르기가 이 문서 안(SignIn idle)에 있어 핸드오프가 없다.
+      if (__STANDALONE__ || import.meta.env.DEV) return;
+      const auth = useAuth.getState();
+      if (auth.step === 'authorized' || handoffConsumed) return;
+      const creds = readHandoff();
+      if (!creds) return;
+      handoffConsumed = true;
+      clearHandoff();
+      void auth.start(creds);
+    })();
   }, [bootstrap]);
 
   /**

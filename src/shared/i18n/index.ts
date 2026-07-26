@@ -8,6 +8,12 @@ import {
   type SeoMeta,
   type SupportedLanguage,
 } from './languages';
+/**
+ * 로케일 리소스의 출처. 빌드 형태에 따라 별칭이 갈라진다(`vite.config.ts`) —
+ * 웹은 번들에 인라인(`resources.ts`), 단일 파일 배포는 `i18n/<코드>.js` 전역에서
+ * 읽는다(`resources.standalone.ts`). 이 파일은 어느 쪽인지 몰라도 된다.
+ */
+import { resources } from '@i18n-resources';
 
 export {
   SUPPORTED_LANGUAGES,
@@ -18,20 +24,6 @@ export {
   type SeoMeta,
   type SupportedLanguage,
 } from './languages';
-
-/**
- * 로케일 파일을 알아서 끌어모은다. 언어를 늘릴 때 이 파일을 고칠 일이 없다.
- */
-const files = import.meta.glob<{ default: Record<string, unknown> }>('./locales/*.json', {
-  eager: true,
-});
-
-const resources = Object.fromEntries(
-  Object.entries(files).map(([path, mod]) => [
-    path.replace('./locales/', '').replace('.json', ''),
-    { translation: mod.default },
-  ]),
-);
 
 /**
  * 그 언어가 스스로 밝힌 자기 이름.

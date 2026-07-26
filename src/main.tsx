@@ -4,11 +4,14 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { I18nextProvider } from 'react-i18next';
 import i18n from '@/shared/i18n';
 import App from '@/app/App';
-import { initAds, initAnalytics } from '@/shared/analytics/gtag';
 import './globals.css';
 
-initAnalytics();
-initAds();
+/*
+  **여기에는 애널리틱스가 없다.** 이 엔트리는 텔레그램 동작 문서(`/run/session/`)다 — 전화번호·
+  인증코드·대화를 만지는 자리라, 그 문서의 CSP는 텔레그램 외 아무 데도 열지 않는다. GA 집계는
+  그 앞 "방식 고르기" 문서(`/run/`, `src/method/main.tsx`)에서만 돈다. 자세한 근거는
+  `src/shared/auth/handoff.ts` 주석 참고.
+*/
 
 const queryClient = new QueryClient({
   defaultOptions: {
