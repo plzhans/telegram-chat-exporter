@@ -335,7 +335,7 @@
     "range": "期間",
     "presetToday": "今天",
     "presetWeek": "最近 7 天",
-    "presetMonth": "最近 30 天",
+    "presetMonth": "最近一個月",
     "stats": {
       "total": "訊息總數",
       "messages": "{{count, number}}"
@@ -376,7 +376,15 @@
     "confirmAbortOk": "停止",
     "confirmKeep": "繼續",
     "anonymize": "參與者匿名化",
-    "anonymizeHint": "名稱會變成 A、B、C，編號變成 1、2、3，並移除頭像。對話名稱亦會隱藏。相片、貼圖等內容維持不變。"
+    "anonymizeHint": "名稱會變成 A、B、C，編號變成 1、2、3，並移除頭像。對話名稱亦會隱藏。相片、貼圖等內容維持不變。",
+    "presetYear": "最近一年",
+    "splitTitle": "分割成多個檔案",
+    "splitHint": "對話太大時，index.html 會大到瀏覽器無法開啟。系統會分割成多個檔案，每個檔名都帶有該檔的第一個日期，方便直接跳到某個時間。小型對話仍維持單一檔案。",
+    "splitCount": "依則數 — 每 5,000 則（預設）",
+    "splitNone": "不分割 — 單一檔案",
+    "splitYear": "依年",
+    "splitMonth": "依月",
+    "splitDay": "依日"
   },
   "errors": {
     "title": "錯誤",

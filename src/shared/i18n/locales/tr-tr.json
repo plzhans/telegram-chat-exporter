@@ -335,7 +335,7 @@
     "range": "Dönem",
     "presetToday": "Bugün",
     "presetWeek": "Son 7 gün",
-    "presetMonth": "Son 30 gün",
+    "presetMonth": "Son bir ay",
     "stats": {
       "total": "Toplam mesaj",
       "messages": "{{count, number}}"
@@ -376,7 +376,15 @@
     "confirmAbortOk": "Durdur",
     "confirmKeep": "Devam et",
     "anonymize": "Katılımcıları anonimleştir",
-    "anonymizeHint": "İsimler A, B, C; kimlikler 1, 2, 3 olur ve profil fotoğrafları kaldırılır. Sohbet adı da gizlenir. Fotoğraflar, çıkartmalar ve diğer içerik olduğu gibi kalır."
+    "anonymizeHint": "İsimler A, B, C; kimlikler 1, 2, 3 olur ve profil fotoğrafları kaldırılır. Sohbet adı da gizlenir. Fotoğraflar, çıkartmalar ve diğer içerik olduğu gibi kalır.",
+    "presetYear": "Son bir yıl",
+    "splitTitle": "Dosyalara böl",
+    "splitHint": "Büyük bir sohbet, index.html'i tarayıcıda açılamayacak kadar büyütür. Birden çok dosyaya bölünür ve her dosyanın adında ilk tarihi yer alır; böylece istediğin zamana doğrudan gidebilirsin. Küçük bir sohbet zaten tek dosya kalır.",
+    "splitCount": "Sayıya göre — her 5.000'de bir (varsayılan)",
+    "splitNone": "Bölme — tek dosya",
+    "splitYear": "Yıla göre",
+    "splitMonth": "Aya göre",
+    "splitDay": "Güne göre"
   },
   "errors": {
     "title": "Hata",

@@ -335,7 +335,7 @@
     "range": "Khoảng thời gian",
     "presetToday": "Hôm nay",
     "presetWeek": "7 ngày qua",
-    "presetMonth": "30 ngày qua",
+    "presetMonth": "1 tháng gần đây",
     "stats": {
       "total": "Tổng tin nhắn",
       "messages": "{{count, number}}"
@@ -376,7 +376,15 @@
     "confirmAbortOk": "Dừng",
     "confirmKeep": "Tiếp tục",
     "anonymize": "Ẩn danh người tham gia",
-    "anonymizeHint": "Tên trở thành A, B, C và ID trở thành 1, 2, 3, ảnh đại diện bị loại bỏ. Tên cuộc trò chuyện cũng được ẩn. Ảnh, nhãn dán và nội dung khác vẫn giữ nguyên."
+    "anonymizeHint": "Tên trở thành A, B, C và ID trở thành 1, 2, 3, ảnh đại diện bị loại bỏ. Tên cuộc trò chuyện cũng được ẩn. Ảnh, nhãn dán và nội dung khác vẫn giữ nguyên.",
+    "presetYear": "1 năm gần đây",
+    "splitTitle": "Chia thành nhiều tệp",
+    "splitHint": "Cuộc trò chuyện lớn khiến index.html quá nặng để mở trong trình duyệt. Nó được chia thành nhiều tệp, và tên mỗi tệp có ngày đầu tiên để bạn nhảy thẳng đến mốc thời gian. Cuộc trò chuyện nhỏ vẫn là một tệp duy nhất.",
+    "splitCount": "Theo số lượng — mỗi 5.000 (mặc định)",
+    "splitNone": "Không chia — một tệp",
+    "splitYear": "Theo năm",
+    "splitMonth": "Theo tháng",
+    "splitDay": "Theo ngày"
   },
   "errors": {
     "title": "Lỗi",
