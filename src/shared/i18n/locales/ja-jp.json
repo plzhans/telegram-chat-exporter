@@ -335,7 +335,7 @@
     "range": "期間",
     "presetToday": "今日",
     "presetWeek": "直近7日",
-    "presetMonth": "直近30日",
+    "presetMonth": "過去1か月",
     "stats": {
       "total": "全メッセージ",
       "messages": "{{count, number}}"
@@ -376,7 +376,15 @@
     "confirmAbortOk": "中断する",
     "confirmKeep": "続ける",
     "anonymize": "参加者を匿名化",
-    "anonymizeHint": "名前は A・B・C、ID は 1・2・3 に置き換わり、プロフィール写真は外れます。チャット名も隠されます。写真やスタンプなどの内容はそのまま残ります。"
+    "anonymizeHint": "名前は A・B・C、ID は 1・2・3 に置き換わり、プロフィール写真は外れます。チャット名も隠されます。写真やスタンプなどの内容はそのまま残ります。",
+    "presetYear": "過去1年",
+    "splitTitle": "ファイル分割",
+    "splitHint": "会話が大きいと index.html が大きすぎてブラウザで開けません。複数のファイルに分け、各ファイル名に最初の日付が入るので目的の時期にすぐ移動できます。小さな会話は元々1ファイルのままです。",
+    "splitCount": "件数 — 5,000件ごと（既定）",
+    "splitNone": "分割しない — 1ファイル",
+    "splitYear": "年ごと",
+    "splitMonth": "月ごと",
+    "splitDay": "日ごと"
   },
   "errors": {
     "title": "エラー",

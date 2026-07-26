@@ -336,7 +336,7 @@
     "range": "Panahon",
     "presetToday": "Ngayon",
     "presetWeek": "Huling 7 araw",
-    "presetMonth": "Huling 30 araw",
+    "presetMonth": "Nakaraang buwan",
     "stats": {
       "total": "Kabuuang mensahe",
       "messages": "{{count, number}}"
@@ -377,7 +377,15 @@
     "confirmAbortOk": "Ihinto",
     "confirmKeep": "Magpatuloy",
     "anonymize": "Gawing anonymous ang mga kalahok",
-    "anonymizeHint": "Ang mga pangalan ay magiging A, B, C at ang mga ID ay 1, 2, 3, at aalisin ang mga profile photo. Itinatago rin ang pangalan ng chat. Nananatili ang mga larawan, sticker at iba pang content."
+    "anonymizeHint": "Ang mga pangalan ay magiging A, B, C at ang mga ID ay 1, 2, 3, at aalisin ang mga profile photo. Itinatago rin ang pangalan ng chat. Nananatili ang mga larawan, sticker at iba pang content.",
+    "presetYear": "Nakaraang taon",
+    "splitTitle": "Hatiin sa mga file",
+    "splitHint": "Ginagawang masyadong malaki ng malaking chat ang index.html kaya hindi mabuksan sa browser. Hinahati ito sa maraming file, at ang pangalan ng bawat file ay may unang petsa nito para makalukso ka agad sa isang panahon. Ang maliit na chat ay nananatiling isang file.",
+    "splitCount": "Ayon sa bilang — bawat 5,000 (default)",
+    "splitNone": "Huwag hatiin — isang file",
+    "splitYear": "Ayon sa taon",
+    "splitMonth": "Ayon sa buwan",
+    "splitDay": "Ayon sa araw"
   },
   "errors": {
     "title": "Error",

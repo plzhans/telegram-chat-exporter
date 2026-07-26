@@ -335,7 +335,7 @@
     "range": "Periodo",
     "presetToday": "Hoy",
     "presetWeek": "Últimos 7 días",
-    "presetMonth": "Últimos 30 días",
+    "presetMonth": "Último mes",
     "stats": {
       "total": "Mensajes en total",
       "messages": "{{count, number}}"
@@ -376,7 +376,15 @@
     "confirmAbortOk": "Detener",
     "confirmKeep": "Continuar",
     "anonymize": "Anonimizar participantes",
-    "anonymizeHint": "Los nombres pasan a ser A, B, C y los identificadores 1, 2, 3, sin fotos de perfil. También se oculta el nombre del chat. Las fotos, stickers y demás contenido quedan igual."
+    "anonymizeHint": "Los nombres pasan a ser A, B, C y los identificadores 1, 2, 3, sin fotos de perfil. También se oculta el nombre del chat. Las fotos, stickers y demás contenido quedan igual.",
+    "presetYear": "Último año",
+    "splitTitle": "Dividir en archivos",
+    "splitHint": "Un chat grande hace que index.html sea demasiado pesado para abrirse en el navegador. Se divide en varios archivos, y el nombre de cada uno incluye su primera fecha para saltar directo a un momento. Un chat pequeño sigue siendo un solo archivo.",
+    "splitCount": "Por cantidad — cada 5,000 (predeterminado)",
+    "splitNone": "No dividir — un archivo",
+    "splitYear": "Por año",
+    "splitMonth": "Por mes",
+    "splitDay": "Por día"
   },
   "errors": {
     "title": "Error",

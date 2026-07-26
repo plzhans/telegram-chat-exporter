@@ -335,7 +335,7 @@
     "range": "Período",
     "presetToday": "Hoje",
     "presetWeek": "Últimos 7 dias",
-    "presetMonth": "Últimos 30 dias",
+    "presetMonth": "Último mês",
     "stats": {
       "total": "Total de mensagens",
       "messages": "{{count, number}}"
@@ -376,7 +376,15 @@
     "confirmAbortOk": "Interromper",
     "confirmKeep": "Continuar",
     "anonymize": "Anonimizar participantes",
-    "anonymizeHint": "Os nomes viram A, B, C e os IDs viram 1, 2, 3, sem fotos de perfil. O nome da conversa também fica oculto. Fotos, figurinhas e outros conteúdos permanecem como estão."
+    "anonymizeHint": "Os nomes viram A, B, C e os IDs viram 1, 2, 3, sem fotos de perfil. O nome da conversa também fica oculto. Fotos, figurinhas e outros conteúdos permanecem como estão.",
+    "presetYear": "Último ano",
+    "splitTitle": "Dividir em arquivos",
+    "splitHint": "Uma conversa grande deixa o index.html pesado demais para abrir no navegador. Ele é dividido em vários arquivos, e o nome de cada um traz a data inicial para você ir direto a um período. Uma conversa pequena continua sendo um único arquivo.",
+    "splitCount": "Por quantidade — a cada 5.000 (padrão)",
+    "splitNone": "Não dividir — um arquivo",
+    "splitYear": "Por ano",
+    "splitMonth": "Por mês",
+    "splitDay": "Por dia"
   },
   "errors": {
     "title": "Erro",

@@ -335,7 +335,7 @@
     "range": "Periode",
     "presetToday": "Hari ini",
     "presetWeek": "7 hari terakhir",
-    "presetMonth": "30 hari terakhir",
+    "presetMonth": "Bulan terakhir",
     "stats": {
       "total": "Total pesan",
       "messages": "{{count, number}}"
@@ -376,7 +376,15 @@
     "confirmAbortOk": "Hentikan",
     "confirmKeep": "Lanjutkan",
     "anonymize": "Anonimkan peserta",
-    "anonymizeHint": "Nama menjadi A, B, C dan ID menjadi 1, 2, 3, foto profil dihapus. Nama obrolan juga disembunyikan. Foto, stiker, dan konten lain tetap seperti aslinya."
+    "anonymizeHint": "Nama menjadi A, B, C dan ID menjadi 1, 2, 3, foto profil dihapus. Nama obrolan juga disembunyikan. Foto, stiker, dan konten lain tetap seperti aslinya.",
+    "presetYear": "Tahun terakhir",
+    "splitTitle": "Bagi menjadi beberapa file",
+    "splitHint": "Obrolan besar membuat index.html terlalu besar untuk dibuka di browser. File dibagi menjadi beberapa bagian, dan nama tiap file memuat tanggal pertamanya agar kamu bisa langsung menuju waktu tertentu. Obrolan kecil tetap satu file.",
+    "splitCount": "Berdasarkan jumlah — tiap 5.000 (bawaan)",
+    "splitNone": "Jangan dibagi — satu file",
+    "splitYear": "Per tahun",
+    "splitMonth": "Per bulan",
+    "splitDay": "Per hari"
   },
   "errors": {
     "title": "Kesalahan",
