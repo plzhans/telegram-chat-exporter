@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.0](https://github.com/plzhans/telegram-chat-exporter/compare/release/v1.6.1...release/v1.7.0) (2026-07-26)
+
+
+### 기능
+
+* **export:** 여러 대화방을 한 번에 백업하는 전용 페이지를 더한다 ([#24](https://github.com/plzhans/telegram-chat-exporter/issues/24)) ([0bbbf90](https://github.com/plzhans/telegram-chat-exporter/commit/0bbbf903fb972bfd31c560c7b838f99a4869acdb))
+
 ## [1.6.1](https://github.com/plzhans/telegram-chat-exporter/compare/release/v1.6.0...release/v1.6.1) (2026-07-26)
 
 
