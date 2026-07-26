@@ -671,7 +671,8 @@ export async function exportChat({
     })) {
       if (signal.aborted) throw new Error('EXPORT_CANCELLED');
 
-      const summary = toMessageSummary(message as Api.Message);
+      // 내보내기는 mediaThumb·원본 캐시를 안 쓴다. 켜 두면 CPU 낭비 + 대형 방 메모리 누수.
+      const summary = toMessageSummary(message as Api.Message, { withPreview: false });
 
       // 끝 경계를 넘었다. 시간순으로 오고 있으므로 여기서 멈추면 된다.
       if (toSeconds !== undefined && summary.date > toSeconds) break;
