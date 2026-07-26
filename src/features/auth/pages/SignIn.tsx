@@ -6,6 +6,7 @@ import { ErrorNotice } from '@/shared/ui/ErrorNotice';
 import { Spinner } from '@/shared/ui/Spinner';
 import { useCountdown, useDuration } from '@/shared/lib/duration';
 import { useAuth } from '@/shared/auth/useAuth';
+import { langSegment, languageFromPath } from '@/shared/i18n';
 import { AuthStepForm } from '../components/AuthStepForm';
 import { CredentialsForm } from '../components/CredentialsForm';
 import { LoginCodeNotice } from '../components/LoginCodeNotice';
@@ -35,6 +36,23 @@ export default function SignIn() {
   useEffect(() => {
     if (step === 'authorized') void navigate('/dialogs', { replace: true });
   }, [step, navigate]);
+
+  /**
+   * **웹: 이 문서(텔레그램 동작, `/run/session/`)가 idle 이면 방식 고르기가 없다.**
+   *
+   * 방식 고르기(`CredentialsForm`)는 별개 문서(`/run/`)에 있다. 그러니 여기서 idle 이라는 건
+   * 핸드오프 없이 세션 문서를 직접 열었거나(새 탭 등) 연결이 실패해 되돌아온 경우다 —
+   * 진짜 페이지 이동으로 방식 화면으로 보낸다. 언어 조각은 그대로 이어 붙인다.
+   *
+   * 단일 파일 배포는 방식 고르기가 이 문서 안에 있으므로(아래 idle 분기) 되돌리지 않는다.
+   */
+  useEffect(() => {
+    // dev 는 두 문서 재배치가 없어 App 을 루트에서 서빙하므로, 되돌리면 무한 루프다. 그때는
+    // 방식 고르기를 이 문서 안(아래 idle 분기)에서 보여 준다 — 단일 문서처럼 개발한다.
+    if (__STANDALONE__ || import.meta.env.DEV || step !== 'idle') return;
+    const seg = langSegment(languageFromPath());
+    window.location.assign(`${import.meta.env.BASE_URL}${seg ? `${seg}/` : ''}`);
+  }, [step]);
 
   /**
    * 제한이 풀릴 때까지 제출 버튼을 잠그고, 남은 시간을 버튼에 적는다.
@@ -75,9 +93,19 @@ export default function SignIn() {
       */}
       {(step === 'idle' || step === 'connecting') && <ErrorNotice error={error} />}
 
-      {step === 'idle' && (
-        <CredentialsForm busy={busy} onSubmit={(c) => void start(c)} />
-      )}
+      {/*
+        방식 고르기(CredentialsForm)는 **단일 파일 배포에서만** 이 화면에 있다. 웹은 별개 문서
+        (`/run/`)가 맡고, 여기(텔레그램 문서)의 idle 은 위 useEffect 가 방식 화면으로 되돌린다 —
+        그 사이 스피너만 잠깐 보인다.
+      */}
+      {step === 'idle' &&
+        (__STANDALONE__ || import.meta.env.DEV ? (
+          <CredentialsForm busy={busy} onSubmit={(c) => void start(c)} />
+        ) : (
+          <div className="flex flex-col items-center gap-3 edge-card bg-white p-8">
+            <Spinner />
+          </div>
+        ))}
 
       {/*
         **첫 화면에서만, 그리고 시작하기 아래에 둔다.**
@@ -91,7 +119,7 @@ export default function SignIn() {
         누르기로 정한 사람이라, 첫 화면을 열었을 때 먼저 보여야 하는 것은 설명이 아니라
         시작 버튼이다. 아직 망설이는 사람은 접힌 제목만 보고 펼치면 된다.
       */}
-      {step === 'idle' && <TrustPanel />}
+      {step === 'idle' && (__STANDALONE__ || import.meta.env.DEV) && <TrustPanel />}
 
 
       {step === 'connecting' && (

@@ -329,24 +329,42 @@ addEventListener('securitypolicyviolation', (e) =>
 보고 스스로 뒤집힌다. 방향이 의미인 아이콘(이전·다음 · 뒤로가기 화살표)에는 `rtl:rotate-180`
 을 붙인다. 재생 삼각형처럼 **방향이 의미가 아닌 아이콘은 뒤집지 않는다.**
 
-### 언어별로 진짜 HTML 파일이 나온다
+### exporter는 두 문서로 갈린다 — 방식 고르기 / 텔레그램 동작
 
-exporter 빌드가 언어마다 앱 셸을 하나씩 찍는다(`vite.config.ts` 의 `appShells`).
+exporter 빌드는 **CSP·GA가 갈리는 두 문서**를 찍는다(`vite.config.ts` 의 두 진입점 + `appShells`).
 
 ```
-dist/index.html          앱 셸  <html lang="ko-KR">
-dist/en-us/index.html    앱 셸  <html lang="en-US">
-dist/404.html            앱 셸 (SPA 폴백)
-dist/en-us/404.html      앱 셸 (SPA 폴백)
+dist/index.html               방식 고르기(/run/)          CSP 구글-open, GA 있음
+dist/en-us/index.html         방식 고르기(언어판)
+dist/session/index.html       텔레그램 동작(/run/session/)  CSP 텔레그램 전용, GA 없음
+dist/en-us/session/index.html 텔레그램 동작(언어판)
+dist/404.html · en-us/session/404.html …   각 구역·언어의 SPA 폴백
 ```
 
-`/en-us/` 로 바로 들어와도 200 으로 응답하도록 언어별 `index.html` 을 둔다(폴백에 맡기면
-404 다). 로그인 뒤 경로(`/en-us/dialogs`)는 실제 파일이 없어 그 언어의 `404.html`(=앱 셸)로
-뜨고, 라우터가 주소를 읽어 정상 렌더한다. 그 경우에도 `<html lang>` 이 틀리지 않도록 앱이
-실행 시점에 문서 언어를 실제 언어로 맞춘다.
+**왜 두 문서인가.** CSP는 문서 단위라 SPA 한 문서 안에서 도중에 조일 수 없다. 방식 고르기
+(CredentialsForm)는 GA를 켜 "얼마나 앱에 들어오나"를 재느라 구글이 열려 있어야 하고, 텔레그램
+동작(phone·code·대화·내보내기)은 전화번호·인증코드를 만지는 자리라 **텔레그램 외엔 아무 데도
+안 열려야** 한다. 그래서 둘을 별개 문서로 나누고 **진짜 페이지 이동**으로 잇는다.
 
-이 앱은 **색인 대상이 아니다** — SEO·홍보는 아래 랜딩이 맡는다. 그래서 앱 셸은 `noindex` 이고
-sitemap·og·canonical 을 만들지 않는다. 언어별 셸이 하는 일은 딱 "그 언어로 뜨는 것"뿐이다.
+- 방식(`method.html`) → dist 루트 `index.html`(=/run/). `src/method/main.tsx` 가 GA 로더
+  (`src/shared/analytics/init.ts`)를 부른다 — **GA 네트워크 코드는 이 문서 번들에만** 있다.
+- 텔레그램(`index.html`=App) → `session/`(=/run/session/). `src/main.tsx` 는 GA를 안 부르고,
+  그 번들엔 gtag 로더가 아예 안 실린다(끄고 켜는 boolean 상수만 `gtag.ts` 에 따로 둔 이유).
+- 언어 조각은 `session` **앞**에 온다(`/run/<언어>/session/`) — 기본은 `/run/session/`. 첫
+  세그먼트가 언어라 i18n 경로 헬퍼(`languageFromPath`·`pathForLanguage`)가 수정 없이 맞는다.
+
+**자격증명 핸드오프.** 방식을 고르면 api_id/api_hash 를 **sessionStorage**(키 `tce.hs`, XOR+base64
+난독화)로 넘기고 `/run/session/` 으로 이동한다. 그 문서가 부팅 때 **읽자마자 지우고**(1회성)
+연결을 시작한다(`src/shared/auth/handoff.ts`). URL·히스토리에 안 남고, CSP를 텔레그램 전용으로
+조여도 sessionStorage 는 로컬이라 영향이 없다 — 바로 그게 목적이다. 난독화는 **암호화가 아니다**
+(같은 출처 JS가 되돌린다) — devtools 흘깃 방지용일 뿐, api_hash 는 애초에 계정 비밀이 아니다.
+
+`/en-us/` 로 바로 들어와도 200 이도록 언어별 셸을 두고, deep route(`session/dialogs`)는 그 구역·
+언어의 `404.html` 로 폴백해 라우터가 정상 렌더한다. 이 앱은 색인 대상이 아니라(SEO·홍보는 아래
+랜딩) `noindex` 이고 sitemap·og 는 없다. `<html lang>`/`dir` 만 그 언어로 맞춘다.
+
+**단일 파일 배포(standalone)는 한 문서 그대로다** — 페이지 이동이 안 되는 `file://` 라 방식
+고르기가 `SignIn` idle 에 그대로 있고, 애초에 GA가 0이라 격리할 것도 없다.
 
 ### 홍보 랜딩은 별개 프로젝트다 (`landing/`)
 

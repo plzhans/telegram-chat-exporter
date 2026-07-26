@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="ko-KR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!--
+      방식 고르기 문서(`/run/`)의 셸. 텔레그램 앱 문서(`index.html`→`/run/session/`)와 **CSP가
+      갈리는** 별개 문서다(이쪽은 GA·구글 open, 저쪽은 텔레그램 전용). 빌드가 이 산출물을 dist
+      루트 `index.html`(=/run/)로 재배치한다(vite.config.ts 의 `appShells`). 색인 대상 아님(noindex).
+    -->
+    <title>Telegram Exporter</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#2563EB" />
+    <meta name="color-scheme" content="light" />
+    <meta name="referrer" content="no-referrer" />
+    <meta name="robots" content="noindex, nofollow" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/method/main.tsx"></script>
+  </body>
+</html>
