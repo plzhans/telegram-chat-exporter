@@ -19,7 +19,7 @@ import {
 } from '@/features/dialogs/api';
 import { loadProfilePhoto } from '@/features/dialogs/lib/profilePhoto';
 import { createAnonymizer } from './anonymize';
-import { HtmlReport } from './htmlReport';
+import { HtmlReport, avatarFile } from './htmlReport';
 import type { ZipSink } from './zipWriter';
 import { ZipWriter } from './zipWriter';
 
@@ -391,6 +391,26 @@ async function sha256(bytes: Uint8Array): Promise<string | null> {
  */
 const FILE_CONCURRENCY = 3;
 
+/**
+ * `data:...;base64,XXX` data URL 을 바이트로 되돈다.
+ *
+ * 프로필 사진(선명본·흐림본)은 data URL 로 손에 들어오는데, 파일로 담으려면 바이트가 필요하다.
+ * 모양이 이상하거나 base64 가 깨졌으면 null 을 준다 — 그러면 그 파일을 안 써서(빈 파일 방지)
+ * 참조가 다음 폴백 단으로 넘어간다.
+ */
+function dataUrlToBytes(dataUrl: string): Uint8Array | null {
+  const comma = dataUrl.indexOf(',');
+  if (comma < 0) return null;
+  try {
+    const binary = atob(dataUrl.slice(comma + 1));
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i += 1) bytes[i] = binary.charCodeAt(i);
+    return bytes;
+  } catch {
+    return null;
+  }
+}
+
 /** 브라우저가 `<img>` 로 바로 그릴 수 있는 형식. */
 const DRAWABLE = /\.(jpe?g|png|gif|webp|bmp|avif)$/i;
 
@@ -634,6 +654,22 @@ export async function exportChat({
   let pageBucket: string | undefined; // 이 쪽의 날짜 버킷. 날짜 분할의 기준.
   let prevGroupedId: string | undefined; // 앨범이 쪽 경계에서 안 쪼개지게 직전 묶음 id 를 본다.
 
+  /*
+    --- 프로필 사진은 파일로 담는다(첨부와 같은 방식) ---
+
+    아바타를 HTML 에 base64 로 박으면 분할 시 **쪽마다 그 데이터가 되풀이돼** 수십 MB 로 분다.
+    대신 사람마다 `avatars/{id}.jpg`(선명본)·`avatars/{id}.b.jpg`(흐림본) 파일로 담고, HTML 은
+    경로만 가리킨다(중복 0, 봉합 중 대기 없음, 전 쪽 적용).
+
+    여기서는 **흐림본 데이터만 모은다.** 흐림본은 메시지에 공짜로 딸려 오므로(요청 없음) 확정이라
+    폴백으로 늘 담긴다. 선명본은 훑기가 끝난 뒤 따로 받아, 성공한 것만 덮어쓰기 파일로 담는다.
+
+    익명화면 `record.senderPhoto`·`identity.photo` 가 undefined 라 여기 아무것도 안 쌓여, 아바타
+    파일이 안 생기고 얼굴이 남지 않는다.
+  */
+  const blurryById = new Map<string, string>();
+  if (identity.photo) blurryById.set(identity.id, identity.photo);
+
   const flush = (last = false) => {
     pushJsonl(jsonlBuffer, last);
     pushText(textBuffer, last);
@@ -840,6 +876,11 @@ export async function exportChat({
       htmlBuffer += report.push(record);
       pageMsgCount += 1;
       prevGroupedId = summary.groupedId;
+      // 흐림본은 공짜로 딸려 온다. 사람마다 한 번만 모아 둔다(폴백·선명본 파일의 바탕). anon 이면
+      // record.senderPhoto 가 undefined 라 안 쌓인다 → 아바타 파일 자체가 안 생긴다.
+      if (record.senderId && record.senderPhoto && !blurryById.has(record.senderId)) {
+        blurryById.set(record.senderId, record.senderPhoto);
+      }
       if (summary.mediaType) {
         attachmentBuffer += `${JSON.stringify({
           messageId: summary.id,
@@ -865,26 +906,11 @@ export async function exportChat({
       }
     }
 
-    /**
-     * 선명한 프로필 사진을 받아 온다.
-     *
-     * 메시지에 딸려 오는 그림은 몇십 px 짜리 미리보기라 아바타 크기로 줄여도 뿌옇다.
-     * 원본은 따로 받아야 하는데 **사람 하나당 요청 하나**다 — 대화가 24만 건이든 참여자가
-     * 열 명이면 요청도 열 번이다. 그래서 훑기가 끝난 지금 한 번에 처리한다.
-     *
-     * `loadProfilePhoto` 는 자체 대기열로 동시 요청을 제한하고, 실패한 사람은 null 로
-     * 굳혀 다시 시도하지 않는다. 사진이 없는 계정은 이름 첫 글자 아바타로 남는다.
-     */
-    await Promise.all(
-      [...report.avatarIds].map(async (id) => {
-        if (signal.aborted) return;
-        const sharp = await loadProfilePhoto(id);
-        if (sharp) report.setAvatar(id, sharp);
-      }),
-    );
-
     /*
       HTML 은 닫는 태그가 있어야 문서가 된다. 마지막 배치를 내보내기 **전에** 채워 넣는다.
+
+      아바타는 여기서 안 받는다. HTML 은 `avatars/{id}.jpg` **경로만** 가리키고, 실제 파일은
+      아래 별도 단계에서 담는다(첨부 사진과 같은 흐름). 그래서 이 시점에 파일이 없어도 된다.
 
       쪽이 하나뿐이면(분할을 안 했거나, 나눌 만큼 크지 않았거나) 네비를 안 준다 — "Page 1"
       막대만 덩그러니 있으면 잡음이다. 마지막 쪽엔 다음이 없으므로 next 도 없다.
@@ -1033,6 +1059,36 @@ export async function exportChat({
        * 둘은 다르다 — 받기로 하지 않은 것, 받으려다 실패한 것이 그 차이에 있다.
        */
       zip.writeFile('files/index.jsonl', saved.map((item) => JSON.stringify(item)).join('\n') + '\n');
+    }
+
+    /*
+      --- 프로필 사진 파일 ---
+
+      사람마다 흐림본(`{id}.b.jpg`)은 **항상**, 선명본(`{id}.jpg`)은 받아지면 담는다. HTML 은
+      둘을 CSS 로 겹쳐(`url(선명), url(흐림)`) 선명 우선·흐림 폴백을 하고, 둘 다 없으면 이니셜
+      아이콘으로 떨어진다 — 3단 방어.
+
+      **빈 파일을 만들지 않는다.** 디코드 실패·다운로드 실패·빈 응답이면 그 파일을 아예 안 써서,
+      참조가 404 로 다음 단으로 깔끔히 넘어가게 둔다. 흐림본은 로컬 디코드라 사실상 실패가 없어
+      폴백의 바닥이 된다.
+    */
+    if (blurryById.size > 0) {
+      const ids = [...blurryById.keys()];
+      for (const id of ids) {
+        const bytes = dataUrlToBytes(blurryById.get(id)!);
+        if (bytes && bytes.length > 0) zip.writeBinary(avatarFile(id, false), bytes);
+      }
+      await zip.drain();
+      // 선명본은 사람당 요청 하나. loadProfilePhoto 가 동시 요청 수를 스스로 3 으로 제한한다.
+      const sharps = await Promise.all(
+        ids.map(async (id) => ({ id, url: await loadProfilePhoto(id).catch(() => null) })),
+      );
+      for (const { id, url } of sharps) {
+        if (signal.aborted) throw new Error('EXPORT_CANCELLED');
+        const bytes = url ? dataUrlToBytes(url) : null;
+        if (bytes && bytes.length > 0) zip.writeBinary(avatarFile(id, true), bytes);
+      }
+      await zip.drain();
     }
 
     const failed = saved.filter((item) => item.error).length;
