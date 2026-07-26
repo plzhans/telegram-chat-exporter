@@ -11,7 +11,7 @@ import { useCountdown, useDuration } from '@/shared/lib/duration';
 import { Field } from '@/shared/ui/Field';
 import { Input } from '@/shared/ui/Input';
 import type { TelegramErrorInfo } from '@/shared/telegram/errors';
-import { dateKeyOf, shiftDateKey, todayKey } from '@/shared/lib/date';
+import { dateKeyOf, shiftDateKey, shiftDateKeyByMonths, todayKey } from '@/shared/lib/date';
 import { useAuth } from '@/shared/auth/useAuth';
 import { getCachedPeer, useChatStatsQuery, type DialogSummary } from '@/features/dialogs/api';
 import { createFileSink, createMemorySink } from '../lib/zipWriter';
@@ -178,9 +178,11 @@ export function ExportPanel({ dialog, defaultFrom, defaultTo }: ExportPanelProps
    * 작년이면 "오늘"은 그 날짜로 내려앉는다.
    */
   const applyPreset = useCallback(
-    (back: number) => {
+    (shift: { days: number } | { months: number }) => {
       const end = lastKey && lastKey < todayKey() ? lastKey : todayKey();
-      const begin = shiftDateKey(end, -back);
+      // 주(7일)는 일수로, 달·년은 달력으로 뒤로 민다 — "30일" 대신 "한 달 전 같은 날짜".
+      const begin =
+        'months' in shift ? shiftDateKeyByMonths(end, -shift.months) : shiftDateKey(end, -shift.days);
       setFrom(firstKey && begin < firstKey ? firstKey : begin);
       setTo(end);
     },
@@ -409,16 +411,17 @@ export function ExportPanel({ dialog, defaultFrom, defaultTo }: ExportPanelProps
                   <span className="text-xs text-slate-500">{t('export.presets')}</span>
                   {(
                     [
-                      ['export.presetToday', 0],
-                      ['export.presetWeek', 6],
-                      ['export.presetMonth', 29],
-                    ] as const
-                  ).map(([label, back]) => (
+                      ['export.presetToday', { days: 0 }],
+                      ['export.presetWeek', { days: 6 }],
+                      ['export.presetMonth', { months: 1 }],
+                      ['export.presetYear', { months: 12 }],
+                    ] as [string, { days: number } | { months: number }][]
+                  ).map(([label, shift]) => (
                     <button
                       key={label}
                       type="button"
                       className="rounded-full border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-600 transition-colors hover:border-primary hover:text-primary"
-                      onClick={() => applyPreset(back)}
+                      onClick={() => applyPreset(shift)}
                     >
                       {t(label)}
                     </button>

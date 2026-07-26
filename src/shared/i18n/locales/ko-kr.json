@@ -335,7 +335,8 @@
     "range": "기간",
     "presetToday": "오늘",
     "presetWeek": "최근 7일",
-    "presetMonth": "최근 30일",
+    "presetMonth": "최근 한 달",
+    "presetYear": "최근 1년",
     "stats": {
       "total": "전체 메시지",
       "messages": "{{count, number}}"

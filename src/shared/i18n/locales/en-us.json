@@ -335,7 +335,8 @@
     "range": "Period",
     "presetToday": "Today",
     "presetWeek": "Last 7 days",
-    "presetMonth": "Last 30 days",
+    "presetMonth": "Last month",
+    "presetYear": "Last year",
     "stats": {
       "total": "Total messages",
       "messages": "{{count, number}}"
