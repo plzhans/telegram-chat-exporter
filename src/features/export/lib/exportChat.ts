@@ -805,6 +805,37 @@ export async function exportChat({
       error?: string;
     }[] = [];
 
+    /**
+     * 한 첨부를 받아 오고, **받은 김에 해시까지 낸다.**
+     *
+     * 해시를 여기서 내는 이유는 겹쳐 돌리기 위해서다 — 예전에는 쓰기 루프에서 `await sha256`
+     * 을 직렬로 기다렸는데, 그동안 다음 다운로드가 놀았다. 이제 형제 다운로드와 나란히 돈다.
+     */
+    type Downloaded =
+      | { task: PhotoTask; bytes: Uint8Array; sha256: string | null }
+      | { task: PhotoTask; error: string };
+
+    const downloadOne = async (task: PhotoTask): Promise<Downloaded> => {
+      try {
+        const buffer = task.thumb
+          ? await client.downloadMedia(task.media, { thumb: pickThumbSize(fileOfMedia(task.media)) })
+          : await client.downloadMedia(task.media);
+        if (!buffer || typeof buffer === 'string' || buffer.length === 0) {
+          return { task, error: 'EMPTY' };
+        }
+        const bytes = new Uint8Array(buffer);
+        /*
+          미리보기 자리에 그림이 아닌 것이 오면 **담지 않는다.** 담아 두면 문서가 그걸 그림으로
+          가리키고, 열어 본 사람은 파일이 깨졌다고 여긴다. 없는 편이 낫다 - 원본은 어차피 따로
+          담겨 있고, 목록에 왜 빠졌는지도 남는다.
+        */
+        if (task.thumb && !looksLikeImage(bytes)) return { task, error: 'NOT_AN_IMAGE' };
+        return { task, bytes, sha256: await sha256(bytes) };
+      } catch (err) {
+        return { task, error: describeError(err).code };
+      }
+    };
+
     if (photoTasks.length > 0) {
       emitProgress({
         count,
@@ -816,70 +847,78 @@ export async function exportChat({
         totalFiles: photoTasks.length,
       });
 
-      for (let index = 0; index < photoTasks.length; index += FILE_CONCURRENCY) {
+      /**
+       * **연속 롤링 윈도우.** 예전에는 FILE_CONCURRENCY 개씩 끊어 `Promise.all` 로 받았는데,
+       * 그러면 한 배치가 그 안에서 제일 느린 파일이 끝나야 다음 배치를 시작했다 — 큰 동영상
+       * 하나에 작은 사진 둘이 노는 식이다. 대신 **늘 FILE_CONCURRENCY 개를 받는 중**으로 두고,
+       * 하나가 끝나면 곧바로 다음 하나를 띄운다.
+       *
+       * 그래도 **넣는 것은 순서대로**다(`nextToWrite`). 받아 둔 버퍼가 쓰기 위치보다
+       * FILE_CONCURRENCY 이상 앞서지 못하게 막으므로, 메모리에 떠 있는 파일 수는 예전과 똑같이
+       * 이 개수를 넘지 않는다.
+       */
+      const results = new Array<Downloaded | undefined>(photoTasks.length);
+      const inFlight = new Map<number, Promise<void>>();
+      let nextToStart = 0;
+      let nextToWrite = 0;
+      let sinceReport = 0;
+
+      const fill = () => {
+        while (nextToStart < photoTasks.length && nextToStart - nextToWrite < FILE_CONCURRENCY) {
+          const index = nextToStart++;
+          const promise = downloadOne(photoTasks[index]).then((result) => {
+            results[index] = result;
+            inFlight.delete(index);
+          });
+          inFlight.set(index, promise);
+        }
+      };
+
+      while (nextToWrite < photoTasks.length) {
         if (signal.aborted) throw new Error('EXPORT_CANCELLED');
-        const batch = photoTasks.slice(index, index + FILE_CONCURRENCY);
+        fill();
+        // 다음 차례가 아직 안 왔으면 받는 중인 것 하나가 끝날 때까지 기다린다.
+        while (results[nextToWrite] === undefined) {
+          await Promise.race(inFlight.values());
+        }
+        const item = results[nextToWrite]!;
+        results[nextToWrite] = undefined; // 버퍼 참조를 놓아 준다.
+        nextToWrite += 1;
 
-        // 받는 것은 동시에, 넣는 것은 순서대로. 그래야 메모리에 뜨는 파일 수가 고정된다.
-        const downloaded = await Promise.all(
-          batch.map(async (task) => {
-            try {
-              const buffer = task.thumb
-                ? await client.downloadMedia(task.media, {
-                    thumb: pickThumbSize(fileOfMedia(task.media)),
-                  })
-                : await client.downloadMedia(task.media);
-              if (!buffer || typeof buffer === 'string' || buffer.length === 0) {
-                return { task, error: 'EMPTY' };
-              }
-              const bytes = new Uint8Array(buffer);
-              /*
-                미리보기 자리에 그림이 아닌 것이 오면 **담지 않는다.** 담아 두면 문서가 그걸
-                그림으로 가리키고, 열어 본 사람은 파일이 깨졌다고 여긴다. 없는 편이 낫다 -
-                원본은 어차피 따로 담겨 있고, 목록에 왜 빠졌는지도 남는다.
-              */
-              if (task.thumb && !looksLikeImage(bytes)) {
-                return { task, error: 'NOT_AN_IMAGE' };
-              }
-              return { task, bytes };
-            } catch (err) {
-              return { task, error: describeError(err).code };
-            }
-          }),
-        );
-
-        for (const item of downloaded) {
-          if (!item.bytes) {
-            saved.push({
-              messageId: item.task.messageId,
-              path: item.task.path,
-              bytes: 0,
-              sha256: null,
-              error: item.error,
-            });
-            continue;
-          }
+        if ('error' in item) {
+          saved.push({
+            messageId: item.task.messageId,
+            path: item.task.path,
+            bytes: 0,
+            sha256: null,
+            error: item.error,
+          });
+        } else {
           zip.writeBinary(item.task.path, item.bytes);
           saved.push({
             messageId: item.task.messageId,
             path: item.task.path,
             bytes: item.bytes.length,
-            sha256: await sha256(item.bytes),
+            sha256: item.sha256,
           });
         }
 
-        await zip.drain();
-        savedFiles = saved.length;
-        emitProgress({
-          count,
-          bytes: zip.bytesWritten,
-          lastDate,
-          totalCount,
-          phase: 'files',
-          files: savedFiles,
-          totalFiles: photoTasks.length,
-        });
-        await yieldToUi();
+        // 한 파일마다 비우고 그리면 잦으니, 예전 배치와 같은 간격으로 흘려보낸다.
+        if (++sinceReport >= FILE_CONCURRENCY || nextToWrite === photoTasks.length) {
+          await zip.drain();
+          savedFiles = saved.length;
+          emitProgress({
+            count,
+            bytes: zip.bytesWritten,
+            lastDate,
+            totalCount,
+            phase: 'files',
+            files: savedFiles,
+            totalFiles: photoTasks.length,
+          });
+          await yieldToUi();
+          sinceReport = 0;
+        }
       }
 
       /**
