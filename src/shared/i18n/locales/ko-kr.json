@@ -433,5 +433,25 @@
     "notFoundBody": "주소가 바뀌었거나 잘못 입력되었을 수 있습니다.",
     "home": "처음 화면으로",
     "details": "오류 내용"
+  },
+  "batch": {
+    "title": "일괄 백업",
+    "description": "여러 대화방을 한 번에 백업합니다. 방마다 개별 파일로 저장돼요. 첨부까지 담고 방이 많으면 오래 걸리고 용량이 큽니다 — 꼭 필요할 때만 쓰세요.",
+    "runError": "일괄 백업 중 문제가 생겼습니다. 잠시 후 다시 시도하세요.",
+    "optionsTitle": "조건 (고른 방 전체에 적용)",
+    "selectTitle": "방 선택",
+    "selectVisible": "보이는 것 전체 선택",
+    "clearVisible": "선택 해제",
+    "selectedCount": "{{count}}개 선택됨",
+    "start": "선택한 {{count}}개 방 내보내기",
+    "confirmTitle": "일괄 백업을 시작할까요?",
+    "confirmBody": "{{count}}개 방을 방마다 개별 파일로 내보냅니다. 첨부를 포함하면 오래 걸릴 수 있고, 그동안 이 탭을 열어 두어야 합니다.",
+    "confirmOk": "시작",
+    "progress": "{{index}}/{{total}}번째 방 내보내는 중…",
+    "saveHint_picked": "고른 폴더에 방마다 파일이 저장됩니다.",
+    "saveHint_download": "방마다 파일이 하나씩 다운로드됩니다. 브라우저가 여러 다운로드를 물으면 허용하세요.",
+    "doneTitle": "일괄 백업 완료",
+    "doneSummary": "{{ok}}개 성공, {{failed}}개 실패",
+    "savedTo": "저장 위치"
   }
 }

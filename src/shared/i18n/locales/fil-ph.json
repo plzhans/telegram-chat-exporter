@@ -434,5 +434,25 @@
     "notFoundBody": "Maaaring nagbago ang address o mali ang pagkaka-type.",
     "home": "Bumalik sa simula",
     "details": "Detalye ng error"
+  },
+  "batch": {
+    "title": "Batch backup",
+    "description": "Mag-backup ng ilang chat nang sabay-sabay. Ang bawat chat ay sine-save bilang sariling file. Kapag may attachment at maraming chat, matagal ito at lumalaki — gamitin lang kapag talagang kailangan.",
+    "runError": "May naganap na problema habang nagba-batch backup. Subukan ulit mamaya.",
+    "optionsTitle": "Mga kundisyon (nalalapat sa lahat ng napiling chat)",
+    "selectTitle": "Pumili ng chat",
+    "selectVisible": "Piliin lahat ng nakikita",
+    "clearVisible": "Alisin ang pinili",
+    "selectedCount": "{{count}} ang napili",
+    "start": "I-export ang {{count}} napili",
+    "confirmTitle": "Simulan ang batch backup?",
+    "confirmBody": "Ie-export ang {{count}} chat, bawat isa bilang sariling file. Kapag may attachment, maaaring matagal, at kailangang nakabukas ang tab na ito.",
+    "confirmOk": "Simulan",
+    "progress": "Ine-export ang chat {{index}} ng {{total}}…",
+    "saveHint_picked": "Ang file ng bawat chat ay sine-save sa folder na pinili mo.",
+    "saveHint_download": "Bawat chat ay dina-download bilang hiwalay na file. Payagan ang maraming download kung magtatanong ang browser.",
+    "doneTitle": "Tapos na ang batch backup",
+    "doneSummary": "{{ok}} tagumpay, {{failed}} bigo",
+    "savedTo": "Nakasave sa"
   }
 }

@@ -433,5 +433,25 @@
     "notFoundBody": "Adres değişmiş veya yanlış yazılmış olabilir.",
     "home": "Başlangıca dön",
     "details": "Hata ayrıntıları"
+  },
+  "batch": {
+    "title": "Toplu yedekleme",
+    "description": "Birden çok sohbeti tek seferde yedekleyin. Her sohbet kendi dosyası olarak kaydedilir. Ekler ve çok sayıda sohbetle uzun sürer ve büyür — yalnızca gerçekten gerektiğinde kullanın.",
+    "runError": "Toplu yedekleme sırasında bir sorun oluştu. Birazdan tekrar deneyin.",
+    "optionsTitle": "Koşullar (seçili tüm sohbetlere uygulanır)",
+    "selectTitle": "Sohbet seç",
+    "selectVisible": "Görünenlerin tümünü seç",
+    "clearVisible": "Seçimi temizle",
+    "selectedCount": "{{count}} seçili",
+    "start": "Seçili {{count}} sohbeti dışa aktar",
+    "confirmTitle": "Toplu yedekleme başlatılsın mı?",
+    "confirmBody": "{{count}} sohbet, her biri kendi dosyası olarak dışa aktarılacak. Eklerle uzun sürebilir ve bu sekmeyi açık tutmalısın.",
+    "confirmOk": "Başlat",
+    "progress": "{{total}} sohbetten {{index}}. aktarılıyor…",
+    "saveHint_picked": "Her sohbetin dosyası seçtiğin klasöre kaydedilir.",
+    "saveHint_download": "Her sohbet ayrı dosya olarak indirilir. Tarayıcı sorarsa birden çok indirmeye izin ver.",
+    "doneTitle": "Toplu yedekleme bitti",
+    "doneSummary": "{{ok}} başarılı, {{failed}} başarısız",
+    "savedTo": "Kayıt yeri"
   }
 }

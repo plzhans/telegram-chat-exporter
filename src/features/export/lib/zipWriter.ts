@@ -76,6 +76,56 @@ export async function createFileSink(filename: string): Promise<FileSinkResult> 
   return { status: 'ok', sink };
 }
 
+/**
+ * 일괄 백업에서 **방마다 개별 파일**을 담을 폴더를 고른다.
+ *
+ * 단일 내보내기의 `showSaveFilePicker`(파일 하나)와 짝을 이루는 `showDirectoryPicker`(폴더)다.
+ * 폴더를 한 번 고르면 그 아래에 방마다 zip 을 각각 디스크로 흘려보낸다 — 한 파일에 합치지
+ * 않으니 큰 첨부에도 용량 부담이 없고, 각 방이 독립 파일이라 하나만 열어 보기도 쉽다.
+ *
+ * 지원하지 않는 브라우저(파이어폭스·사파리)에서는 `unsupported` 다 — 그쪽은 방마다 순차
+ * 다운로드로 떨어진다(호출부가 판단).
+ */
+export type DirPickResult =
+  | { status: 'ok'; dir: FileSystemDirectoryHandle }
+  | { status: 'unsupported' }
+  | { status: 'cancelled' };
+
+export async function pickDirectory(): Promise<DirPickResult> {
+  const picker = window.showDirectoryPicker;
+  if (!picker) return { status: 'unsupported' };
+  try {
+    // 쓰기 권한까지 한 번에 받아 둔다. 방마다 다시 묻지 않게.
+    const dir = await picker({ mode: 'readwrite' });
+    return { status: 'ok', dir };
+  } catch {
+    return { status: 'cancelled' };
+  }
+}
+
+/**
+ * 이미 고른 폴더 안에 파일 하나를 여는 sink.
+ *
+ * **사용자 제스처가 더 필요하지 않다.** 폴더 핸들은 `pickDirectory` 에서 한 번 받아 뒀고,
+ * 그 뒤 파일 생성은 제스처 없이 된다 — 그래서 방을 여러 개 이어 담을 수 있다. 같은 이름이
+ * 이미 있으면 덮어쓴다(재실행 시 자연스러운 동작).
+ */
+export async function createDirFileSink(
+  dir: FileSystemDirectoryHandle,
+  filename: string,
+): Promise<ZipSink> {
+  const handle = await dir.getFileHandle(filename, { create: true });
+  const stream = await handle.createWritable();
+  return {
+    name: handle.name,
+    kind: 'picked',
+    // 캐스팅 사유는 createFileSink 와 같다(fflate 의 Uint8Array).
+    write: (chunk) => stream.write(chunk as unknown as FileSystemWriteChunkType),
+    finish: () => stream.close(),
+    abort: () => stream.abort(),
+  };
+}
+
 /** Blob 으로 모았다가 마지막에 내려받는다. File System Access API 가 없을 때의 대안. */
 /**
  * 조각을 Blob 으로 접어 넘기는 단위.

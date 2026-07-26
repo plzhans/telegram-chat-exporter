@@ -433,5 +433,25 @@
     "notFoundBody": "網址可能已變更或輸入有誤。",
     "home": "回到起始畫面",
     "details": "錯誤內容"
+  },
+  "batch": {
+    "title": "批次備份",
+    "description": "一次備份多個對話。每個對話會另存為獨立檔案。連附件一起備份且對話多時會較慢、體積也大 — 只在真正需要時使用。",
+    "runError": "批次備份時發生問題。請稍後再試。",
+    "optionsTitle": "條件（套用到所選的所有對話）",
+    "selectTitle": "選擇對話",
+    "selectVisible": "全選目前顯示",
+    "clearVisible": "清除選取",
+    "selectedCount": "已選 {{count}} 個",
+    "start": "匯出所選的 {{count}} 個",
+    "confirmTitle": "要開始批次備份嗎？",
+    "confirmBody": "將把 {{count}} 個對話各自匯出成獨立檔案。含附件時可能較久，其間請保持此分頁開啟。",
+    "confirmOk": "開始",
+    "progress": "正在匯出第 {{index}}/{{total}} 個對話…",
+    "saveHint_picked": "每個對話的檔案會存到你選的資料夾。",
+    "saveHint_download": "每個對話會分別下載成檔案。若瀏覽器詢問是否允許多個下載，請允許。",
+    "doneTitle": "批次備份完成",
+    "doneSummary": "{{ok}} 個成功，{{failed}} 個失敗",
+    "savedTo": "儲存位置"
   }
 }
