@@ -141,6 +141,29 @@ export function ExportPanel({ dialog, defaultFrom, defaultTo }: ExportPanelProps
   useEffect(() => () => abortRef.current?.abort(), []);
 
   /**
+   * 내보내는 **동안에만** 새로고침·탭 닫기·창 닫기를 한 번 붙잡는다.
+   *
+   * 세션을 저장하지 않아, 실수로 새로고침하면 여태 받은 것이 통째로 날아가고 처음부터다.
+   * `beforeunload` 는 브라우저가 자기 확인창("이 사이트에서 나가시겠습니까?")을 띄우게 하는
+   * 유일한 표준 통로다 — **문구는 우리가 못 바꾸고**(브라우저가 정한 일반 문장이다), 막지도
+   * 못한다(사용자가 그래도 나가겠다면 나간다). 실수를 한 번 되묻는 것까지가 할 수 있는 전부다.
+   *
+   * 끝났거나(idle·done) 시작 전에는 걸지 않는다 — 잃을 것이 없는데 나갈 때마다 물으면
+   * 성가시기만 하다. SPA 안에서 다른 화면으로 가는 건 이 이벤트가 아니라 위 언마운트가
+   * 맡는다(진행 중이면 그때 중단된다).
+   */
+  useEffect(() => {
+    if (phase !== 'running') return;
+    const confirmLeave = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      // 일부 오래된 브라우저는 returnValue 가 채워져 있어야 확인창을 띄운다.
+      event.returnValue = '';
+    };
+    window.addEventListener('beforeunload', confirmLeave);
+    return () => window.removeEventListener('beforeunload', confirmLeave);
+  }, [phase]);
+
+  /**
    * 되돌릴 수 없는 동작 앞에 한 번 더 묻는 자리.
    *
    * 세 가지가 여기 걸린다 - 전체 기간, 실제 내려받기 시작, 중단. 셋 다 누른 뒤에 "아차"
