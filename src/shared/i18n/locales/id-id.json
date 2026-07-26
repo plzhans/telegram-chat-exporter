@@ -433,5 +433,25 @@
     "notFoundBody": "Alamat mungkin berubah atau salah ketik.",
     "home": "Kembali ke awal",
     "details": "Detail kesalahan"
+  },
+  "batch": {
+    "title": "Cadangan massal",
+    "description": "Cadangkan beberapa obrolan sekaligus. Tiap obrolan disimpan sebagai file tersendiri. Dengan lampiran dan banyak obrolan, prosesnya lama dan besar — pakai hanya saat benar-benar perlu.",
+    "runError": "Terjadi masalah saat cadangan massal. Coba lagi sebentar.",
+    "optionsTitle": "Ketentuan (berlaku untuk semua obrolan terpilih)",
+    "selectTitle": "Pilih obrolan",
+    "selectVisible": "Pilih semua yang tampil",
+    "clearVisible": "Hapus pilihan",
+    "selectedCount": "{{count}} dipilih",
+    "start": "Ekspor {{count}} terpilih",
+    "confirmTitle": "Mulai cadangan massal?",
+    "confirmBody": "{{count}} obrolan akan diekspor, masing-masing sebagai file tersendiri. Dengan lampiran bisa lama, dan kamu harus membiarkan tab ini terbuka.",
+    "confirmOk": "Mulai",
+    "progress": "Mengekspor obrolan {{index}} dari {{total}}…",
+    "saveHint_picked": "File tiap obrolan disimpan ke folder yang kamu pilih.",
+    "saveHint_download": "Tiap obrolan diunduh sebagai file terpisah. Izinkan beberapa unduhan bila browser bertanya.",
+    "doneTitle": "Cadangan massal selesai",
+    "doneSummary": "{{ok}} berhasil, {{failed}} gagal",
+    "savedTo": "Disimpan di"
   }
 }

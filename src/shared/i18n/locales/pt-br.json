@@ -433,5 +433,25 @@
     "notFoundBody": "O endereço pode ter mudado ou sido digitado errado.",
     "home": "Voltar ao início",
     "details": "Detalhes do erro"
+  },
+  "batch": {
+    "title": "Backup em lote",
+    "description": "Faça backup de várias conversas de uma vez. Cada conversa é salva como um arquivo próprio. Com anexos e muitas conversas demora e fica grande — use só quando realmente precisar.",
+    "runError": "Algo deu errado durante o backup em lote. Tente de novo em instantes.",
+    "optionsTitle": "Opções (aplicadas a cada conversa selecionada)",
+    "selectTitle": "Selecionar conversas",
+    "selectVisible": "Selecionar tudo visível",
+    "clearVisible": "Limpar seleção",
+    "selectedCount": "{{count}} selecionadas",
+    "start": "Exportar {{count}} selecionadas",
+    "confirmTitle": "Iniciar o backup em lote?",
+    "confirmBody": "{{count}} conversas serão exportadas, cada uma como um arquivo próprio. Com anexos pode demorar, e você precisa manter esta aba aberta.",
+    "confirmOk": "Iniciar",
+    "progress": "Exportando conversa {{index}} de {{total}}…",
+    "saveHint_picked": "O arquivo de cada conversa é salvo na pasta que você escolheu.",
+    "saveHint_download": "Cada conversa baixa como um arquivo separado. Permita vários downloads se o navegador perguntar.",
+    "doneTitle": "Backup em lote concluído",
+    "doneSummary": "{{ok}} com sucesso, {{failed}} com falha",
+    "savedTo": "Salvo em"
   }
 }

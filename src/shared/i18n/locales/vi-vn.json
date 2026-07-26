@@ -433,5 +433,25 @@
     "notFoundBody": "Địa chỉ có thể đã thay đổi hoặc bị nhập sai.",
     "home": "Về màn hình đầu",
     "details": "Chi tiết lỗi"
+  },
+  "batch": {
+    "title": "Sao lưu hàng loạt",
+    "description": "Sao lưu nhiều cuộc trò chuyện cùng lúc. Mỗi cuộc trò chuyện được lưu thành tệp riêng. Kèm tệp đính kèm và nhiều cuộc trò chuyện thì lâu và nặng — chỉ dùng khi thực sự cần.",
+    "runError": "Đã xảy ra lỗi khi sao lưu hàng loạt. Hãy thử lại sau giây lát.",
+    "optionsTitle": "Điều kiện (áp dụng cho mọi cuộc trò chuyện đã chọn)",
+    "selectTitle": "Chọn cuộc trò chuyện",
+    "selectVisible": "Chọn tất cả đang hiện",
+    "clearVisible": "Bỏ chọn",
+    "selectedCount": "Đã chọn {{count}}",
+    "start": "Xuất {{count}} đã chọn",
+    "confirmTitle": "Bắt đầu sao lưu hàng loạt?",
+    "confirmBody": "{{count}} cuộc trò chuyện sẽ được xuất, mỗi cái thành một tệp riêng. Kèm tệp đính kèm có thể lâu, và bạn phải giữ tab này mở.",
+    "confirmOk": "Bắt đầu",
+    "progress": "Đang xuất cuộc trò chuyện {{index}}/{{total}}…",
+    "saveHint_picked": "Tệp của mỗi cuộc trò chuyện được lưu vào thư mục bạn đã chọn.",
+    "saveHint_download": "Mỗi cuộc trò chuyện tải xuống thành tệp riêng. Cho phép tải nhiều tệp nếu trình duyệt hỏi.",
+    "doneTitle": "Đã xong sao lưu hàng loạt",
+    "doneSummary": "{{ok}} thành công, {{failed}} thất bại",
+    "savedTo": "Lưu tại"
   }
 }

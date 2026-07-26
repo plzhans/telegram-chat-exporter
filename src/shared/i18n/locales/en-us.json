@@ -433,5 +433,25 @@
     "notFoundBody": "The address may have changed or been mistyped.",
     "home": "Back to start",
     "details": "Error details"
+  },
+  "batch": {
+    "title": "Batch backup",
+    "description": "Back up several chats at once. Each chat is saved as its own file. With attachments and many chats it takes a while and gets large — use it only when you really need it.",
+    "runError": "Something went wrong during the batch backup. Try again in a moment.",
+    "optionsTitle": "Options (applied to every selected chat)",
+    "selectTitle": "Select chats",
+    "selectVisible": "Select all shown",
+    "clearVisible": "Clear selection",
+    "selectedCount": "{{count}} selected",
+    "start": "Export {{count}} selected",
+    "confirmTitle": "Start the batch backup?",
+    "confirmBody": "{{count}} chat(s) will be exported, each as its own file. With attachments it can take a while, and you must keep this tab open.",
+    "confirmOk": "Start",
+    "progress": "Exporting chat {{index}} of {{total}}…",
+    "saveHint_picked": "Each chat's file is saved to the folder you chose.",
+    "saveHint_download": "Each chat downloads as a separate file. Allow multiple downloads if the browser asks.",
+    "doneTitle": "Batch backup done",
+    "doneSummary": "{{ok}} succeeded, {{failed}} failed",
+    "savedTo": "Saved to"
   }
 }

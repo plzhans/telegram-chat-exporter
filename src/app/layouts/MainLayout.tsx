@@ -1,7 +1,7 @@
 import { Suspense, useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, Github, LogOut } from 'lucide-react';
+import { ArrowLeft, Github, Layers, LogOut } from 'lucide-react';
 import { Button } from '@/shared/ui/Button';
 import { Modal } from '@/shared/ui/Modal';
 import { DialogListSkeleton, MessageListSkeleton, PageSkeleton } from '@/shared/ui/Skeleton';
@@ -128,6 +128,20 @@ export function MainLayout() {
                   </span>
                 )}
               </p>
+              {/*
+                일괄 백업 입구. **목록 화면에서만, 작게** 둔다 — 헤비한 기능이라 부각하지 않고
+                필요한 사람만 찾아 들어가게 한다(사용자 요청).
+              */}
+              {pathname.endsWith('/dialogs') && (
+                <Link
+                  to="/backup"
+                  aria-label={t('batch.title')}
+                  title={t('batch.title')}
+                  className="shrink-0 rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-200 hover:text-slate-700"
+                >
+                  <Layers className="h-4 w-4" />
+                </Link>
+              )}
               <Button
                 variant="ghost"
                 size="sm"

@@ -433,5 +433,25 @@
     "notFoundBody": "La dirección pudo cambiar o escribirse mal.",
     "home": "Volver al inicio",
     "details": "Detalles del error"
+  },
+  "batch": {
+    "title": "Copia por lotes",
+    "description": "Respalda varios chats a la vez. Cada chat se guarda como su propio archivo. Con adjuntos y muchos chats tarda y ocupa mucho — úsalo solo cuando de verdad lo necesites.",
+    "runError": "Algo salió mal durante la copia por lotes. Inténtalo de nuevo en un momento.",
+    "optionsTitle": "Opciones (se aplican a cada chat seleccionado)",
+    "selectTitle": "Seleccionar chats",
+    "selectVisible": "Seleccionar todo lo visible",
+    "clearVisible": "Quitar selección",
+    "selectedCount": "{{count}} seleccionados",
+    "start": "Exportar {{count}} seleccionados",
+    "confirmTitle": "¿Iniciar la copia por lotes?",
+    "confirmBody": "Se exportarán {{count}} chats, cada uno como su propio archivo. Con adjuntos puede tardar, y debes mantener esta pestaña abierta.",
+    "confirmOk": "Iniciar",
+    "progress": "Exportando chat {{index}} de {{total}}…",
+    "saveHint_picked": "El archivo de cada chat se guarda en la carpeta que elegiste.",
+    "saveHint_download": "Cada chat se descarga como un archivo aparte. Permite varias descargas si el navegador lo pregunta.",
+    "doneTitle": "Copia por lotes lista",
+    "doneSummary": "{{ok}} con éxito, {{failed}} con error",
+    "savedTo": "Guardado en"
   }
 }

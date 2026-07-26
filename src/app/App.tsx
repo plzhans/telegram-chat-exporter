@@ -24,6 +24,7 @@ const SignIn = lazy(() => import('@/features/auth/pages/SignIn'));
 const Dialogs = lazy(() => import('@/features/dialogs/pages/Dialogs'));
 const DialogDetail = lazy(() => import('@/features/dialogs/pages/DialogDetail'));
 const ExportPage = lazy(() => import('@/features/export/pages/ExportPage'));
+const BatchExportPage = lazy(() => import('@/features/export/pages/BatchExportPage'));
 
 /** 세션 복원을 기다리는 동안. Suspense 폴백과 같은 것을 그려야 화면이 안 갈아치워진다. */
 function BootSkeleton() {
@@ -62,6 +63,8 @@ const pages: RouteObject[] = [
       { path: 'dialogs', element: <Dialogs /> },
       { path: 'dialogs/:id', element: <DialogDetail /> },
       { path: 'dialogs/:id/export', element: <ExportPage /> },
+      // 여러 방을 한 번에(방별 개별 zip). 헤비해서 목록 헤더의 작은 버튼으로만 들어온다.
+      { path: 'backup', element: <BatchExportPage /> },
     ],
   },
   { path: '*', element: <Navigate to="/" replace /> },
