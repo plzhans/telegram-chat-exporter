@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.0](https://github.com/plzhans/telegram-chat-exporter/compare/release/v1.5.0...release/v1.6.0) (2026-07-26)
+
+
+### 기능
+
+* **export:** 대량 내보내기 성능·파일 분할·프로필 사진 파일화 ([#20](https://github.com/plzhans/telegram-chat-exporter/issues/20)) ([638d636](https://github.com/plzhans/telegram-chat-exporter/commit/638d636c42222a52fad4abca534409e5ce10e5ab))
+
 ## [1.5.0](https://github.com/plzhans/telegram-chat-exporter/compare/release/v1.4.0...release/v1.5.0) (2026-07-26)
 
 
