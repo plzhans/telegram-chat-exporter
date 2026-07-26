@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.1](https://github.com/plzhans/telegram-chat-exporter/compare/release/v1.6.0...release/v1.6.1) (2026-07-26)
+
+
+### 버그 수정
+
+* **i18n:** 분할 방식·최근 1년 문자열을 13개 언어에 채운다 ([#22](https://github.com/plzhans/telegram-chat-exporter/issues/22)) ([d44ec5f](https://github.com/plzhans/telegram-chat-exporter/commit/d44ec5faa0e0678ce11be957d5d57b321ce10898))
+
 ## [1.6.0](https://github.com/plzhans/telegram-chat-exporter/compare/release/v1.5.0...release/v1.6.0) (2026-07-26)
 
 
