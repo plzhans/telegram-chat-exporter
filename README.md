@@ -49,6 +49,17 @@ else:
 | <img src="landing/public/en/shot-15.png" width="300" alt="index.html opened — the conversation as it was" /> | <img src="landing/public/en/shot-16.png" width="300" alt="The same export, anonymized: names become A, B, C" /> |
 | The export, as it was | The same export, anonymized |
 
+## Back up many chats at once
+
+Instead of one chat at a time, pick several and export them together — each chat is saved as its
+own file. Handy for a full backup, though with attachments and many chats it takes a while and
+gets large.
+
+|  |  |
+| :---: | :---: |
+| <img src="landing/public/en/shot-17.png" width="230" alt="Batch backup options, applied to every selected chat" /> | <img src="landing/public/en/shot-18.png" width="230" alt="Picking which chats to back up" /> |
+| The options, applied to every chat | Pick which chats to back up |
+
 ## Two ways to use it
 
 **1. Open the site** — [telegram-exporter.plzhans.com](https://telegram-exporter.plzhans.com/)
