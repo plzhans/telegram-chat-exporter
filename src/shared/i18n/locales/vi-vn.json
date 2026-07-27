@@ -104,6 +104,9 @@
       "why": "Dù vậy, công cụ này đăng nhập vào Telegram với danh nghĩa của bạn để lấy tin nhắn. Không có số điện thoại và mã đăng nhập thì nó chẳng làm được gì. Những giá trị đó chỉ dùng cho yêu cầu gửi tới Telegram và không bao giờ được lưu ở đâu.",
       "storage": "Sau khi đăng nhập, thứ duy nhất còn lại là một giá trị giữ kết nối, và nó cũng chỉ sống bên trong thẻ bạn đang xem — đóng thẻ là mất.",
       "selfHost": "Nếu vẫn chưa yên tâm, đừng tin lời ai cả. Hãy tự đọc mã nguồn, hoặc tải về và chạy trên máy của mình. Khi đó bạn vẫn có đúng màn hình này, nhưng chạy bằng mã do chính bạn kiểm chứng."
+    },
+    "lock": {
+      "body": "Một thiết lập meta HTML chặn mọi kết nối trừ những địa chỉ bên dưới, nên trang này không thể gửi bất cứ thứ gì ra ngoài Telegram."
     }
   },
   "credentials": {
@@ -166,6 +169,13 @@
     "retryIn": "Thử lại sau {{duration}}",
     "keepSignedIn": "Giữ đăng nhập trong thẻ này",
     "keepSignedInHint": "Tải lại trang sẽ không phải đăng nhập lại. Đóng thẻ hoặc để yên {{minutes}} phút sẽ xóa nó. Hãy tắt khi dùng máy tính chung.",
+    "method": {
+      "title": "Chọn cách đăng nhập",
+      "phone": "Số điện thoại",
+      "phoneHint": "Nhận mã đăng nhập trên điện thoại và nhập vào",
+      "qr": "Mã QR",
+      "qrHint": "Quét mã QR bằng ứng dụng Telegram"
+    },
     "phone": {
       "title": "Số điện thoại",
       "willSend": "Mã sẽ được gửi tới:",

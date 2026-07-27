@@ -104,6 +104,9 @@
       "why": "Yine de bu araç, mesajlarınızı getirmek için Telegram'a sizin adınıza girer. Telefon numaranız ve giriş kodunuz olmadan hiçbir şey yapamaz. Bu değerler yalnızca Telegram'a gönderilen istekte kullanılır ve hiçbir yerde saklanmaz.",
       "storage": "Giriş yaptıktan sonra geriye yalnızca bağlantıyı ayakta tutan tek bir değer kalır; o da yalnızca baktığınız sekmenin içinde yaşar — sekmeyi kapatınca yok olur.",
       "selfHost": "Yine de ikna olmadıysanız kimsenin sözüne güvenmeyin. Kodu kendiniz okuyun ya da indirip kendi makinenizde çalıştırın. O zaman tam olarak bu ekranı, kendi denetlediğiniz kodla kullanırsınız."
+    },
+    "lock": {
+      "body": "Bir HTML meta ayarı, aşağıdakiler dışındaki tüm bağlantıları engeller; bu yüzden bu sayfa Telegram dışına hiçbir şey gönderemez."
     }
   },
   "credentials": {
@@ -166,6 +169,13 @@
     "retryIn": "{{duration}} sonra tekrar deneyin",
     "keepSignedIn": "Bu sekmede oturumu açık tut",
     "keepSignedInHint": "Sayfayı yenilemek yeniden giriş istemez. Sekmeyi kapatmak ya da {{minutes}} dakika kullanmamak bunu siler. Ortak bilgisayarda kapalı tutun.",
+    "method": {
+      "title": "Nasıl giriş yapacağınızı seçin",
+      "phone": "Telefon numarası",
+      "phoneHint": "Telefonunuza gelen giriş kodunu girin",
+      "qr": "QR kodu",
+      "qrHint": "Telegram uygulamasıyla bir QR kodu tarayın"
+    },
     "phone": {
       "title": "Telefon numarası",
       "willSend": "Kod şu numaraya gönderilecek:",

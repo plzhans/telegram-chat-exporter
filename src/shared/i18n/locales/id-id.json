@@ -104,6 +104,9 @@
       "why": "Meski begitu, alat ini masuk ke Telegram sebagai Anda untuk mengambil pesan Anda. Tanpa nomor telepon dan kode masuk, ia tidak bisa berbuat apa-apa. Nilai-nilai itu hanya dipakai untuk permintaan ke Telegram dan tidak pernah disimpan di mana pun.",
       "storage": "Setelah Anda masuk, satu-satunya yang tersimpan adalah satu nilai yang menjaga koneksi tetap hidup, dan itu pun hanya hidup di dalam tab yang sedang Anda lihat — tutup tabnya dan nilai itu lenyap.",
       "selfHost": "Kalau Anda masih belum yakin, jangan percaya kata-kata siapa pun. Bacalah kodenya, atau unduh dan jalankan di komputer Anda sendiri. Anda akan mendapat layar yang persis sama, berjalan di atas kode yang Anda periksa sendiri."
+    },
+    "lock": {
+      "body": "Sebuah pengaturan meta HTML memblokir semua koneksi kecuali yang di bawah, sehingga halaman ini tidak dapat mengirim apa pun ke luar Telegram."
     }
   },
   "credentials": {
@@ -166,6 +169,13 @@
     "retryIn": "Coba lagi dalam {{duration}}",
     "keepSignedIn": "Tetap masuk di tab ini",
     "keepSignedInHint": "Memuat ulang tidak akan meminta Anda masuk lagi. Menutup tab atau membiarkannya menganggur {{minutes}} menit akan menghapusnya. Matikan bila memakai komputer bersama.",
+    "method": {
+      "title": "Pilih cara masuk",
+      "phone": "Nomor telepon",
+      "phoneHint": "Dapatkan kode masuk di ponsel Anda lalu masukkan",
+      "qr": "Kode QR",
+      "qrHint": "Pindai kode QR dengan aplikasi Telegram"
+    },
     "phone": {
       "title": "Nomor telepon",
       "willSend": "Kode akan dikirim ke:",

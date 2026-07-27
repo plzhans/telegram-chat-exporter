@@ -22,13 +22,26 @@ import {
  * 인증 단계.
  *
  * - `idle`      : 아직 시작 안 함. api_id 입력 화면.
+ * - `method`    : 로그인 수단(문자/QR) 고르기. 첫 화면 다음, **연결을 맺기 전**이다.
  * - `connecting`: MTProto 연결 + 인증키 교환 중.
  * - `phone`     : 전화번호 입력 대기.
  * - `code`      : 텔레그램이 보낸 로그인 코드 입력 대기.
+ * - `qr`        : QR 코드를 띄우고 폰에서 스캔·승인하기를 대기.
  * - `password`  : 2단계 인증 비밀번호 입력 대기.
  * - `authorized`: 로그인 완료.
  */
-export type AuthStep = 'idle' | 'connecting' | 'phone' | 'code' | 'password' | 'authorized';
+export type AuthStep =
+  | 'idle'
+  | 'method'
+  | 'connecting'
+  | 'phone'
+  | 'code'
+  | 'qr'
+  | 'password'
+  | 'authorized';
+
+/** 로그인 수단. 전화번호+코드냐, QR 스캔이냐. */
+export type AuthMethod = 'phone' | 'qr';
 
 interface AuthState {
   step: AuthStep;
@@ -60,6 +73,14 @@ interface AuthState {
    */
   remember: boolean;
   me: MeInfo | null;
+  /** 지금 진행 중인 로그인 수단. `start` 가 시작할 때 기록한다(문자/QR 은 `method` 화면에서 고른다). */
+  method: AuthMethod;
+  /**
+   * QR 화면에 그릴 딥링크(`tg://login?token=...`). `qr` 단계에서만 값이 있다.
+   *
+   * 토큰은 ~30초마다 갱신되므로 GramJS 의 `qrCode` 콜백이 불릴 때마다 새 값으로 덮는다.
+   */
+  qrUrl?: string;
   /** 코드가 텔레그램 앱으로 갔는지(true) SMS 로 갔는지(false). 안내 문구가 달라진다. */
   codeViaApp: boolean;
   /** 2단계 인증 비밀번호 힌트. 사용자가 설정해 뒀다면 텔레그램이 내려준다. */
@@ -75,10 +96,22 @@ interface AuthState {
   bootstrap: () => Promise<void>;
   dismissNotice: () => void;
   setRemember: (value: boolean) => void;
-  start: (credentials: ApiCredentials) => Promise<void>;
+  /**
+   * 자격증명을 받아 **수단 고르기(`method`) 화면으로** 넘어간다. 아직 연결은 안 맺는다 —
+   * 문자/QR 을 고른 뒤에야 `start` 가 연결을 시작한다. 첫 화면(CredentialsForm) 다음 단계다.
+   */
+  stageCredentials: (credentials: ApiCredentials) => void;
+  /** `method` 화면에서 문자/QR 을 고르면 그 수단으로 연결을 시작한다. */
+  chooseMethod: (method: AuthMethod) => void;
+  start: (credentials: ApiCredentials, method?: AuthMethod) => Promise<void>;
   submitPhone: (phoneNumber: string) => void;
   submitCode: (code: string) => void;
   submitPassword: (password: string) => void;
+  /**
+   * 진행 중인 인증을 접고 **수단 고르기(`method`) 화면으로 되돌아간다.** phone/qr 화면의
+   * 뒤로가기가 쓴다 — 다른 수단으로 바꾸려는 사람이 첫 화면까지 안 가고 한 칸만 물러난다.
+   */
+  backToMethod: () => void;
   /** 코드 입력 화면에서 "다른 번호로" — GramJS 가 전화번호 단계로 되감는다. */
   restart: () => void;
   /** 전부 취소하고 연결을 끊는다. 텔레그램 쪽 세션은 남는다. */
@@ -98,12 +131,43 @@ const pending: {
   phone?: Deferred<string>;
   code?: Deferred<string>;
   password?: Deferred<string>;
+  /**
+   * QR 단계에서 GramJS `qrCode` 콜백이 돌려준 promise. **평소엔 resolve 되지 않는다** —
+   * GramJS 는 이 promise 와 30초 sleep 을 race 시켜 토큰을 갱신하므로, 우리가 붙잡고 있다가
+   * reject 하면 QR 대기 루프를 그 자리에서 끊을 수 있다(취소·방식 전환에 쓴다).
+   */
+  qr?: Deferred<void>;
 } = {};
 
 /** 진행 중인 인증을 끊을 때 GramJS 쪽 while 루프를 빠져나오게 하는 신호. */
 const CANCEL = Object.assign(new Error('AUTH_USER_CANCEL'), {
   errorMessage: 'AUTH_USER_CANCEL',
 });
+
+/**
+ * `start()` 가 마지막에 세션을 저장할 때, 그리고 방식 전환 시 재시작할 때 쓰려고 들고 있는
+ * 자격증명. 렌더링에 안 쓰이는 제어 값이라 스토어가 아니라 모듈에 둔다(`pending` 과 같은 이유).
+ */
+let activeCredentials: ApiCredentials | null = null;
+
+/**
+ * 뒤로가기(`backToMethod`)가 걸려 있는지. 진행 중 인증을 취소로 끊으면 `start()` 의 catch 가
+ * 이 값을 보고 idle 대신 **수단 고르기 화면(`method`)** 으로 돌려보낸다. 자격증명은
+ * `activeCredentials` 에 그대로 남아 있어 거기서 다른 수단을 바로 다시 고를 수 있다.
+ */
+let backToMethodPending = false;
+
+/**
+ * 바이트열을 URL-safe base64(패딩 없음)로. QR 딥링크 `tg://login?token=` 뒤에 붙는 형식이다.
+ *
+ * `Buffer.toString('base64')` 에 기대지 않고 직접 도는 이유: GramJS 가 주는 token 이 Buffer 든
+ * Uint8Array 든 똑같이 동작하게 하려는 것이다.
+ */
+function toBase64Url(bytes: Uint8Array): string {
+  let binary = '';
+  for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
 
 /**
  * 오류를 화면용으로 풀면서, 요청 제한이면 풀리는 시각도 함께 남긴다.
@@ -139,7 +203,7 @@ function floodBlock(floodUntil: number | undefined): TelegramErrorInfo | null {
 }
 
 function rejectAllPending(reason: unknown) {
-  for (const key of ['phone', 'code', 'password'] as const) {
+  for (const key of ['phone', 'code', 'password', 'qr'] as const) {
     pending[key]?.reject(reason);
     pending[key] = undefined;
   }
@@ -152,6 +216,8 @@ export const useAuth = create<AuthState>((set, get) => ({
   error: null,
   remember: true,
   me: null,
+  method: 'phone',
+  qrUrl: undefined,
   codeViaApp: true,
   passwordHint: undefined,
   notice: null,
@@ -194,49 +260,87 @@ export const useAuth = create<AuthState>((set, get) => ({
 
   setRemember: (value) => set({ remember: value }),
 
-  start: async (credentials) => {
-    set({ step: 'connecting', busy: true, error: null, me: null });
+  start: async (credentials, method = 'phone') => {
+    activeCredentials = credentials;
+    set({ step: 'connecting', busy: true, error: null, me: null, method, qrUrl: undefined });
 
     try {
       const client = await createClient(credentials);
 
       /**
-       * `phoneNumber` 를 **함수로** 넘기는 게 중요하다.
-       *
-       * GramJS 의 signInUser 는 `typeof phoneNumber !== 'function'` 이면 첫 에러에서 그대로
-       * throw 하고 끝난다. 함수로 주면 onError 를 거쳐 다시 물어보는 루프가 돌아서,
-       * "번호를 잘못 눌렀다 → 다시 입력" 이 화면 이동 없이 처리된다.
+       * 2단계 인증 비밀번호 콜백. 전화번호 로그인과 QR 로그인이 **똑같이** 쓴다 — QR 로
+       * 승인하더라도 계정에 클라우드 비밀번호가 걸려 있으면 GramJS 가 이 콜백을 부른다.
        */
-      await client.start({
-        phoneNumber: () => {
-          const d = deferred<string>();
-          pending.phone = d;
-          set({ step: 'phone', busy: false });
-          return d.promise;
-        },
-        phoneCode: (isCodeViaApp) => {
-          const d = deferred<string>();
-          pending.code = d;
-          set({ step: 'code', busy: false, codeViaApp: isCodeViaApp ?? true });
-          return d.promise;
-        },
-        password: (hint) => {
-          const d = deferred<string>();
-          pending.password = d;
-          set({ step: 'password', busy: false, passwordHint: hint });
-          return d.promise;
-        },
+      const password = (hint?: string) => {
+        const d = deferred<string>();
+        pending.password = d;
+        set({ step: 'password', busy: false, passwordHint: hint });
+        return d.promise;
+      };
+
+      /**
+       * `false` 를 돌려주면 GramJS 가 같은 단계를 다시 묻는다. 그래서 코드 오타 같은 건
+       * 에러 문구만 띄우고 그 자리에서 재입력을 받는다. 사용자가 직접 취소한 경우에만
+       * `true` 로 루프를 끊는다.
+       */
+      const onError = async (err: Error) => {
+        if (isUserCancel(err)) return true;
+        set({ ...describeWithFlood(err), busy: false });
+        return false;
+      };
+
+      if (method === 'qr') {
         /**
-         * `false` 를 돌려주면 GramJS 가 같은 단계를 다시 묻는다. 그래서 코드 오타 같은 건
-         * 에러 문구만 띄우고 그 자리에서 재입력을 받는다. 사용자가 직접 취소한 경우에만
-         * `true` 로 루프를 끊는다.
+         * QR 로그인. `signInUserWithQrCode` 는 `auth.exportLoginToken` 을 폴링하며 ~30초마다
+         * `qrCode` 콜백을 다시 부른다. 콜백이 돌려준 promise 를 우리가 붙잡고 있다가
+         * (`pending.qr`) 취소·방식 전환 때 reject 하면 대기 루프가 곧바로 풀린다.
          */
-        onError: async (err) => {
-          if (isUserCancel(err)) return true;
-          set({ ...describeWithFlood(err), busy: false });
-          return false;
-        },
-      });
+        await client.signInUserWithQrCode(
+          { apiId: credentials.apiId, apiHash: credentials.apiHash },
+          {
+            qrCode: async ({ token }) => {
+              const url = `tg://login?token=${toBase64Url(token)}`;
+              const d = deferred<void>();
+              pending.qr = d;
+              set({ step: 'qr', busy: false, qrUrl: url });
+              return d.promise;
+            },
+            password,
+            onError,
+          },
+        );
+      } else {
+        /**
+         * `phoneNumber` 를 **함수로** 넘기는 게 중요하다.
+         *
+         * GramJS 의 signInUser 는 `typeof phoneNumber !== 'function'` 이면 첫 에러에서 그대로
+         * throw 하고 끝난다. 함수로 주면 onError 를 거쳐 다시 물어보는 루프가 돌아서,
+         * "번호를 잘못 눌렀다 → 다시 입력" 이 화면 이동 없이 처리된다.
+         */
+        await client.start({
+          phoneNumber: () => {
+            const d = deferred<string>();
+            pending.phone = d;
+            set({ step: 'phone', busy: false });
+            return d.promise;
+          },
+          phoneCode: (isCodeViaApp) => {
+            const d = deferred<string>();
+            pending.code = d;
+            set({ step: 'code', busy: false, codeViaApp: isCodeViaApp ?? true });
+            return d.promise;
+          },
+          password,
+          onError,
+        });
+      }
+
+      /*
+        QR 성공 시 `pending.qr` 는 끝내 resolve 되지 않은 채 남는다(로그인은 GramJS 의
+        UpdateLoginToken 으로 끝난다). 여기서 비워 두지 않으면 이후 rejectAllPending 이
+        아무도 안 기다리는 promise 를 reject 해 unhandledrejection 이 난다.
+      */
+      pending.qr = undefined;
 
       /*
         체크박스는 전화번호 화면에 있고, 그 값은 여기까지 와서야 읽힌다. 인증 도중 언제
@@ -247,14 +351,29 @@ export const useAuth = create<AuthState>((set, get) => ({
         if (saved) storeSession({ ...credentials, session: saved });
       }
 
-      set({ step: 'authorized', busy: false, error: null, me: await fetchMe() });
+      set({ step: 'authorized', busy: false, error: null, qrUrl: undefined, me: await fetchMe() });
     } catch (err) {
       rejectAllPending(CANCEL);
+
+      /*
+        뒤로가기(`backToMethod`)가 걸어 둔 취소라면 idle 로 떨어뜨리지 않고 **수단 고르기
+        화면으로** 돌려보낸다. 자격증명(`activeCredentials`)은 그대로 남아 있어 거기서 다른
+        수단을 바로 다시 고를 수 있다. 다음 `start` 의 createClient 가 재사용 전에 정리하지만,
+        여기서는 화면이 곧장 method 로 바뀌므로 끊긴 연결을 명시적으로 닫아 둔다.
+      */
+      if (backToMethodPending) {
+        backToMethodPending = false;
+        await destroyClient();
+        set({ step: 'method', busy: false, error: null, qrUrl: undefined });
+        return;
+      }
+
       clearStoredSession();
       await destroyClient();
       set({
         step: 'idle',
         busy: false,
+        qrUrl: undefined,
         error: isUserCancel(err) ? null : describeError(err),
       });
     }
@@ -287,6 +406,32 @@ export const useAuth = create<AuthState>((set, get) => ({
     pending.password = undefined;
   },
 
+  stageCredentials: (credentials) => {
+    activeCredentials = credentials;
+    // 아직 연결하지 않는다. 문자/QR 을 고르는 화면만 띄운다.
+    set({ step: 'method', busy: false, error: null, me: null });
+  },
+
+  chooseMethod: (method) => {
+    if (!activeCredentials) return;
+    void get().start(activeCredentials, method);
+  },
+
+  backToMethod: () => {
+    /**
+     * 진행 중 인증을 취소로 끊고 수단 고르기 화면으로 돌아간다. `start()` 의 catch 가
+     * `backToMethodPending` 을 보고 idle 대신 `method` 로 보낸다.
+     *
+     * QR 대기 루프는 `pending.qr` 을 reject 해야 그 자리에서 풀린다 — 안 그러면 GramJS 의
+     * 30초 sleep 이 끝날 때까지 안 끊긴다. 전화번호 흐름은 `CANCEL` 이 onError 를 통해 루프를
+     * 끝낸다(그쪽은 `pending.qr` 이 비어 있어 무해하다). 그래서 둘 다 `rejectAllPending` 로 끊는다.
+     */
+    if (!activeCredentials) return;
+    backToMethodPending = true;
+    set({ busy: true, error: null });
+    rejectAllPending(CANCEL);
+  },
+
   restart: () => {
     /**
      * GramJS 는 phoneCode 콜백이 `RESTART_AUTH` 로 reject 되면 signInUser 를 처음부터
@@ -300,13 +445,26 @@ export const useAuth = create<AuthState>((set, get) => ({
   },
 
   cancel: async () => {
+    // 예약된 뒤로가기가 남아 있으면 지운다. 안 그러면 start 의 catch 가 method 로 되돌린다.
+    backToMethodPending = false;
+    activeCredentials = null;
     rejectAllPending(CANCEL);
     clearStoredSession();
     await destroyClient();
-    set({ step: 'idle', busy: false, error: null, me: null, passwordHint: undefined });
+    set({
+      step: 'idle',
+      busy: false,
+      error: null,
+      me: null,
+      method: 'phone',
+      qrUrl: undefined,
+      passwordHint: undefined,
+    });
   },
 
   signOut: async () => {
+    backToMethodPending = false;
+    activeCredentials = null;
     rejectAllPending(CANCEL);
     // 저장본을 먼저 지운다. LogOut 요청이 실패하더라도 이 브라우저에는 아무것도 안 남게.
     clearStoredSession();
@@ -319,7 +477,15 @@ export const useAuth = create<AuthState>((set, get) => ({
       // 세션이 이미 죽었으면 LogOut 도 실패한다. 어차피 목적은 로컬 초기화다.
       await destroyClient();
     }
-    set({ step: 'idle', busy: false, error: null, me: null, passwordHint: undefined });
+    set({
+      step: 'idle',
+      busy: false,
+      error: null,
+      me: null,
+      method: 'phone',
+      qrUrl: undefined,
+      passwordHint: undefined,
+    });
   },
 }));
 

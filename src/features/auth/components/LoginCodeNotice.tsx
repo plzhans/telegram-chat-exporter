@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { ChevronRight } from 'lucide-react';
 import { Alert } from '@/shared/ui/Alert';
 import { SOURCE_URL } from '@/shared/config/app';
+import { ConnectionLock } from './ConnectionLock';
 
 /**
  * 전화번호·로그인 코드를 입력하는 자리에 붙는 경고.
@@ -50,6 +51,15 @@ export function LoginCodeNotice() {
           </a>
         </p>
       </details>
+
+      {/*
+        경고를 접어 두더라도 **잠금 자체는 늘 보이게** 상자 안에 둔다. "코드를 요구한다"는
+        말 바로 아래에서, 그 코드가 브라우저 규칙으로 텔레그램 밖을 못 나간다는 사실을 같이
+        보여 줘야 요구와 보장이 한 자리에서 읽힌다.
+      */}
+      <div className="mt-2">
+        <ConnectionLock />
+      </div>
     </Alert>
   );
 }
