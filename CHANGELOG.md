@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.0](https://github.com/plzhans/telegram-chat-exporter/compare/release/v1.7.0...release/v1.8.0) (2026-07-27)
+
+
+### 기능
+
+* **auth:** QR 로그인을 더하고 로그인 수단을 연결 전에 고르게 한다 ([#27](https://github.com/plzhans/telegram-chat-exporter/issues/27)) ([fb70bf9](https://github.com/plzhans/telegram-chat-exporter/commit/fb70bf9a31cfdd1cb747c189e361d1531b479103))
+
 ## [1.7.0](https://github.com/plzhans/telegram-chat-exporter/compare/release/v1.6.1...release/v1.7.0) (2026-07-26)
 
 
