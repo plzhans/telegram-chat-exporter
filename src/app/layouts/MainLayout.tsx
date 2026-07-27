@@ -1,8 +1,9 @@
 import { Suspense, useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, Github, LogOut } from 'lucide-react';
+import { ArrowLeft, LogOut } from 'lucide-react';
 import { Button } from '@/shared/ui/Button';
+import { GithubIcon } from '@/shared/ui/GithubIcon';
 import { Modal } from '@/shared/ui/Modal';
 import { DialogListSkeleton, MessageListSkeleton, PageSkeleton } from '@/shared/ui/Skeleton';
 import { LanguageSelect } from '@/shared/ui/LanguageSelect';
@@ -91,7 +92,7 @@ export function MainLayout() {
             title={t('common.source')}
             className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-lg border border-slate-800 bg-slate-900 px-2.5 text-xs font-bold text-white transition-colors hover:bg-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1"
           >
-            <Github className="h-4 w-4 shrink-0" />
+            <GithubIcon className="h-4 w-4 shrink-0" />
             <span className="hidden sm:inline">{t('common.source')}</span>
           </a>
         </div>
