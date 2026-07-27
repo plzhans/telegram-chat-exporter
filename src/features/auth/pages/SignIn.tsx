@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
+import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/shared/ui/Button';
 import { ErrorNotice } from '@/shared/ui/ErrorNotice';
 import { Spinner } from '@/shared/ui/Spinner';
@@ -8,9 +9,12 @@ import { useCountdown, useDuration } from '@/shared/lib/duration';
 import { useAuth } from '@/shared/auth/useAuth';
 import { langSegment, languageFromPath } from '@/shared/i18n';
 import { AuthStepForm } from '../components/AuthStepForm';
+import { ConnectionLock } from '../components/ConnectionLock';
 import { CredentialsForm } from '../components/CredentialsForm';
 import { LoginCodeNotice } from '../components/LoginCodeNotice';
+import { MethodChoice } from '../components/MethodChoice';
 import { PhoneForm } from '../components/PhoneForm';
+import { QrPanel } from '../components/QrPanel';
 import { SessionNotice } from '../components/SessionNotice';
 import { TrustPanel } from '../components/TrustPanel';
 
@@ -21,15 +25,18 @@ export default function SignIn() {
   const step = useAuth((s) => s.step);
   const busy = useAuth((s) => s.busy);
   const error = useAuth((s) => s.error);
+  const qrUrl = useAuth((s) => s.qrUrl);
   const codeViaApp = useAuth((s) => s.codeViaApp);
   const passwordHint = useAuth((s) => s.passwordHint);
   const floodUntil = useAuth((s) => s.floodUntil);
   const remember = useAuth((s) => s.remember);
   const setRemember = useAuth((s) => s.setRemember);
-  const start = useAuth((s) => s.start);
+  const stageCredentials = useAuth((s) => s.stageCredentials);
+  const chooseMethod = useAuth((s) => s.chooseMethod);
   const submitPhone = useAuth((s) => s.submitPhone);
   const submitCode = useAuth((s) => s.submitCode);
   const submitPassword = useAuth((s) => s.submitPassword);
+  const backToMethod = useAuth((s) => s.backToMethod);
   const restart = useAuth((s) => s.restart);
   const cancel = useAuth((s) => s.cancel);
 
@@ -75,6 +82,20 @@ export default function SignIn() {
     </Button>
   );
 
+  /*
+    입력·QR 화면에서 **한 칸 물러나 수단 고르기 화면으로** 돌아간다.
+
+    전에는 진행 중 화면에서 반대 방식으로 바로 넘기는 버튼을 뒀는데, 그 전환이 연결을 다시
+    맺어 "접속 중"이 또 떴다. 이제 수단은 연결 전 `method` 화면에서 고르므로, 바꾸려면 거기로
+    되돌아가 다시 고르면 된다 — `backToMethod()` 가 진행 중 인증을 접고 그 화면으로 보낸다.
+  */
+  const backButton = (
+    <Button type="button" variant="ghost" size="sm" className="w-full" onClick={backToMethod}>
+      <ArrowLeft className="h-4 w-4 rtl:rotate-180" />
+      {t('common.back')}
+    </Button>
+  );
+
   return (
     <div className="space-y-4">
       <SessionNotice />
@@ -100,7 +121,7 @@ export default function SignIn() {
       */}
       {step === 'idle' &&
         (__STANDALONE__ || import.meta.env.DEV ? (
-          <CredentialsForm busy={busy} onSubmit={(c) => void start(c)} />
+          <CredentialsForm busy={busy} onSubmit={stageCredentials} />
         ) : (
           <div className="flex flex-col items-center gap-3 edge-card bg-white p-8">
             <Spinner />
@@ -121,11 +142,38 @@ export default function SignIn() {
       */}
       {step === 'idle' && (__STANDALONE__ || import.meta.env.DEV) && <TrustPanel />}
 
+      {/*
+        수단 고르기 — 첫 화면 다음, 연결 전. 여기서 문자/QR 을 고르면 그 수단으로 연결을
+        시작한다(`chooseMethod` → `start`). 아직 텔레그램에 안 붙었으므로 보안 잠금은 아직
+        띄우지 않는다 — 잠금은 연결이 시작되는 다음 화면부터다. 뒤로가기는 첫 화면으로 돌아간다.
+      */}
+      {step === 'method' && (
+        <div className="space-y-3">
+          <MethodChoice onChoose={chooseMethod} />
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="w-full"
+            onClick={() => void cancel()}
+          >
+            <ArrowLeft className="h-4 w-4 rtl:rotate-180" />
+            {t('common.back')}
+          </Button>
+        </div>
+      )}
 
+      {/*
+        연결하는 순간부터 잠금을 보인다. 텔레그램에 붙기 시작하는 이 화면이 곧 "전화번호를
+        넣어도 되나" 를 사람이 정하는 자리라, 보안 아이덴티티는 여기서부터 계속 따라다녀야 한다.
+      */}
       {step === 'connecting' && (
-        <div className="flex flex-col items-center gap-3 edge-card bg-white p-8">
-          <Spinner />
-          <p className="text-sm text-slate-500">{t('auth.connecting')}</p>
+        <div className="space-y-3">
+          <ConnectionLock />
+          <div className="flex flex-col items-center gap-3 edge-card bg-white p-8">
+            <Spinner />
+            <p className="text-sm text-slate-500">{t('auth.connecting')}</p>
+          </div>
         </div>
       )}
 
@@ -146,8 +194,22 @@ export default function SignIn() {
               onRememberChange={setRemember}
               blockedLabel={blockedLabel}
               notice={<ErrorNotice error={error} />}
-              footer={cancelButton}
+              footer={backButton}
             />
+          </div>
+        </div>
+      )}
+
+      {/*
+        QR 로그인. 전화번호·코드 흐름과 같은 텔레그램 문서에서 돌고(MTProto 호출이므로),
+        승인 후 2단계 인증이 걸려 있으면 아래 password 단계로 그대로 이어진다.
+      */}
+      {step === 'qr' && (
+        <div className="space-y-3">
+          <ConnectionLock />
+          <div className="edge-card bg-white p-4">
+            <QrPanel url={qrUrl} />
+            <div className="mt-4">{backButton}</div>
           </div>
         </div>
       )}
@@ -200,26 +262,30 @@ export default function SignIn() {
       )}
 
       {step === 'password' && (
-        <div className="edge-card bg-white p-4">
-          <AuthStepForm
-            key="password"
-            label={t('auth.password.title')}
-            hint={
-              passwordHint
-                ? t('auth.password.hintLabel', { hint: passwordHint })
-                : t('auth.password.hint')
-            }
-            submitLabel={t('auth.password.submit')}
-            busy={busy}
-            onSubmit={submitPassword}
-            blockedLabel={blockedLabel}
-            notice={<ErrorNotice error={error} />}
-            footer={cancelButton}
-            inputProps={{
-              type: 'password',
-              autoComplete: 'current-password',
-            }}
-          />
+        <div className="space-y-3">
+          {/* 2단계 인증 비밀번호도 같은 잠금 안에 있음을 이어서 보인다(연결 중·QR 과 같은 자리). */}
+          <ConnectionLock />
+          <div className="edge-card bg-white p-4">
+            <AuthStepForm
+              key="password"
+              label={t('auth.password.title')}
+              hint={
+                passwordHint
+                  ? t('auth.password.hintLabel', { hint: passwordHint })
+                  : t('auth.password.hint')
+              }
+              submitLabel={t('auth.password.submit')}
+              busy={busy}
+              onSubmit={submitPassword}
+              blockedLabel={blockedLabel}
+              notice={<ErrorNotice error={error} />}
+              footer={cancelButton}
+              inputProps={{
+                type: 'password',
+                autoComplete: 'current-password',
+              }}
+            />
+          </div>
         </div>
       )}
     </div>

@@ -105,6 +105,9 @@
       "why": "Gayunpaman, nagsa-sign in ang tool na ito sa Telegram bilang ikaw para kunin ang mga mensahe mo. Kung wala ang numero at login code mo, wala itong magagawa. Ginagamit lang ang mga halagang iyon sa kahilingan papuntang Telegram at hindi kailanman iniimbak.",
       "storage": "Pagkatapos mong mag-sign in, ang tanging natitira ay isang halagang nagpapanatili ng koneksyon, at nabubuhay lang iyon sa loob ng tab na tinitingnan mo — isara mo ang tab at mawawala na.",
       "selfHost": "Kung hindi ka pa rin kumbinsido, huwag kang maniwala sa salita ninuman. Basahin mo ang code, o i-download at patakbuhin sa sarili mong makina. Makukuha mo ang eksaktong screen na ito, na tumatakbo sa code na ikaw mismo ang sumuri."
+    },
+    "lock": {
+      "body": "May HTML meta setting na humaharang sa lahat ng koneksyon maliban sa nasa ibaba, kaya hindi makakapagpadala ang page na ito ng anuman sa labas ng Telegram."
     }
   },
   "credentials": {
@@ -167,6 +170,13 @@
     "retryIn": "Subukan ulit sa {{duration}}",
     "keepSignedIn": "Manatiling naka-sign in sa tab na ito",
     "keepSignedInHint": "Hindi ka hihingan ng login kapag nag-reload. Nabubura ito kapag isinara ang tab o hindi ginamit nang {{minutes}} minuto. Patayin ito sa computer na ginagamit ng marami.",
+    "method": {
+      "title": "Pumili kung paano mag-sign in",
+      "phone": "Numero ng telepono",
+      "phoneHint": "Kumuha ng login code sa iyong telepono at ilagay ito",
+      "qr": "QR code",
+      "qrHint": "I-scan ang QR code gamit ang Telegram app"
+    },
     "phone": {
       "title": "Numero ng telepono",
       "willSend": "Ipapadala ang code sa:",

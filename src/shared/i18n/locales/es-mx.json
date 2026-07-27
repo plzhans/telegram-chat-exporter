@@ -104,6 +104,9 @@
       "why": "Dicho eso, esta herramienta entra a Telegram como tú para traer tus mensajes. Sin tu número y tu código de acceso no puede hacer nada. Esos datos se usan solo en la petición a Telegram y nunca se almacenan.",
       "storage": "Después de entrar, lo único que queda es un valor que mantiene la conexión, y vive solo dentro de la pestaña que estás viendo: cierras la pestaña y desaparece.",
       "selfHost": "Si aun así no te convence, no le creas a nadie. Lee el código, o descárgalo y ejecútalo en tu propia máquina. Tendrás exactamente esta pantalla, corriendo con código que revisaste tú."
+    },
+    "lock": {
+      "body": "Una configuración meta de HTML bloquea toda conexión salvo las de abajo, así que esta página no puede enviar nada fuera de Telegram."
     }
   },
   "credentials": {
@@ -166,6 +169,13 @@
     "retryIn": "Reintentar en {{duration}}",
     "keepSignedIn": "Mantener la sesión en esta pestaña",
     "keepSignedInHint": "Recargar no te pedirá entrar otra vez. Cerrar la pestaña o dejarla {{minutes}} minutos sin uso lo borra. Desactívalo en una computadora compartida.",
+    "method": {
+      "title": "Elige cómo iniciar sesión",
+      "phone": "Número de teléfono",
+      "phoneHint": "Recibe un código de acceso en tu teléfono e ingrésalo",
+      "qr": "Código QR",
+      "qrHint": "Escanea un código QR con la app de Telegram"
+    },
     "phone": {
       "title": "Número de teléfono",
       "willSend": "El código se enviará a:",

@@ -104,6 +104,9 @@
       "why": "Dito isso, esta ferramenta entra no Telegram como você para buscar suas mensagens. Sem seu número e seu código de acesso, ela não consegue fazer nada. Esses valores são usados só na requisição ao Telegram e nunca são armazenados.",
       "storage": "Depois que você entra, a única coisa guardada é um valor que mantém a conexão aberta, e ele vive apenas dentro da aba que você está vendo — fechou a aba, acabou.",
       "selfHost": "Se ainda assim não convencer, não acredite na palavra de ninguém. Leia o código, ou baixe e rode na sua própria máquina. Você terá exatamente esta tela, rodando um código que você mesmo conferiu."
+    },
+    "lock": {
+      "body": "Uma configuração meta do HTML bloqueia todas as conexões exceto as abaixo, então esta página não pode enviar nada para fora do Telegram."
     }
   },
   "credentials": {
@@ -166,6 +169,13 @@
     "retryIn": "Tentar de novo em {{duration}}",
     "keepSignedIn": "Continuar conectado nesta aba",
     "keepSignedInHint": "Recarregar não vai pedir login de novo. Fechar a aba ou deixá-la {{minutes}} minutos sem uso apaga isso. Desligue em computador compartilhado.",
+    "method": {
+      "title": "Escolha como entrar",
+      "phone": "Número de telefone",
+      "phoneHint": "Receba um código de acesso no seu telefone e digite-o",
+      "qr": "Código QR",
+      "qrHint": "Escaneie um código QR com o app do Telegram"
+    },
     "phone": {
       "title": "Número de telefone",
       "willSend": "O código será enviado para:",

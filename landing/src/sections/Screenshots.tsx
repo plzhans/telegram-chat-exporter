@@ -29,7 +29,7 @@ function shotDir(lang: SupportedLanguage): string {
  * 하기 위해서다(`shot-1`, `shot-10`, `shot-2` 로 섞이지 않는다). 장수를 바꾸면 이 숫자만
  * 고치면 된다.
  */
-const COUNT = 16;
+const COUNT = 18;
 
 /**
  * 자리를 미리 잡아 두기 위한 치수. 이미지가 도착하기 전에도 높이가 정해져 화면이 안 흔들린다.

@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { RefreshCw, Search, X } from 'lucide-react';
+import { Link } from 'react-router';
+import { FolderArchive, RefreshCw, Search, X } from 'lucide-react';
 import { ErrorNotice } from '@/shared/ui/ErrorNotice';
 import { Input } from '@/shared/ui/Input';
 import { cn } from '@/shared/lib/utils';
@@ -56,6 +57,19 @@ export default function Dialogs() {
             </p>
           )}
         </div>
+
+        {/*
+          일괄 백업 입구. 헤비한 기능이라 부각하지 않고 새로고침 앞에 작게 둔다 — 필요한
+          사람만 찾아 들어가게 한다(사용자 요청).
+        */}
+        <Link
+          to="/backup"
+          title={t('batch.title')}
+          aria-label={t('batch.title')}
+          className="shrink-0 rounded-lg p-2 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
+        >
+          <FolderArchive className="h-4 w-4" />
+        </Link>
 
         {/*
           "다시 시도" 가 아니라 새로고침이다. 실패했을 때만 누르는 버튼처럼 보이면,

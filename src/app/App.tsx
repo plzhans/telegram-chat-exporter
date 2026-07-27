@@ -174,10 +174,11 @@ export default function App() {
    * 저장본이 없으면 즉시 끝나고 있으면 createClient 가 이전 클라이언트를 정리하고 다시
    * 만들기 때문에 두 번 돌아도 결과가 같다.
    *
-   * **부팅 핸드오프(웹):** 이 문서는 텔레그램 동작(`/run/session/`)이라 방식 고르기가 없다.
-   * 방식 문서(`/run/`)에서 고른 자격증명을 sessionStorage 로 받아(`readHandoff`) 곧장 연결을
-   * 시작한다. 세션 복원이 먼저 성공하면 그대로 두고, 핸드오프도 없으면 `SignIn` 의 웹 idle
-   * 분기가 방식 화면으로 되돌린다. **소진 즉시 지운다**(1회성) — 새로고침에 안 남는다.
+   * **부팅 핸드오프(웹):** 이 문서는 텔레그램 동작(`/run/session/`)이라 첫 화면이 없다.
+   * 첫 화면(`/run/`)에서 넣은 자격증명을 sessionStorage 로 받아(`readHandoff`) **문자/QR 고르기
+   * 화면으로** 보낸다(`stageCredentials`) — 연결은 거기서 수단을 고른 뒤에 시작한다. 세션 복원이
+   * 먼저 성공하면 그대로 두고, 핸드오프도 없으면 `SignIn` 의 웹 idle 분기가 첫 화면으로
+   * 되돌린다. **소진 즉시 지운다**(1회성) — 새로고침에 안 남는다.
    * `handoffConsumed` 로 StrictMode 이중 실행에서 두 번 시작하는 것을 막는다.
    */
   useEffect(() => {
@@ -191,7 +192,8 @@ export default function App() {
       if (!creds) return;
       handoffConsumed = true;
       clearHandoff();
-      void auth.start(creds);
+      // 곧장 연결하지 않는다. 문자/QR 을 고르는 화면으로 보낸다(고른 뒤 `start` 가 연결한다).
+      auth.stageCredentials(creds);
     })();
   }, [bootstrap]);
 

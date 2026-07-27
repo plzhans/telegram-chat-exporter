@@ -104,6 +104,9 @@
       "why": "That said, this tool signs in to Telegram as you in order to fetch your messages. Without your phone number and login code there is nothing it can do. Those values are used only for the request to Telegram and are never stored anywhere.",
       "storage": "After you sign in, the only thing kept is a single value that holds the connection open, and it lives only inside the tab you're looking at — close the tab and it's gone.",
       "selfHost": "If you're still unconvinced, don't take anyone's word for it. Read the code, or download it and run it on your own machine. You'll get exactly this screen, running code you checked yourself."
+    },
+    "lock": {
+      "body": "An HTML meta setting blocks every connection except the ones below, so this page cannot send anything outside Telegram."
     }
   },
   "credentials": {
@@ -166,6 +169,13 @@
     "retryIn": "Try again in {{duration}}",
     "keepSignedIn": "Stay signed in on this tab",
     "keepSignedInHint": "Reloading won't ask you to sign in again. Closing the tab or leaving it unused for {{minutes}} minutes clears it. Turn this off on a shared computer.",
+    "method": {
+      "title": "Choose how to sign in",
+      "phone": "Phone number",
+      "phoneHint": "Get a login code on your phone and enter it",
+      "qr": "QR code",
+      "qrHint": "Scan a QR code with the Telegram app"
+    },
     "phone": {
       "title": "Phone number",
       "willSend": "The code will be sent to:",

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Folder, Hourglass, Layers, Search, X, Check } from 'lucide-react';
+import { Folder, Hourglass, FolderArchive, Search, X, Check } from 'lucide-react';
 import { Alert } from '@/shared/ui/Alert';
 import { Button } from '@/shared/ui/Button';
 import { Checkbox } from '@/shared/ui/Checkbox';
@@ -166,7 +166,7 @@ export default function BatchExportPage() {
     <div className="space-y-4">
       <div>
         <h1 className="flex items-center gap-2 text-xl font-bold text-slate-900">
-          <Layers className="h-5 w-5 text-slate-400" />
+          <FolderArchive className="h-5 w-5 text-slate-400" />
           {t('batch.title')}
         </h1>
         <p className="mt-1 rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs leading-relaxed text-amber-800">
@@ -378,7 +378,7 @@ export default function BatchExportPage() {
               disabled={selected.size === 0}
               onClick={() => setConfirm(true)}
             >
-              <Layers className="h-4 w-4" />
+              <FolderArchive className="h-4 w-4" />
               {t('batch.start', { count: selected.size })}
             </Button>
           </div>

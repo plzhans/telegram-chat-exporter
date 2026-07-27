@@ -48,6 +48,16 @@ A·B·C로 회원번호는 1·2·3으로 바뀝니다. 이렇게 내보내면 �
 | <img src="landing/public/shot-15.png" width="300" alt="index.html 를 연 모습 — 원래 대화 그대로" /> | <img src="landing/public/shot-16.png" width="300" alt="같은 내보내기를 익명 처리한 모습 — 이름이 A·B·C 로" /> |
 | 내보낸 그대로 | 같은 내보내기, 익명 처리 |
 
+## 여러 대화방을 한 번에
+
+한 방씩이 아니라 여러 방을 골라 한꺼번에 내보냅니다. 대화방마다 파일이 따로 나옵니다. 통째로
+백업할 때 좋지만 첨부까지 담고 방이 많으면 시간이 걸리고 용량도 커집니다.
+
+|  |  |
+| :---: | :---: |
+| <img src="landing/public/shot-17.png" width="230" alt="일괄 백업 설정 — 고른 모든 대화방에 함께 적용" /> | <img src="landing/public/shot-18.png" width="230" alt="어떤 대화방을 백업할지 고르기" /> |
+| 고른 모든 방에 함께 적용되는 설정 | 어떤 방을 백업할지 고르기 |
+
 ## 두 가지 방법
 
 **1. 사이트에서 바로** — [telegram-exporter.plzhans.com](https://telegram-exporter.plzhans.com/)

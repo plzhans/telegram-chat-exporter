@@ -1,7 +1,7 @@
 import { Suspense, useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, Github, Layers, LogOut } from 'lucide-react';
+import { ArrowLeft, Github, LogOut } from 'lucide-react';
 import { Button } from '@/shared/ui/Button';
 import { Modal } from '@/shared/ui/Modal';
 import { DialogListSkeleton, MessageListSkeleton, PageSkeleton } from '@/shared/ui/Skeleton';
@@ -37,8 +37,12 @@ function RouteSkeleton() {
  * `navigate(-1)` 을 쓰지 않는 이유는 **주소로 바로 들어온 경우** 돌아갈 기록이 없어서다.
  * 링크를 받아서 연 사람이 뒤로가기를 누르면 이 앱 밖으로 나가 버린다. 경로에서 계산하면
  * 어디로 왔든 같은 곳으로 간다.
+ *
+ * 일괄 백업(`/backup`)은 목록(`/dialogs`)의 형제라 경로만 깎으면 부모가 안 나온다. 하지만
+ * 들어오는 문이 목록 헤더뿐이니 돌아갈 곳도 목록이다 — 이 한 경우만 목록으로 이어 준다.
  */
 function parentPath(pathname: string): string | null {
+  if (pathname.endsWith('/backup')) return '/dialogs';
   const parts = pathname.split('/').filter(Boolean);
   if (parts.length <= 1) return null;
   return `/${parts.slice(0, -1).join('/')}`;
@@ -129,19 +133,9 @@ export function MainLayout() {
                 )}
               </p>
               {/*
-                일괄 백업 입구. **목록 화면에서만, 작게** 둔다 — 헤비한 기능이라 부각하지 않고
-                필요한 사람만 찾아 들어가게 한다(사용자 요청).
+                일괄 백업 입구는 목록 화면(`Dialogs`)의 새로고침 버튼 옆에 둔다 - 헤더가 아니라
+                목록 안이라야 "이 목록으로 무언가 한다"는 게 자연스럽게 읽힌다.
               */}
-              {pathname.endsWith('/dialogs') && (
-                <Link
-                  to="/backup"
-                  aria-label={t('batch.title')}
-                  title={t('batch.title')}
-                  className="shrink-0 rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-200 hover:text-slate-700"
-                >
-                  <Layers className="h-4 w-4" />
-                </Link>
-              )}
               <Button
                 variant="ghost"
                 size="sm"
