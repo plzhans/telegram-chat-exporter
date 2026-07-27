@@ -40,19 +40,38 @@
       "play": "Mulai geser otomatis"
     },
     "why": {
-      "title": "Apa bedanya dengan alat yang harus dipasang",
-      "install": {
-        "title": "Tidak ada yang perlu dipasang",
-        "body": "Tidak perlu memasang Python atau Node, tidak perlu membuka terminal. Asal ada peramban, ini jalan — di Windows, macOS, Android, maupun iPhone."
+      "title": "Apa bedanya dengan ekspor resmi",
+      "lede": "Telegram Desktop punya fitur ekspor sendiri. Kalau duduk di depan komputer dan menyimpan satu per satu sudah cukup, pakai saja itu. Alat ini mengerjakan yang tidak bisa dengan cara tersebut.",
+      "official": "Ekspor resmi",
+      "ours": "Alat ini",
+      "rows": {
+        "where": {
+          "label": "Di mana",
+          "official": "Hanya di komputer yang sudah dipasangi aplikasi desktop. Tidak ada di iPhone, Android, atau web",
+          "ours": "Di mana pun ada peramban. Buka alamatnya lalu mulai"
+        },
+        "chats": {
+          "label": "Obrolan mana",
+          "official": "Satu per satu. Kalau banyak, hanya per kategori secara utuh",
+          "ours": "Pilih obrolan yang Anda mau saja lalu ekspor sekaligus"
+        },
+        "dates": {
+          "label": "Rentang waktu",
+          "official": "Rentang tanggal hanya saat mengekspor satu obrolan",
+          "ours": "Rentang tanggal juga saat mengekspor banyak obrolan sekaligus"
+        },
+        "anon": {
+          "label": "Penyamaran",
+          "official": "Tidak ada",
+          "ours": "Nama menjadi A, B, C dan ID menjadi 1, 2, 3. Aman diserahkan apa adanya"
+        },
+        "layout": {
+          "label": "Bentuk bacaannya",
+          "official": "Daftar datar berisi baris nama dan teks",
+          "ours": "Tampilan pesan itu sendiri. Pesan Anda berada di kanan"
+        }
       },
-      "server": {
-        "title": "Tidak ada server di tengah",
-        "body": "Peramban Anda terhubung langsung ke Telegram. Tidak ada server perantara yang dilewati nomor telepon, kode masuk, atau pesan Anda."
-      },
-      "output": {
-        "title": "Hasil yang bisa dibaca manusia",
-        "body": "Ekstrak berkasnya dan Anda mendapat dokumen HTML yang tampil persis seperti percakapannya. Bisa dibuka tanpa internet, dan tanpa alat ini."
-      }
+      "note": "Baris pertama yang paling menentukan. Ekspor resmi baru terbuka kalau aplikasi desktop dipasang, jadi yang hanya punya ponsel sama sekali tidak punya jalan."
     },
     "zip": {
       "title": "Inilah isi berkas yang Anda terima",

@@ -40,19 +40,38 @@
       "play": "Bật tự động chuyển"
     },
     "why": {
-      "title": "Khác gì so với những công cụ phải cài đặt",
-      "install": {
-        "title": "Không phải cài gì",
-        "body": "Không cài Python hay Node, không mở terminal. Có trình duyệt là chạy được — Windows, macOS, Android hay iPhone đều như nhau."
+      "title": "Khác gì so với xuất dữ liệu chính thức",
+      "lede": "Telegram Desktop vốn đã có chức năng xuất. Nếu bạn thấy ngồi trước máy tính và lưu từng cuộc trò chuyện là đủ, cứ dùng nó. Công cụ này làm những việc cách đó không làm được.",
+      "official": "Xuất chính thức",
+      "ours": "Công cụ này",
+      "rows": {
+        "where": {
+          "label": "Ở đâu",
+          "official": "Chỉ trên máy tính đã cài ứng dụng desktop. Không có trên iPhone, Android hay web",
+          "ours": "Bất cứ nơi nào có trình duyệt. Mở địa chỉ là bắt đầu được"
+        },
+        "chats": {
+          "label": "Những đoạn chat nào",
+          "official": "Mỗi lần một đoạn. Muốn nhiều thì chỉ có thể lấy trọn theo loại",
+          "ours": "Chọn đúng những đoạn bạn cần rồi xuất cùng lúc"
+        },
+        "dates": {
+          "label": "Khoảng thời gian nào",
+          "official": "Chỉ chọn được khoảng ngày khi xuất một đoạn chat",
+          "ours": "Chọn được khoảng ngày ngay cả khi xuất nhiều đoạn cùng lúc"
+        },
+        "anon": {
+          "label": "Ẩn danh",
+          "official": "Không có",
+          "ours": "Tên thành A, B, C và ID thành 1, 2, 3. Đưa cho người khác vẫn an toàn"
+        },
+        "layout": {
+          "label": "Đọc ra sao",
+          "official": "Một danh sách phẳng gồm các dòng tên và nội dung",
+          "ours": "Đúng giao diện tin nhắn. Lời của bạn nằm bên phải"
+        }
       },
-      "server": {
-        "title": "Không có máy chủ ở giữa",
-        "body": "Trình duyệt kết nối thẳng tới Telegram. Đơn giản là không tồn tại máy chủ trung gian nào để số điện thoại, mã đăng nhập hay tin nhắn của bạn đi qua."
-      },
-      "output": {
-        "title": "Kết quả con người đọc được",
-        "body": "Giải nén ra là một tài liệu HTML trông y như chính cuộc trò chuyện. Nó mở được cả khi không có mạng, và không cần đến công cụ này."
-      }
+      "note": "Dòng đầu tiên là điều khác biệt lớn nhất. Xuất chính thức chỉ mở được khi đã cài ứng dụng desktop, nên người chỉ có điện thoại thì hoàn toàn không có đường nào."
     },
     "zip": {
       "title": "Bạn sẽ nhận được những gì",

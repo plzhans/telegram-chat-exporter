@@ -40,19 +40,38 @@
       "play": "Iniciar el avance automático"
     },
     "why": {
-      "title": "En qué se diferencia de las herramientas que hay que instalar",
-      "install": {
-        "title": "Nada que instalar",
-        "body": "Sin instalar Python ni Node, sin abrir una terminal. Si tienes un navegador, funciona — igual en Windows, macOS, Android y iPhone."
+      "title": "En qué se diferencia de la exportación oficial",
+      "lede": "Telegram Desktop ya trae su propia exportación. Si te basta con sentarte frente a la computadora y sacar un chat a la vez, úsala. Esta herramienta hace lo que de esa forma no se puede.",
+      "official": "Exportación oficial",
+      "ours": "Esta herramienta",
+      "rows": {
+        "where": {
+          "label": "Dónde",
+          "official": "Solo en la computadora con la app de escritorio instalada. No está en iPhone, Android ni en la web",
+          "ours": "En cualquier lugar donde haya un navegador. Abre la dirección y empieza"
+        },
+        "chats": {
+          "label": "Qué chats",
+          "official": "Uno a la vez. Varios solo por categorías completas",
+          "ours": "Elige solo los chats que quieras y expórtalos juntos"
+        },
+        "dates": {
+          "label": "Qué periodo",
+          "official": "Rango de fechas solo al exportar un chat",
+          "ours": "Rango de fechas incluso al exportar varios chats a la vez"
+        },
+        "anon": {
+          "label": "Anonimizado",
+          "official": "No existe",
+          "ours": "Los nombres pasan a ser A, B, C y los ID 1, 2, 3. Puedes entregarlo tal cual"
+        },
+        "layout": {
+          "label": "Cómo se lee",
+          "official": "Una lista plana de filas con nombre y texto",
+          "ours": "La vista del mensajero tal cual. Tus mensajes van a la derecha"
+        }
       },
-      "server": {
-        "title": "Ningún servidor de por medio",
-        "body": "Tu navegador se conecta directo a Telegram. Sencillamente no hay un servidor intermedio por donde pasen tu número, tu código de acceso ni tus mensajes."
-      },
-      "output": {
-        "title": "Un resultado que una persona puede leer",
-        "body": "Descomprímelo y tendrás un documento HTML que se ve como la conversación misma. Se abre sin internet y sin esta herramienta."
-      }
+      "note": "La primera fila es la que más pesa. La exportación oficial solo abre si instalas la app de escritorio, así que quien solo tiene teléfono no tiene ninguna vía."
     },
     "zip": {
       "title": "Esto es lo que recibes",

@@ -32,7 +32,26 @@ export interface LandingCopy {
    * 안 보이고 화면 읽기 프로그램이 읽는다)뿐이다.
    */
   screenshots: { title: string; body: string; pause: string; play: string };
-  why: { title: string } & Record<'install' | 'server' | 'output', Card>;
+  /**
+   * 공식 텔레그램 내보내기와의 대조표.
+   *
+   * 이 화면에 오는 사람 상당수가 공식 데스크톱 내보내기를 이미 알고 있고, 그래서 "그거
+   * 있는데 이건 뭐냐" 가 첫 물음이다. 카드로 장점을 늘어놓는 대신 줄마다 둘을 나란히
+   * 세우는 이유가 그것이다.
+   *
+   * **`official` 칸은 사실이어야 한다.** 공식도 하는 일을 못 한다고 적으면 그걸 써 본
+   * 사람이 표 전체를 믿지 않는다 - 예를 들어 공식도 한 방씩 받을 때는 날짜를 지정한다.
+   */
+  why: {
+    title: string;
+    lede: string;
+    /** 두 열의 이름. 좁은 화면에서는 열 대신 각 칸 위에 붙는다. */
+    official: string;
+    ours: string;
+    /** 표 아래 한 문장. 다섯 줄 중 무엇이 제일 크게 갈리는지 짚는다. */
+    note: string;
+    rows: Record<'where' | 'chats' | 'dates' | 'anon' | 'layout', CompareRow>;
+  };
   zip: {
     title: string;
     /** 내보내기 결과물의 파일명 예시. 릴리스 에셋 이름과는 무관하다. */
@@ -55,6 +74,13 @@ export interface LandingCopy {
 export interface Card {
   title: string;
   body: string;
+}
+
+/** 대조표의 한 줄. 무엇을 비교하는지(`label`)와 양쪽의 답. */
+export interface CompareRow {
+  label: string;
+  official: string;
+  ours: string;
 }
 
 /** 앱 화면과 함께 쓰는 문구. 헤더·푸터가 앱과 같아 보여야 하므로 같은 키에서 온다. */
