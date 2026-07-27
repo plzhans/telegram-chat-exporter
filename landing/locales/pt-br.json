@@ -40,19 +40,38 @@
       "play": "Iniciar a passagem automática"
     },
     "why": {
-      "title": "Como isto difere das ferramentas que você instala",
-      "install": {
-        "title": "Nada para instalar",
-        "body": "Sem instalar Python ou Node, sem abrir terminal. Se você tem um navegador, funciona — no Windows, no macOS, no Android e no iPhone."
+      "title": "O que muda em relação à exportação oficial",
+      "lede": "O Telegram Desktop já tem a própria exportação. Se para você basta sentar no computador e salvar uma conversa por vez, use ela. Esta ferramenta faz o que desse jeito não dá.",
+      "official": "Exportação oficial",
+      "ours": "Esta ferramenta",
+      "rows": {
+        "where": {
+          "label": "Onde",
+          "official": "Só no computador com o app de desktop instalado. Não existe no iPhone, no Android nem na web",
+          "ours": "Em qualquer lugar com navegador. Abra o endereço e comece"
+        },
+        "chats": {
+          "label": "Quais conversas",
+          "official": "Uma por vez. Várias, só por categorias inteiras",
+          "ours": "Escolha só as conversas que quiser e exporte todas juntas"
+        },
+        "dates": {
+          "label": "Qual período",
+          "official": "Intervalo de datas só ao exportar uma conversa",
+          "ours": "Intervalo de datas mesmo exportando várias conversas de uma vez"
+        },
+        "anon": {
+          "label": "Anonimização",
+          "official": "Não existe",
+          "ours": "Os nomes viram A, B, C e os IDs 1, 2, 3. Dá para entregar assim mesmo"
+        },
+        "layout": {
+          "label": "Como se lê",
+          "official": "Uma lista corrida de linhas com nome e texto",
+          "ours": "A própria tela do mensageiro. Suas mensagens ficam à direita"
+        }
       },
-      "server": {
-        "title": "Nenhum servidor no meio",
-        "body": "Seu navegador se conecta direto ao Telegram. Simplesmente não existe servidor intermediário por onde passem seu número, seu código de login ou suas mensagens."
-      },
-      "output": {
-        "title": "Um resultado que uma pessoa lê",
-        "body": "Descompacte e você tem um documento HTML com a cara da própria conversa. Ele abre sem internet e sem esta ferramenta."
-      }
+      "note": "A primeira linha é a que mais pesa. A exportação oficial só abre se você instalar o app de desktop, então quem só tem celular não tem caminho nenhum."
     },
     "zip": {
       "title": "É isto que você recebe",

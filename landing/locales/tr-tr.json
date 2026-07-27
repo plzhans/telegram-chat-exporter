@@ -40,19 +40,38 @@
       "play": "Otomatik geçişi başlat"
     },
     "why": {
-      "title": "Kurulum gerektiren araçlardan farkı ne",
-      "install": {
-        "title": "Kurulacak bir şey yok",
-        "body": "Python ya da Node kurmak, terminal açmak yok. Tarayıcınız varsa çalışır — Windows, macOS, Android ve iPhone'da aynı şekilde."
+      "title": "Resmî dışa aktarmadan farkı ne",
+      "lede": "Telegram Desktop'ın kendi dışa aktarma özelliği var. Bilgisayar başında oturup sohbetleri tek tek almak size yetiyorsa onu kullanın. Bu araç, o yolla yapılamayanları yapar.",
+      "official": "Resmî dışa aktarma",
+      "ours": "Bu araç",
+      "rows": {
+        "where": {
+          "label": "Nerede",
+          "official": "Yalnızca masaüstü uygulaması kurulu bilgisayarda. iPhone, Android ve web'de yok",
+          "ours": "Tarayıcı olan her yerde. Adresi açın ve başlayın"
+        },
+        "chats": {
+          "label": "Hangi sohbetler",
+          "official": "Seferde bir tane. Birden fazlası ancak kategorinin tamamı olarak",
+          "ours": "Yalnızca istediğiniz sohbetleri seçip hepsini birlikte alın"
+        },
+        "dates": {
+          "label": "Hangi tarihler",
+          "official": "Tarih aralığı yalnızca tek sohbet alırken",
+          "ours": "Birden çok sohbeti birlikte alırken de tarih aralığı"
+        },
+        "anon": {
+          "label": "Anonimleştirme",
+          "official": "Yok",
+          "ours": "İsimler A, B, C; kimlikler 1, 2, 3 olur. Olduğu gibi başkasına verilebilir"
+        },
+        "layout": {
+          "label": "Nasıl okunur",
+          "official": "İsim ve metin satırlarından oluşan düz bir liste",
+          "ours": "Mesajlaşma ekranının kendisi. Kendi mesajlarınız sağda durur"
+        }
       },
-      "server": {
-        "title": "Arada sunucu yok",
-        "body": "Tarayıcınız doğrudan Telegram'a bağlanır. Telefon numaranızın, giriş kodunuzun ya da mesajlarınızın uğrayacağı bir ara sunucu hiç yok."
-      },
-      "output": {
-        "title": "İnsanın okuyabileceği bir çıktı",
-        "body": "Arşivi açtığınızda karşınıza sohbetin kendisi gibi görünen bir HTML belgesi çıkar. İnternet olmadan da, bu araç olmadan da açılır."
-      }
+      "note": "En büyük fark ilk satırda. Resmî dışa aktarma ancak masaüstü uygulaması kurulunca açılır; elinde yalnızca telefon olanın hiçbir yolu yoktur."
     },
     "zip": {
       "title": "Elinize geçen şey bu",

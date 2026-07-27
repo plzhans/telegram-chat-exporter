@@ -58,6 +58,19 @@ export const Shield = ({ className }: IconProps) => (
   </Svg>
 );
 
+export const Check = ({ className }: IconProps) => (
+  <Svg className={className}>
+    <path d="M20 6 9 17l-5-5" />
+  </Svg>
+);
+
+/** 공식 내보내기가 못 하는 칸에 붙는다. 없음을 말하지 틀렸다고 말하지는 않으므로 X 가 아니라 선 하나다. */
+export const Minus = ({ className }: IconProps) => (
+  <Svg className={className}>
+    <path d="M5 12h14" />
+  </Svg>
+);
+
 export const Monitor = ({ className }: IconProps) => (
   <Svg className={className}>
     <path d="M18 8V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h8" />

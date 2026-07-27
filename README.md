@@ -17,6 +17,22 @@ through.
 
 ---
 
+## How this differs from Telegram's own export
+
+Telegram Desktop has an export feature of its own. If sitting at a desktop and taking one chat at
+a time is fine for you, use it. This tool does the things that way can't.
+
+| | Official export | This tool |
+| :--- | :--- | :--- |
+| **Where** | Only a computer with the desktop app<br><sub>Not on iPhone, Android or the web</sub> | ✅ **Anywhere there's a browser**<br><sub>Open the address and start</sub> |
+| **Which chats** | One at a time<br><sub>Several only as whole categories</sub> | ✅ **Only the chats you pick, all at once** |
+| **Which dates** | A date range only for a single chat | ✅ **A date range for many chats at once** |
+| **Anonymizing** | Not available | ✅ **Names → A, B, C · IDs → 1, 2, 3**<br><sub>Safe to hand to someone else</sub> |
+| **How it reads** | A flat list of name-and-text rows | ✅ **The messenger view itself**<br><sub>Your own messages on the right</sub> |
+
+The first row is the big one. The official export only opens if you install the desktop app, so
+if all you have is a phone there is no route at all. This tool needs one address.
+
 ## What it looks like
 
 |  |  |  |

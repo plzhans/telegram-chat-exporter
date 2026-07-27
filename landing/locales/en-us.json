@@ -40,19 +40,38 @@
       "play": "Play autoplay"
     },
     "why": {
-      "title": "How this differs from tools you install",
-      "install": {
-        "title": "Nothing to install",
-        "body": "No installing Python or Node, no opening a terminal. If you have a browser it works — Windows, macOS, Android and iPhone alike."
+      "title": "How this differs from Telegram's own export",
+      "lede": "Telegram Desktop has an export feature of its own. If sitting at a computer and taking one chat at a time works for you, use it. This tool does what that way can't.",
+      "official": "Official export",
+      "ours": "This tool",
+      "rows": {
+        "where": {
+          "label": "Where",
+          "official": "Only on a computer with the desktop app installed. Not on iPhone, Android or the web",
+          "ours": "Anywhere there's a browser. Open the address and start"
+        },
+        "chats": {
+          "label": "Which chats",
+          "official": "One at a time. Several only as whole categories",
+          "ours": "Pick just the chats you want and export them together"
+        },
+        "dates": {
+          "label": "Which dates",
+          "official": "A date range only when exporting a single chat",
+          "ours": "A date range even when exporting many chats at once"
+        },
+        "anon": {
+          "label": "Anonymizing",
+          "official": "Not available",
+          "ours": "Names become A, B, C and IDs 1, 2, 3 — safe to hand to someone else"
+        },
+        "layout": {
+          "label": "How it reads",
+          "official": "A flat list of name-and-text rows",
+          "ours": "The messenger view itself. Your own messages sit on the right"
+        }
       },
-      "server": {
-        "title": "No server in between",
-        "body": "Your browser connects to Telegram directly. There is simply no middle server for your phone number, login code or messages to pass through."
-      },
-      "output": {
-        "title": "Output a person can read",
-        "body": "Unzip it and you get an HTML document that looks like the conversation itself. It opens without an internet connection, and without this tool."
-      }
+      "note": "The first row is the big one. The official export only opens if you install the desktop app, so if all you have is a phone there is no route at all."
     },
     "zip": {
       "title": "This is what you get",

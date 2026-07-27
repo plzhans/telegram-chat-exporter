@@ -41,19 +41,38 @@
       "play": "Simulan ang kusang pagpalit"
     },
     "why": {
-      "title": "Ano ang pinagkaiba nito sa mga tool na kailangang i-install",
-      "install": {
-        "title": "Walang i-install",
-        "body": "Walang pag-install ng Python o Node, walang pagbukas ng terminal. Basta may browser ka, gumagana ito — sa Windows, macOS, Android at iPhone."
+      "title": "Ano ang pinagkaiba sa opisyal na export",
+      "lede": "May sariling export ang Telegram Desktop. Kung sapat na sa iyo ang umupo sa kompyuter at isa-isahin ang mga chat, gamitin mo iyon. Ginagawa ng tool na ito ang hindi kayang gawin sa paraang iyon.",
+      "official": "Opisyal na export",
+      "ours": "Ang tool na ito",
+      "rows": {
+        "where": {
+          "label": "Saan",
+          "official": "Sa kompyuter lang na may nakainstall na desktop app. Wala sa iPhone, Android, o web",
+          "ours": "Kahit saan basta may browser. Buksan ang address at magsimula"
+        },
+        "chats": {
+          "label": "Aling mga chat",
+          "official": "Tig-isa. Kung marami, buong kategorya lang",
+          "ours": "Piliin lang ang mga chat na gusto mo at isabay ang lahat"
+        },
+        "dates": {
+          "label": "Anong panahon",
+          "official": "May saklaw ng petsa lang kapag isang chat ang ini-export",
+          "ours": "May saklaw ng petsa kahit maraming chat ang sabay-sabay"
+        },
+        "anon": {
+          "label": "Pag-anonimo",
+          "official": "Wala",
+          "ours": "Nagiging A, B, C ang mga pangalan at 1, 2, 3 ang mga ID. Puwedeng ibigay nang ganoon na lang"
+        },
+        "layout": {
+          "label": "Anyo ng pagbasa",
+          "official": "Isang patag na listahan ng pangalan at teksto",
+          "ours": "Mismong hitsura ng messenger. Nasa kanan ang mga mensahe mo"
+        }
       },
-      "server": {
-        "title": "Walang server sa gitna",
-        "body": "Diretso sa Telegram kumakabit ang browser mo. Wala talagang panggitnang server na daraanan ng numero mo, ng login code o ng mga mensahe mo."
-      },
-      "output": {
-        "title": "Resultang kayang basahin ng tao",
-        "body": "I-unzip mo at may HTML document kang makukuha na kamukha mismo ng usapan. Bumubukas ito kahit walang internet, at kahit wala ang tool na ito."
-      }
+      "note": "Ang unang hilera ang pinakamalaki. Bumubukas lang ang opisyal na export kapag nakainstall ang desktop app, kaya walang anumang daan ang may telepono lang."
     },
     "zip": {
       "title": "Ito ang matatanggap mo",
