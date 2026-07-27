@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.1](https://github.com/plzhans/telegram-chat-exporter/compare/release/v1.8.0...release/v1.8.1) (2026-07-27)
+
+
+### 구조 변경
+
+* **ui:** 깃허브 아이콘을 직접 들고 lucide 브랜드 아이콘 의존을 끊는다 ([#29](https://github.com/plzhans/telegram-chat-exporter/issues/29)) ([910bdd3](https://github.com/plzhans/telegram-chat-exporter/commit/910bdd3e46484ea1fa393f54bcc7e8fd4b7fd256))
+
 ## [1.8.0](https://github.com/plzhans/telegram-chat-exporter/compare/release/v1.7.0...release/v1.8.0) (2026-07-27)
 
 
