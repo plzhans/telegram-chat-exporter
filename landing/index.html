@@ -25,14 +25,28 @@
       content="텔레그램 대화를 zip 으로 내려받습니다. 서버를 거치지 않고 브라우저 안에서만 동작합니다."
     />
     <meta property="og:url" content="/" />
+    <!--
+      공유 카드 그림. 값은 `vite.config.ts` 가 **절대 주소로** 덮어쓴다 - 상대 경로는
+      크롤러가 풀지 못해서 그림이 아예 안 뜬다. 여기 적힌 `/og.png` 는 개발 모드용이다.
+
+      한 장으로 열다섯 판을 다 쓴다. 그림 안 글씨를 영어로 두고 제품 이름과 화면만
+      보여 주기 때문에 어느 언어판에서 공유해도 어긋나 보이지 않는다. 판마다 한 장씩
+      두려면 열다섯 장을 만들고 여기 이름을 언어별로 갈라야 한다.
+    -->
+    <meta property="og:image" content="/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:alt" content="Telegram Exporter" />
     <meta property="og:locale" content="ko_KR" />
     <meta property="og:locale:alternate" content="en_US" />
-    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="텔레그램 대화 백업 — 설치 없이 브라우저에서" />
     <meta
       name="twitter:description"
       content="텔레그램 대화를 zip 으로 내려받습니다. 서버를 거치지 않고 브라우저 안에서만 동작합니다."
     />
+    <meta name="twitter:image" content="/og.png" />
 
     <script type="application/ld+json">
       {

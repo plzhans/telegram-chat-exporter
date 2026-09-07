@@ -1,35 +1,6 @@
 import { useLanding } from '../context';
 import { ChevronLeft, ChevronRight, Pause, Play } from '../icons';
-import type { SupportedLanguage } from '../i18n/languages';
-
-/**
- * 언어별 스크린샷이 놓이는 폴더.
- *
- * 스크린샷은 앱 UI 가 찍혀 있어서 화면 안 글자가 언어를 탄다. 그래서 판마다 한 벌씩 두되,
- * **여기 적힌 언어만** 제 폴더를 갖고 나머지는 영어판(`en/`)으로 떨어진다 - 열다섯 언어
- * 전부를 새로 찍을 수는 없으니, 있는 것만 두고 없으면 영어로 폴백한다.
- *
- * 기본 언어(`ko-kr`)는 URL 과 같은 규칙으로 접두사 없는 맨 자리(`public/` 바로 아래)를 쓴다.
- * 폴더를 새로 채우면(`ja/` 처럼) 여기에 한 줄 더한다.
- */
-const SHOT_DIR: Partial<Record<SupportedLanguage, string>> = {
-  'ko-kr': '', // 기본 언어 - 접두사 없는 맨 자리(public/shot-XX.png)
-  'en-us': 'en/',
-};
-
-/** 이 언어의 스크린샷 폴더. 제 판이 없으면 영어판을 쓴다. */
-function shotDir(lang: SupportedLanguage): string {
-  return SHOT_DIR[lang] ?? 'en/';
-}
-
-/**
- * `public/`(과 `public/en/`)에 있는 스크린샷 장수.
- *
- * 파일 이름은 `shot-01.png` … 로 두 자리를 맞춘다. 사전순 정렬이 곧 화면 순서가 되도록
- * 하기 위해서다(`shot-1`, `shot-10`, `shot-2` 로 섞이지 않는다). 장수를 바꾸면 이 숫자만
- * 고치면 된다.
- */
-const COUNT = 18;
+import { SHOT_COUNT, SHOT_EAGER_COUNT, shotDir, shotName } from '../config/shots';
 
 /**
  * 자리를 미리 잡아 두기 위한 치수. 이미지가 도착하기 전에도 높이가 정해져 화면이 안 흔들린다.
@@ -58,7 +29,7 @@ const HEIGHT = 1690;
 export function Screenshots() {
   const { env, copy } = useLanding();
   const dir = shotDir(env.lang);
-  const shots = Array.from({ length: COUNT }, (_, i) => String(i + 1).padStart(2, '0'));
+  const shots = Array.from({ length: SHOT_COUNT }, (_, i) => shotName(i));
 
   return (
     <section className="border-b border-slate-200 bg-white py-8 sm:py-12">
@@ -102,25 +73,36 @@ export function Screenshots() {
                   "휴대전화 화면"으로 읽히고, 흰 배경 위에서 경계도 또렷해진다.
                 */}
                 <div className="rounded-[1.75rem] bg-slate-900 p-1.5 shadow-lg ring-1 ring-slate-900/5">
-                  <img
-                    src={`${env.assetBase}${dir}shot-${n}.png`}
-                    width={WIDTH}
-                    height={HEIGHT}
-                    /*
-                      첫 장만 곧바로 받는다. 나머지는 다가올 때 받게 두지 않으면 이 한 섹션이
-                      수 MB 를 끌고 와서, 정작 첫 화면이 늦게 뜬다.
-                    */
-                    loading={i === 0 ? 'eager' : 'lazy'}
-                    decoding="async"
-                    alt={`${copy.screenshots.title} ${i + 1}`}
-                    /*
-                      데스크톱에서 이미지를 마우스로 눌러 끌면 브라우저가 "이미지 드래그"(고스트)를
-                      시작해 캐러셀 드래그를 가로챈다. 기본 드래그를 꺼서 마우스 조작이 Embla 로
-                      가게 한다. 터치에는 이 기본 동작이 없어 원래도 잘 넘어갔다.
-                    */
-                    draggable={false}
-                    className="block w-56 select-none rounded-[1.4rem] sm:w-64"
-                  />
+                  {/*
+                    WebP 를 먼저 걸고 PNG 를 폴백으로 남긴다. 스크린샷은 UI 캡처라 평탄한
+                    색면이 많아 WebP 손실 압축에서 열화가 눈에 안 띄면서 용량은 7.1MB → 1.9MB
+                    (73%)로 줄어든다. PNG 를 지우지 않는 건 git 히스토리가 이미 들고 있어서
+                    지워도 클론 용량이 안 줄기 때문이다 - 위험만 지고 얻는 게 없다.
+                  */}
+                  <picture>
+                    <source srcSet={`${env.assetBase}${dir}shot-${n}.webp`} type="image/webp" />
+                    <img
+                      src={`${env.assetBase}${dir}shot-${n}.png`}
+                      width={WIDTH}
+                      height={HEIGHT}
+                      /*
+                        첫 화면에 걸리는 몇 장만 곧바로 받는다(`SHOT_EAGER_COUNT` 에 이유를
+                        적어 두었다). 나머지를 다가올 때 받게 두지 않으면 이 한 섹션이 수 MB 를
+                        끌고 와서, 정작 첫 화면이 늦게 뜬다.
+                      */
+                      loading={i < SHOT_EAGER_COUNT ? 'eager' : 'lazy'}
+                      fetchPriority={i < SHOT_EAGER_COUNT ? 'high' : undefined}
+                      decoding="async"
+                      alt={`${copy.screenshots.title} ${i + 1}`}
+                      /*
+                        데스크톱에서 이미지를 마우스로 눌러 끌면 브라우저가 "이미지 드래그"(고스트)를
+                        시작해 캐러셀 드래그를 가로챈다. 기본 드래그를 꺼서 마우스 조작이 Embla 로
+                        가게 한다. 터치에는 이 기본 동작이 없어 원래도 잘 넘어갔다.
+                      */
+                      draggable={false}
+                      className="block w-56 select-none rounded-[1.4rem] sm:w-64"
+                    />
+                  </picture>
                 </div>
               </div>
             ))}

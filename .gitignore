@@ -6,3 +6,6 @@ dist-standalone
 .env
 .env.local
 config/telegram/*.pem
+
+# SEO 감사 산출물 (claude-seo). 리포지터리에 남길 것이 아니라 그때그때 다시 뽑는 것이다.
+*-audit/
