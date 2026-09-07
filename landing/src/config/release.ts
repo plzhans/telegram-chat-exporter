@@ -45,3 +45,22 @@ export const DEFAULT_RELEASE_ASSET = 'telegram-exporter.zip';
  */
 export const githubLatestDownloadUrl = (repoUrl: string, asset: string): string =>
   `${repoUrl.replace(/\/$/, '')}/releases/latest/download/${asset}`;
+
+/**
+ * 저장소 주소에서 만든 사람을 뽑는다. `https://github.com/plzhans/telegram-chat-exporter`
+ * 에서 `plzhans` 와 그 프로필 주소가 나온다.
+ *
+ * **읽는 쪽이 둘이다.** 푸터가 이름을 걸고(`sections/Footer.tsx`), 구조화 데이터가
+ * `author`·`publisher` 에 같은 사람을 적는다(`vite.config.ts`). 화면과 메타데이터가
+ * 서로 다른 사람을 가리키면 "누가 만들었는가" 에 답을 두 개 주는 셈이다.
+ *
+ * **박아 두지 않는 이유.** 저장소 주소는 `VITE_GITHUB_REPO_URL` 로 갈아 끼울 수 있어서
+ * 포크한 쪽은 제 저장소를 가리키는데, 만든 사람만 원래 주인으로 남으면 어긋난다.
+ *
+ * 주소 모양이 짐작과 다르면(호스팅이 GitHub 가 아니거나) 아무것도 돌려주지 않는다 -
+ * 틀린 사람을 적느니 비워 두는 편이 낫다. 그때 푸터는 이름만 글자로 두고 링크를 걸지 않는다.
+ */
+export const ownerOf = (repoUrl: string): { name: string; url: string } | null => {
+  const m = /^(https?:\/\/[^/]+)\/([^/]+)\/[^/]+\/?$/.exec(repoUrl);
+  return m ? { name: m[2], url: `${m[1]}/${m[2]}` } : null;
+};

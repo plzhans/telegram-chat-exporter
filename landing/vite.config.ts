@@ -25,7 +25,7 @@ import {
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { Landing } from './src/Landing';
-import { DEFAULT_RELEASE_ASSET, githubLatestDownloadUrl } from './src/config/release';
+import { DEFAULT_RELEASE_ASSET, githubLatestDownloadUrl, ownerOf } from './src/config/release';
 import { SHOT_COUNT, shotDir, shotName } from './src/config/shots';
 import { execFileSync } from 'node:child_process';
 import type { LandingText } from './src/context';
@@ -108,21 +108,6 @@ const localeLastmod = (lang: SupportedLanguage): string | null => {
   }
 };
 
-/**
- * 저장소 주소에서 만든 사람을 뽑는다. `https://github.com/plzhans/telegram-chat-exporter`
- * 에서 `plzhans` 와 그 프로필 주소가 나온다.
- *
- * **박아 두지 않는 이유.** 저장소 주소는 `VITE_GITHUB_REPO_URL` 로 갈아 끼울 수 있어서
- * 포크한 쪽은 제 저장소를 가리키는데, 만든 사람만 원래 주인으로 남으면 구조화 데이터가
- * 서로 다른 두 사람을 가리키게 된다. 주소에서 뽑으면 늘 한 사람을 가리킨다.
- *
- * 주소 모양이 짐작과 다르면(호스팅이 GitHub 가 아니거나) 아무것도 돌려주지 않는다 -
- * 틀린 사람을 적느니 비워 두는 편이 낫다.
- */
-const ownerOf = (repoUrl: string): { name: string; url: string } | null => {
-  const m = /^(https?:\/\/[^/]+)\/([^/]+)\/[^/]+\/?$/.exec(repoUrl);
-  return m ? { name: m[2], url: `${m[1]}/${m[2]}` } : null;
-};
 
 /**
  * 애널리틱스·광고 스위치.
@@ -302,7 +287,8 @@ function localizedPages(opts: {
   sourceUrl: string;
   /** 내려받기 버튼이 걸 주소. 이미 완성된 형태다. `src/config/release.ts` 참고. */
   downloadUrl: string;
-  copyright: string;
+  /** 푸터에 찍을 연도. 만든 사람 이름은 `sourceUrl` 에서 뽑으므로 여기 없다. */
+  copyrightYear: number;
   /** 구글 애널리틱스 측정 ID. 비어 있으면 랜딩에 스크립트가 한 줄도 안 들어간다. */
   gaId: string;
   /**
@@ -659,7 +645,7 @@ function localizedPages(opts: {
           analytics: Boolean(opts.gaId),
           sourceUrl: opts.sourceUrl,
           downloadUrl: opts.downloadUrl,
-          copyright: opts.copyright,
+          copyrightYear: opts.copyrightYear,
         },
       }),
     );
@@ -759,7 +745,7 @@ export default defineConfig(({ command, mode }) => {
             localizedPages({
               sourceUrl: repoUrl,
               downloadUrl,
-              copyright: `© ${COPYRIGHT_YEAR} plzhans`,
+              copyrightYear: COPYRIGHT_YEAR,
               gaId: on.ga,
               appUrl,
             }),
