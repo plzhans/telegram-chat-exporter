@@ -143,3 +143,32 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v5
+
+      # 새 판을 올렸으니 엣지에 남은 옛 판을 지운다.
+      #
+      # **이게 없으면 배포가 최대 10분 늦게 보인다.** HTML 은 엣지에서 600초를 살고
+      # (`cloudflare/rules/http_request_cache_settings/html-pages.json`) 그 시간이 다 갈
+      # 때까지 이전 문서가 나간다. 해시 붙은 번들은 이름이 바뀌니 상관없지만, 이름이
+      # 고정된 것들(HTML·스크린샷·og.png·sitemap.xml)은 지워 줘야 새것이 보인다.
+      #
+      # **스크립트를 쓰려고 체크아웃한다.** 배포 job 은 원래 아무것도 안 받아 오는데,
+      # 퍼지 규칙(어느 호스트를 지울지)이 `cloudflare/settings.json` 에 있다. 빌드한
+      # 지점과 같은 곳을 봐야 하므로 ref 도 build 와 똑같이 맞춘다.
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.ref || github.ref }}
+
+      # 토큰이 없으면 조용히 건너뛴다. 포크한 쪽은 Cloudflare 를 안 쓸 수도 있는데,
+      # 그 때문에 배포가 실패하면 안 된다 - 퍼지는 배포가 끝난 뒤의 뒷정리일 뿐이다.
+      #
+      # 이 토큰은 **캐시 퍼지 권한만** 있으면 된다. zone 을 고칠 수 있는 토큰을 CI 에
+      # 두지 말 것 - 새는 자리가 늘어나는데 얻는 것이 없다.
+      - name: Purge Cloudflare cache
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          if [ -z "${CLOUDFLARE_API_TOKEN}" ]; then
+            echo "::notice::CLOUDFLARE_API_TOKEN 이 없어 캐시 퍼지를 건너뛴다."
+            exit 0
+          fi
+          ./cloudflare/purge-cache.sh

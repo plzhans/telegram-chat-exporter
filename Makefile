@@ -41,3 +41,14 @@ decrypt:
 	    && echo "복호화 완료: $$f.enc -> $$f" \
 	    || { rm -f "$$f.tmp"; exit 1; }; \
 	done
+
+.PHONY: cloudflare-purge cloudflare-dns cloudflare-rules
+
+cloudflare-purge:
+	./cloudflare/purge-cache.sh
+
+cloudflare-dns:
+	./cloudflare/manage-dns.sh
+
+cloudflare-rules:
+	./cloudflare/manage-rules.sh

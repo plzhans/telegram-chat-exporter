@@ -1,0 +1,11 @@
+{
+  "ref": "telegram-exporter-static",
+  "description": "[telegram-exporter-static] 이름이 고정된 자산 - 스크린샷(shot-*.webp/png) · og.png · favicon.svg. 해시가 없어 같은 URL 이 다른 내용을 담을 수 있다(실제로 스크린샷을 같은 이름으로 다시 찍은 적이 있다). **엣지와 브라우저에 다른 수명을 준다.** 배포 뒤 퍼지(deploy.yml)가 지울 수 있는 것은 엣지뿐이라 그쪽은 30일을 줘도 새 판이 곧바로 반영되지만, 브라우저 캐시에는 퍼지가 닿지 못해서 길게 잡으면 다시 온 사람이 그 기간 내내 옛 그림을 본다 - 그래서 브라우저는 하루로 묶는다. 해시가 붙은 번들은 이 규칙이 아니라 immutable 로 간다.",
+  "expression": "(http.host eq \"telegram-exporter.plzhans.com\") and (http.request.uri.path wildcard \"/shot-*\" or http.request.uri.path wildcard \"/en/shot-*\" or http.request.uri.path eq \"/og.png\" or http.request.uri.path eq \"/favicon.svg\")",
+  "action": "set_cache_settings",
+  "action_parameters": {
+    "cache": true,
+    "edge_ttl": { "mode": "override_origin", "default": 2592000 },
+    "browser_ttl": { "mode": "override_origin", "default": 86400 }
+  }
+}
