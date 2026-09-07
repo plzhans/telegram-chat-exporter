@@ -26,6 +26,7 @@ import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { Landing } from './src/Landing';
 import { DEFAULT_RELEASE_ASSET, githubLatestDownloadUrl } from './src/config/release';
+import { shotDir, shotName } from './src/config/shots';
 import type { LandingText } from './src/context';
 
 /**
@@ -351,6 +352,47 @@ function localizedPages(opts: {
     out = setMeta(out, 'property', 'og:url', url);
     out = setMeta(out, 'name', 'twitter:title', meta.shareTitle);
     out = setMeta(out, 'name', 'twitter:description', meta.shareDescription);
+
+    /*
+      공유 카드 그림은 **절대 주소여야** 한다. 상대 경로를 적으면 슬랙·트위터·카카오톡이
+      풀지 못해 카드에 그림이 아예 안 뜬다 - 문서 안에서만 도는 `canonical` 과 다르다.
+
+      정식 주소가 없는 로컬 빌드에서는 손대지 않고 `index.html` 의 `/og.png` 를 그대로
+      둔다. 개발 중에는 그 편이 실제로 열리고, 어차피 그 빌드는 게시되지 않는다.
+    */
+    if (SITE_ORIGIN) {
+      const ogImage = `${SITE_ORIGIN}${base}og.png`;
+      out = setMeta(out, 'property', 'og:image', ogImage);
+      out = setMeta(out, 'name', 'twitter:image', ogImage);
+    }
+    // 그림 안 글씨는 영어 한 벌이지만 대체 텍스트는 그 판의 말로 읽히게 둔다.
+    out = setMeta(out, 'property', 'og:image:alt', meta.shareTitle);
+
+    /*
+      캐러셀 첫 장을 미리 받아 둔다. 이 그림이 데스크톱 LCP 요소인데, preload 가 없으면
+      CSS 를 다 읽고 나서야 요청이 시작된다 - `<img>` 는 문서 아래쪽에 있고 브라우저는
+      그때까지 이 그림이 필요한 줄 모른다.
+
+      **`type` 을 적어야 한다.** 화면에 걸리는 것은 `<picture>` 라 WebP 를 못 읽는
+      브라우저는 PNG 로 떨어지는데, 여기에 `type` 이 없으면 그런 브라우저까지 WebP 를
+      받아 두고 쓰지도 않는다 - 안 쓸 파일을 최우선으로 받는 셈이라 되레 느려진다.
+
+      주소가 언어를 탄다(`shotDir`). 판마다 제 그림을 미리 받아야지, 한 벌로 박아 두면
+      영어판을 받아 놓고 화면은 다른 그림을 걸어 첫 장을 두 번 받는다.
+
+      **넣기 전에 먼저 지운다.** 이 함수는 기본 언어를 이미 한 번 거친 문서에 다시 걸린다
+      (`transformIndexHtml` 이 셸에 기본판을 찍고, `generateBundle` 이 그 셸을 받아 언어판을
+      찍는다). 위 `setMeta` 들은 값을 덮어쓰니 겹칠 일이 없지만 이 줄은 새로 붙이는 것이라,
+      지우지 않으면 언어판마다 preload 가 둘씩 남아 안 쓸 기본판 그림까지 최우선으로
+      받아 온다 - 바로 위에서 경계한 "첫 장을 두 번 받는다"가 그대로 일어난다.
+    */
+    const firstShot = `${base}${shotDir(lang)}shot-${shotName(0)}.webp`;
+    out = out
+      .replace(/\s*<link rel="preload" as="image"[^>]*\/>/g, '')
+      .replace(
+        '</head>',
+        `  <link rel="preload" as="image" href="${firstShot}" type="image/webp" fetchpriority="high" />\n  </head>`,
+      );
 
     // og:locale 은 언어 수가 늘어도 맞도록 통째로 다시 만든다.
     const localeTags = [
