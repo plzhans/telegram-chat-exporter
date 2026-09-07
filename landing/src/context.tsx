@@ -131,7 +131,8 @@ export interface LandingEnv {
    * 읽지 않는 이유도 거기 있다: 랜딩은 빌드 도중 Node 에서 그려져서 그게 없다.
    */
   downloadUrl: string;
-  copyright: string;
+  /** 푸터에 찍을 연도. 만든 사람 이름은 `sourceUrl` 에서 뽑는다(`ownerOf`). */
+  copyrightYear: number;
 }
 
 export interface LandingValue {

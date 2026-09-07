@@ -80,7 +80,7 @@ export function landingProps(): LandingValue {
     downloadUrl:
       env.VITE_RELEASE_DOWNLOAD_URL ||
       githubLatestDownloadUrl(repoUrl, env.VITE_RELEASE_ASSET_FILE_NAME || DEFAULT_RELEASE_ASSET),
-    copyright: `© ${new Date().getFullYear()} plzhans`,
+    copyrightYear: new Date().getFullYear(),
   };
 
   return { text: textFor(lang), env: value };
