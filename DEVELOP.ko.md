@@ -233,7 +233,7 @@ addEventListener('securitypolicyviolation', (e) =>
 
 ## 다국어
 
-화면과 검색용 메타 정보 양쪽을 번역한다. 현재 **14개 언어**를 지원한다.
+화면과 검색용 메타 정보 양쪽을 번역한다. 현재 **15개 언어**를 지원한다.
 
 번역 파일: [`src/shared/i18n/locales/`](src/shared/i18n/locales/)
 
@@ -253,6 +253,7 @@ addEventListener('securitypolicyviolation', (e) =>
 | [`tr-tr`](src/shared/i18n/locales/tr-tr.json) | 터키어 |
 | [`fil-ph`](src/shared/i18n/locales/fil-ph.json) | 필리핀어 |
 | [`kk-kz`](src/shared/i18n/locales/kk-kz.json) | 카자흐어 |
+| [`zh-hk`](src/shared/i18n/locales/zh-hk.json) | 중국어 번체 (홍콩) |
 
 목록의 순서가 곧 **언어 선택 상자의 순서**다. 앞의 셋은 이 도구가 먼저 챙기는 사용자들이고,
 그 뒤는 텔레그램 사용자 수가 많은 순서다.

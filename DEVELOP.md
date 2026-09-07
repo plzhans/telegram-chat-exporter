@@ -282,7 +282,7 @@ look at the first screen.
 
 ## Internationalization
 
-Both the UI and the search metadata are translated. **14 languages** are currently supported.
+Both the UI and the search metadata are translated. **15 languages** are currently supported.
 
 Translation files: [`src/shared/i18n/locales/`](src/shared/i18n/locales/)
 
@@ -302,6 +302,7 @@ Translation files: [`src/shared/i18n/locales/`](src/shared/i18n/locales/)
 | [`tr-tr`](src/shared/i18n/locales/tr-tr.json) | Turkish |
 | [`fil-ph`](src/shared/i18n/locales/fil-ph.json) | Filipino |
 | [`kk-kz`](src/shared/i18n/locales/kk-kz.json) | Kazakh |
+| [`zh-hk`](src/shared/i18n/locales/zh-hk.json) | Chinese Traditional (Hong Kong) |
 
 The order of this list is **the order in the language picker**. The first three are the users this
 tool serves first; the rest follow Telegram user counts.
