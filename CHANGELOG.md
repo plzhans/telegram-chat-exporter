@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.1](https://github.com/plzhans/telegram-chat-exporter/compare/release/v1.9.0...release/v1.9.1) (2026-09-07)
+
+
+### 버그 수정
+
+* **deps:** 릴리스를 막던 고위험 취약점을 올린다 ([#39](https://github.com/plzhans/telegram-chat-exporter/issues/39)) ([452f928](https://github.com/plzhans/telegram-chat-exporter/commit/452f928405336f75f66d8668272bd3368ce321f1))
+
 ## [1.9.0](https://github.com/plzhans/telegram-chat-exporter/compare/release/v1.8.1...release/v1.9.0) (2026-09-07)
 
 
