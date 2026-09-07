@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.9.0](https://github.com/plzhans/telegram-chat-exporter/compare/release/v1.8.1...release/v1.9.0) (2026-09-07)
+
+
+### 기능
+
+* **landing:** 공유 카드에 그림을 달고 스크린샷을 WebP 로 바꾼다 ([#40](https://github.com/plzhans/telegram-chat-exporter/issues/40)) ([7cec19c](https://github.com/plzhans/telegram-chat-exporter/commit/7cec19ce8049b5e90c52d2242a828414939fa5ea))
+* **landing:** 구조화 데이터를 채우고 대체 텍스트를 쓸모 있게 만든다 ([#41](https://github.com/plzhans/telegram-chat-exporter/issues/41)) ([7d2f83b](https://github.com/plzhans/telegram-chat-exporter/commit/7d2f83b84b84b471b55b02fc2c634d5f518ad3ac))
+* **landing:** 푸터에서 만든 사람을 밝히고 이름에 링크를 건다 ([#42](https://github.com/plzhans/telegram-chat-exporter/issues/42)) ([0fc2ac6](https://github.com/plzhans/telegram-chat-exporter/commit/0fc2ac6722ed84c42a0f3349b426c9f39349bc52))
+
+
+### 문서
+
+* **landing:** 공식 내보내기와의 차이를 대조표로 앞세운다 ([#31](https://github.com/plzhans/telegram-chat-exporter/issues/31)) ([2f6cf11](https://github.com/plzhans/telegram-chat-exporter/commit/2f6cf11bc9b7ab361ff8f2753e7564c742f6e1b2))
+
 ## [1.8.1](https://github.com/plzhans/telegram-chat-exporter/compare/release/v1.8.0...release/v1.8.1) (2026-07-27)
 
 
