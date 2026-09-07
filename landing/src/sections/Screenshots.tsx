@@ -1,6 +1,6 @@
 import { useLanding } from '../context';
 import { ChevronLeft, ChevronRight, Pause, Play } from '../icons';
-import { SHOT_COUNT, SHOT_EAGER_COUNT, shotDir, shotName } from '../config/shots';
+import { SHOT_COUNT, SHOT_EAGER_COUNT, shotDir, shotName, shotStage } from '../config/shots';
 
 /**
  * 자리를 미리 잡아 두기 위한 치수. 이미지가 도착하기 전에도 높이가 정해져 화면이 안 흔들린다.
@@ -93,7 +93,13 @@ export function Screenshots() {
                       loading={i < SHOT_EAGER_COUNT ? 'eager' : 'lazy'}
                       fetchPriority={i < SHOT_EAGER_COUNT ? 'high' : undefined}
                       decoding="async"
-                      alt={`${copy.screenshots.title} ${i + 1}`}
+                      /*
+                        번호만 붙이면(`실제 화면 보기 7`) 있으나 마나 한 대체 텍스트다.
+                        화면 낭독기로 듣는 사람에게도, 이미지 검색에도 알려 주는 것이 없다.
+                        어느 단계 화면인지 함께 읽어 준다 - 단계 이름은 `shotStage` 주석대로
+                        이미 열다섯 언어에 번역되어 있어 새로 만들 문구가 없다.
+                      */
+                      alt={`${copy.screenshots.title} — ${copy.steps[shotStage(i)].title} (${i + 1}/${SHOT_COUNT})`}
                       /*
                         데스크톱에서 이미지를 마우스로 눌러 끌면 브라우저가 "이미지 드래그"(고스트)를
                         시작해 캐러셀 드래그를 가로챈다. 기본 드래그를 꺼서 마우스 조작이 Embla 로
