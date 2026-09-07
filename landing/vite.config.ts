@@ -26,7 +26,8 @@ import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { Landing } from './src/Landing';
 import { DEFAULT_RELEASE_ASSET, githubLatestDownloadUrl } from './src/config/release';
-import { shotDir, shotName } from './src/config/shots';
+import { SHOT_COUNT, shotDir, shotName } from './src/config/shots';
+import { execFileSync } from 'node:child_process';
 import type { LandingText } from './src/context';
 
 /**
@@ -67,6 +68,61 @@ const ANALYTICS_FILE = 'assets/analytics.js';
 
 /** 푸터 저작권 연도. 랜딩은 버전·커밋을 보여 주지 않으므로 이 한 값이면 된다. */
 const COPYRIGHT_YEAR = new Date().getFullYear();
+
+/**
+ * 구조화 데이터에 적을 판 번호. **루트 `package.json` 에서 읽는다.**
+ *
+ * `landing/package.json` 은 0.0.0 으로 두고 쓰지 않는다 - release-please 가 올려 주는
+ * 것은 루트 하나뿐이라(`.release-please-manifest.json`), 여기서 읽어야 릴리스마다
+ * 저절로 맞는다. 손으로 적어 두면 반드시 낡는다.
+ */
+const APP_VERSION = (
+  JSON.parse(readFileSync(path.resolve(__dirname, '../package.json'), 'utf8')) as {
+    version?: string;
+  }
+).version;
+
+/** 구조화 데이터에 몇 장까지 적을지. 열여덟 장을 다 적을 이유는 없다. */
+const SCHEMA_SCREENSHOT_COUNT = 3;
+
+/**
+ * 이 언어판 문구가 마지막으로 바뀐 날(`YYYY-MM-DD`). 사이트맵의 `lastmod` 에 쓴다.
+ *
+ * **빌드 시각을 쓰면 안 된다.** 내용이 그대로인데 배포할 때마다 날짜가 새로 찍히면
+ * 구글이 이 값을 못 믿게 되고, 결국 통째로 무시한다 - 넣느니만 못하다. 그래서 그 판의
+ * 문구 파일이 실제로 고쳐진 날, 즉 git 이 아는 마지막 커밋 날짜를 쓴다.
+ *
+ * 날짜를 못 구하면(git 이 없는 환경, 얕은 클론, 아직 커밋 안 된 파일) `null` 을 주고
+ * 사이트맵은 그 줄을 아예 빼 버린다. 지어낸 날짜를 적는 것보다 없는 편이 낫다.
+ */
+const localeLastmod = (lang: SupportedLanguage): string | null => {
+  try {
+    const out = execFileSync(
+      'git',
+      ['log', '-1', '--format=%cs', '--', `locales/${lang}.json`],
+      { cwd: __dirname, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] },
+    ).trim();
+    return /^\d{4}-\d{2}-\d{2}$/.test(out) ? out : null;
+  } catch {
+    return null;
+  }
+};
+
+/**
+ * 저장소 주소에서 만든 사람을 뽑는다. `https://github.com/plzhans/telegram-chat-exporter`
+ * 에서 `plzhans` 와 그 프로필 주소가 나온다.
+ *
+ * **박아 두지 않는 이유.** 저장소 주소는 `VITE_GITHUB_REPO_URL` 로 갈아 끼울 수 있어서
+ * 포크한 쪽은 제 저장소를 가리키는데, 만든 사람만 원래 주인으로 남으면 구조화 데이터가
+ * 서로 다른 두 사람을 가리키게 된다. 주소에서 뽑으면 늘 한 사람을 가리킨다.
+ *
+ * 주소 모양이 짐작과 다르면(호스팅이 GitHub 가 아니거나) 아무것도 돌려주지 않는다 -
+ * 틀린 사람을 적느니 비워 두는 편이 낫다.
+ */
+const ownerOf = (repoUrl: string): { name: string; url: string } | null => {
+  const m = /^(https?:\/\/[^/]+)\/([^/]+)\/[^/]+\/?$/.exec(repoUrl);
+  return m ? { name: m[2], url: `${m[1]}/${m[2]}` } : null;
+};
 
 /**
  * 애널리틱스·광고 스위치.
@@ -305,9 +361,17 @@ function localizedPages(opts: {
       ),
       `    <xhtml:link rel="alternate" hreflang="x-default" href="${canonicalOf(DEFAULT_LANGUAGE)}" />`,
     ].join('\n');
-    const urls = SUPPORTED_LANGUAGES.map((lang) =>
-      ['  <url>', `    <loc>${canonicalOf(lang)}</loc>`, alt, '  </url>'].join('\n'),
-    );
+    const urls = SUPPORTED_LANGUAGES.map((lang) => {
+      const lastmod = localeLastmod(lang);
+      return [
+        '  <url>',
+        `    <loc>${canonicalOf(lang)}</loc>`,
+        // 날짜를 못 구하면 줄째로 뺀다(`localeLastmod` 주석 참고).
+        ...(lastmod ? [`    <lastmod>${lastmod}</lastmod>`] : []),
+        alt,
+        '  </url>',
+      ].join('\n');
+    });
     return [
       '<?xml version="1.0" encoding="UTF-8"?>',
       '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">',
@@ -414,14 +478,51 @@ function localizedPages(opts: {
       치환 지시로 읽어 버린다.
     */
     /** `"key": <값>` 을 통째로 갈아 끼운다. 함수라 값 안의 `$` 가 치환 지시로 안 읽힌다. */
+    /*
+      갈아 끼울 수 있는 값의 모양은 셋이다 - 문자열, 납작한 배열, 납작한 객체
+      (`author` 처럼 `{"@type": …, "name": …}` 한 겹). **중첩은 못 받는다.** 배열 안에
+      `]` 이, 객체 안에 `}` 이 없다고 보고 거기까지를 값으로 끊기 때문이다. 자리표시자를
+      더 복잡하게 쓸 일이 생기면 이 정규식이 아니라 문서 전체를 다시 만드는 쪽이 맞다.
+    */
     const setJson = (source: string, key: string, value: unknown) =>
       source.replace(
-        new RegExp(`"${key}": (?:"[^"]*"|\\[[^\\]]*\\])`),
+        new RegExp(`"${key}": (?:"[^"]*"|\\[[^\\]]*\\]|\\{[^}]*\\}|true|false)`),
         () => `"${key}": ${JSON.stringify(value)}`,
       );
 
+    /** 이 판이 실제로 거는 스크린샷. 언어를 타므로(`shotDir`) 판마다 다르다. */
+    const screenshots = Array.from(
+      { length: Math.min(SCHEMA_SCREENSHOT_COUNT, SHOT_COUNT) },
+      (_, i) => `${SITE_ORIGIN}${base}${shotDir(lang)}shot-${shotName(i)}.png`,
+    );
+
+    /*
+      기능 목록은 **대조표의 "이 도구" 칸을 그대로 가져온다.** 새로 쓰면 열다섯 언어를
+      또 번역해야 하는데, 그 칸은 이미 열다섯 판에 다 번역되어 있고 내용도 정확히
+      "이 도구가 무엇을 하는가" 다.
+    */
+    const rows = landingTextOf(lang).landing.why.rows;
+    const featureList = Object.values(rows).map((r) => r.ours);
+
     let data = setJson(out, 'url', url);
     data = setJson(data, 'description', meta.shareDescription);
+    data = setJson(data, 'softwareVersion', APP_VERSION);
+    data = setJson(data, 'downloadUrl', opts.downloadUrl);
+    data = setJson(data, 'license', `${opts.sourceUrl}/blob/main/LICENSE`);
+    data = setJson(data, 'sameAs', [opts.sourceUrl]);
+    data = setJson(data, 'featureList', featureList);
+
+    const owner = ownerOf(opts.sourceUrl);
+    if (owner) {
+      const person = { '@type': 'Person', name: owner.name, url: owner.url };
+      data = setJson(data, 'author', person);
+      data = setJson(data, 'publisher', person);
+    }
+    // 정식 주소가 없는 로컬 빌드에서는 그림 주소를 만들 수 없으니 자리표시자를 둔다.
+    if (SITE_ORIGIN) {
+      data = setJson(data, 'image', `${SITE_ORIGIN}${base}og.png`);
+      data = setJson(data, 'screenshot', screenshots);
+    }
     return setJson(
       data,
       'inLanguage',
@@ -552,6 +653,7 @@ function localizedPages(opts: {
             href: `${base}${langSegment(l) ? `${langSegment(l)}/` : ''}`,
             label: String(localeOf(l).nativeName ?? l),
             current: l === lang,
+            hreflang: seoOf(l).tag,
           })),
           connectSrc,
           analytics: Boolean(opts.gaId),

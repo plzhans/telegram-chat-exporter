@@ -104,7 +104,14 @@ export interface LandingEnv {
   assetBase: string;
   /** 앱 진입 주소. 랜딩에는 앱 코드가 없으므로 여기서부터 React 가 뜬다. */
   start: string;
-  languages: { code: SupportedLanguage; href: string; label: string; current: boolean }[];
+  languages: {
+    code: SupportedLanguage;
+    href: string;
+    label: string;
+    current: boolean;
+    /** 그 판의 hreflang 태그(`en-US`). 언어 링크에 그대로 단다. */
+    hreflang: string;
+  }[];
   /**
    * 이 문서에 **실제로 걸린** `connect-src`.
    *

@@ -133,6 +133,11 @@ export function LanguageMenu() {
           <a
             key={l.code}
             href={l.href}
+            /*
+              머리의 `<link rel="alternate">` 목록이 이미 온전해서 없어도 되지만, 링크
+              자체가 어느 말로 쓰인 곳을 가리키는지 한 겹 더 일러 준다.
+            */
+            hrefLang={l.hreflang}
             aria-current={l.current || undefined}
             className={`flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm text-slate-700 hover:bg-slate-100${
               l.current ? ' font-bold text-slate-900' : ''

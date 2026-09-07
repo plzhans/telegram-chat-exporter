@@ -71,6 +71,7 @@ export function landingProps(): LandingValue {
       href: `${base}${seg(l)}`,
       label: String(localeOf(l).nativeName ?? l),
       current: l === lang,
+      hreflang: String((localeOf(l).seo as { tag?: string })?.tag ?? l),
     })),
     // 개발용 근사값이다. SSG 는 실제 CSP 에서 뽑지만 dev 에는 CSP 가 없다.
     connectSrc: analytics ? `${TELEGRAM_CONNECT}${GOOGLE_CONNECT}` : TELEGRAM_CONNECT,

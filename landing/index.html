@@ -48,6 +48,13 @@
     />
     <meta name="twitter:image" content="/og.png" />
 
+    <!--
+      구조화 데이터. 여기 적힌 값은 **개발 모드용 자리표시자**이고, 게시 빌드에서는
+      `vite.config.ts` 의 `setJson` 이 판마다 덮어쓴다.
+
+      `author`·`publisher`·`sameAs` 는 "누가 만들었는가" 에 답할 근거다. 전화번호와
+      인증코드를 다루는 도구라 만든 사람이 구조화 데이터에 아예 없는 것은 약점이었다.
+    -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -59,7 +66,17 @@
         "browserRequirements": "Requires JavaScript and WebSocket support",
         "inLanguage": ["ko-KR", "en-US"],
         "description": "텔레그램 대화를 zip 으로 내려받습니다. 서버를 거치지 않고 브라우저 안에서만 동작합니다.",
-        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "KRW" }
+        "softwareVersion": "0.0.0",
+        "license": "https://github.com/plzhans/telegram-chat-exporter/blob/main/LICENSE",
+        "downloadUrl": "https://github.com/plzhans/telegram-chat-exporter/releases/latest/download/telegram-exporter.zip",
+        "image": "/og.png",
+        "screenshot": ["/shot-01.png"],
+        "featureList": ["원하는 방만 골라서 여러 개를 한꺼번에"],
+        "isAccessibleForFree": true,
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "KRW" },
+        "author": { "@type": "Person", "name": "plzhans", "url": "https://github.com/plzhans" },
+        "publisher": { "@type": "Person", "name": "plzhans", "url": "https://github.com/plzhans" },
+        "sameAs": ["https://github.com/plzhans/telegram-chat-exporter"]
       }
     </script>
   </head>

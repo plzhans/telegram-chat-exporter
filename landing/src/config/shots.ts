@@ -54,3 +54,25 @@ export const shotName = (index: number): string => String(index + 1).padStart(2,
  * 곧바로 받으면 정작 LCP 를 정하는 그림이 `lazy` 라 브라우저가 뒷순위로 미룬다.
  */
 export const SHOT_EAGER_COUNT = 2;
+
+/**
+ * 각 장이 세 단계 중 어디쯤인가. 대체 텍스트에 쓴다.
+ *
+ * **번역을 새로 만들지 않으려고 이렇게 한다.** 장마다 제 설명을 달면 열여덟 장 × 열다섯
+ * 언어를 번역해야 한다. 대신 "세 단계면 끝납니다" 섹션이 이미 들고 있는 단계 이름
+ * (`landing.steps.one|two|three.title`)을 재사용한다 - 열다섯 언어에 이미 다 번역되어 있다.
+ *
+ * **구간은 근사값이다.** 실제 찍힌 순서를 보고 나눴다.
+ *
+ * - `one`  01-06 시작 화면 · 언어 고르기 · 전화번호 · 인증코드
+ * - `two`  07-11 대화방 목록 · 대화방 열기 · 날짜 고르기 · 내보내기 설정
+ * - `three` 12-18 진행률 · 완료 · 압축 푼 파일 · 결과 문서 · 일괄 백업
+ *
+ * 첫 두 장은 엄밀히는 로그인 화면이 아니라 랜딩과 언어 메뉴지만, 로그인까지 가는 길목이라
+ * 첫 단계에 넣었다. 장을 새로 찍어 순서가 바뀌면 이 경계도 같이 옮겨야 한다.
+ */
+export type ShotStage = 'one' | 'two' | 'three';
+
+/** 이 장이 속한 단계. 0 부터 세는 자리를 받는다. */
+export const shotStage = (index: number): ShotStage =>
+  index < 6 ? 'one' : index < 11 ? 'two' : 'three';
