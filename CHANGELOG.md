@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.2](https://github.com/plzhans/telegram-chat-exporter/compare/release/v1.9.1...release/v1.9.2) (2026-09-07)
+
+
+### 문서
+
+* 지원 언어 수를 실제와 맞춘다 ([#43](https://github.com/plzhans/telegram-chat-exporter/issues/43)) ([db12946](https://github.com/plzhans/telegram-chat-exporter/commit/db12946237f69881346beace96d913438252478c))
+
 ## [1.9.1](https://github.com/plzhans/telegram-chat-exporter/compare/release/v1.9.0...release/v1.9.1) (2026-09-07)
 
 
