@@ -1,0 +1,23 @@
+{
+  "ref": "security-headers-telegram-exporter",
+  "description": "[security-headers-telegram-exporter] telegram-exporter.plzhans.com - meta 로는 못 거는 헤더만 채운다",
+  "expression": "(http.host eq \"telegram-exporter.plzhans.com\")",
+  "action": "rewrite",
+  "action_parameters": {
+    "headers": {
+      "Strict-Transport-Security": {
+        "operation": "set",
+        "value": "max-age=31536000; includeSubDomains"
+      },
+      "X-Content-Type-Options": { "operation": "set", "value": "nosniff" },
+      "X-Frame-Options": { "operation": "set", "value": "DENY" },
+      "Content-Security-Policy": { "operation": "set", "value": "frame-ancestors 'none'" },
+      "Referrer-Policy": { "operation": "set", "value": "no-referrer" },
+      "Cross-Origin-Opener-Policy": { "operation": "set", "value": "same-origin" },
+      "Permissions-Policy": {
+        "operation": "set",
+        "value": "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+      }
+    }
+  }
+}

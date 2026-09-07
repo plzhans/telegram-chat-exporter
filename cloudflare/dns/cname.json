@@ -1,0 +1,8 @@
+{
+  "type": "CNAME",
+  "name": "telegram-exporter.plzhans.com",
+  "content": "plzhans.github.io",
+  "proxied": true,
+  "ttl": 1,
+  "comment": "telegram-exporter GitHub Pages - 보안 헤더 Transform Rule 을 태우려고 프록시 켬"
+}
