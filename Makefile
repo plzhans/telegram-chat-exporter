@@ -52,3 +52,13 @@ cloudflare-dns:
 
 cloudflare-rules:
 	./cloudflare/manage-rules.sh
+
+.PHONY: landing-webp landing-webp-check
+
+# 랜딩 스크린샷 PNG 에 맞춰 WebP 짝을 다시 만든다. 자세한 내용은 mcp/README.md 참고.
+landing-webp:
+	@node mcp/landing-webp/server.mjs --sync
+
+# 어긋난 짝이 있으면 실패로 끝낸다(훅·CI 용).
+landing-webp-check:
+	@node mcp/landing-webp/server.mjs --check

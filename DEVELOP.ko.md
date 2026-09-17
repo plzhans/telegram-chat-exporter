@@ -382,6 +382,10 @@ dist/404.html · en-us/session/404.html …   각 구역·언어의 SPA 폴백
   블록이다. 자세한 근거는 `landing/src/Landing.tsx` 주석 참고.
 - "시작하기" 는 exporter 진입 주소(`VITE_APP_URL`, 기본 `/run/`)로 **진짜 페이지 이동**한다 —
   랜딩에는 앱 코드가 한 줄도 없다.
+- **스크린샷은 WebP 로 나가고 PNG 는 `<picture>` 폴백일 뿐이다.** 그래서 `landing/public` 의
+  PNG 만 고치면 브라우저는 옛 그림을 계속 본다 — 고친 사람 화면에서도 그대로라 배포하고 나서야
+  안다. PNG 를 건드렸으면 커밋 전에 `make landing-webp` 로 짝을 다시 만든다. 설정과 이유는
+  `mcp/README.md` 참고.
 
 배포(`.github/workflows/deploy.yml`)는 두 산출물을 한 아티팩트로 합친다 — 도메인 루트 `/` 는
 랜딩(sitemap·robots 포함), `/run/` 는 exporter. 최종 URL(서브패스·서브도메인·루트 중 무엇으로
