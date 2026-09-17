@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "landing-webp": {
+      "command": "node",
+      "args": ["mcp/landing-webp/server.mjs"]
+    }
+  }
+}

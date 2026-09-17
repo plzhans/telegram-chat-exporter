@@ -439,6 +439,10 @@ install/build.
   locale copies (`landing/locales/*.json`), blocks `landing`/`seo`. See `landing/src/Landing.tsx`.
 - "Get started" does a **real page navigation** to the exporter's entry URL (`VITE_APP_URL`,
   default `/run/`) — the landing ships no app code.
+- **Screenshots ship as WebP, with the PNG only as a `<picture>` fallback.** Editing a PNG under
+  `landing/public` alone therefore changes nothing anyone sees — not even on the machine that
+  edited it, so you find out after deploying. Touch a PNG, then run `make landing-webp` before
+  committing to rebuild its pair. Settings and rationale: `mcp/README.md`.
 
 Deployment (`.github/workflows/deploy.yml`) composes the two outputs into one artifact — the domain
 root `/` is the landing (sitemap/robots included), `/run/` is the exporter. The final URL (subpath,
